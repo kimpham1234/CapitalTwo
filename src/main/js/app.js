@@ -16,7 +16,7 @@ class App extends React.Component {
 		      .then(res => {
 		        const employees = res.data._embedded.customerAccounts;//.map(obj => obj.data);
 		        this.setState({ employees });
-		        //console.log("employees "+ this.state.employees);
+		        console.log("employees "+ this.state.employees);
 		        console.log("axios "+ JSON.stringify(res.data._embedded.customerAccounts));
 		      });
 		      /*
@@ -36,13 +36,71 @@ class App extends React.Component {
 	render() {
 		return (
 	      <div>
-	        <ul>
-	          
-	        </ul>
+	        <table>
+	        	<tr>
+	        		<th>Name</th>
+	        		<th>Email</th>
+	        		<th>PhoneNo</th>
+	        		<th>Gender</th>
+	        		<th>Income</th>
+	        	</tr>
+	        	{this.state.employees.map(employee =>
+	             <tr>
+	             	<td>{employee.name}</td>
+	             	<td>{employee.email}</td>
+	             	<td>{employee.phoneNo}</td>
+	             	<td>{employee.gender}</td>
+	             	<td>{employee.income}</td>
+	             </tr>
+	          	)}
+	        </table>
+
+	        <Card></Card>
 	      </div>
 	    );
 	 }
 }
+
+class Card extends React.Component{
+
+	constructor(props){
+		super(props);
+		this.state = {cards: []};
+		console.log("card constructor");
+	}
+
+	componentDidMount(){
+		axios.get('http://localhost:8080/api/creditCards')
+			.then(res => {
+				const cards = res.data._embedded.creditCards;
+				console.log("credit cardssss "+ JSON.stringify(res.data._embedded.creditCards));
+				this.setState({ cards });
+			});
+	}
+
+	render(){
+		return (
+			<div>
+		        <table>
+		        	<tr>
+		        		<th>Date</th>
+		        		<th>LoginId</th>
+		        		<th>Amount</th>
+		        	</tr>
+		        	{this.state.cards.map(card =>
+		             <tr>
+		             	<td>{card.expirationDate}</td>
+		             	<td>{card.loginId}</td>
+		             	<td>{card.monthlyLimit}</td>
+		             </tr>
+		          	)}
+		        </table>
+		     </div>
+		)
+	}
+}
+
+
 
 /*
 {this.state.employees.map(employee =>

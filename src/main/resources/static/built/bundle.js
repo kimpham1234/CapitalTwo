@@ -80,8 +80,8 @@
 				axios.get('http://localhost:8080/api/customerAccounts').then(function (res) {
 					var employees = res.data._embedded.customerAccounts; //.map(obj => obj.data);
 					_this2.setState({ employees: employees });
-					//console.log("employees "+ this.state.employees);
-					console.log("axios " + res.data._embedded.customerAccounts);
+					console.log("employees " + _this2.state.employees);
+					console.log("axios " + JSON.stringify(res.data._embedded.customerAccounts));
 				});
 				/*
 	   axios.get('http://localhost:8080/api/customerAccounts')
@@ -102,12 +102,157 @@
 				return React.createElement(
 					'div',
 					null,
-					React.createElement('ul', null)
+					React.createElement(
+						'table',
+						null,
+						React.createElement(
+							'tr',
+							null,
+							React.createElement(
+								'th',
+								null,
+								'Name'
+							),
+							React.createElement(
+								'th',
+								null,
+								'Email'
+							),
+							React.createElement(
+								'th',
+								null,
+								'PhoneNo'
+							),
+							React.createElement(
+								'th',
+								null,
+								'Gender'
+							),
+							React.createElement(
+								'th',
+								null,
+								'Income'
+							)
+						),
+						this.state.employees.map(function (employee) {
+							return React.createElement(
+								'tr',
+								null,
+								React.createElement(
+									'td',
+									null,
+									employee.name
+								),
+								React.createElement(
+									'td',
+									null,
+									employee.email
+								),
+								React.createElement(
+									'td',
+									null,
+									employee.phoneNo
+								),
+								React.createElement(
+									'td',
+									null,
+									employee.gender
+								),
+								React.createElement(
+									'td',
+									null,
+									employee.income
+								)
+							);
+						})
+					),
+					React.createElement(Card, null)
 				);
 			}
 		}]);
 	
 		return App;
+	}(React.Component);
+	
+	var Card = function (_React$Component2) {
+		_inherits(Card, _React$Component2);
+	
+		function Card(props) {
+			_classCallCheck(this, Card);
+	
+			var _this3 = _possibleConstructorReturn(this, (Card.__proto__ || Object.getPrototypeOf(Card)).call(this, props));
+	
+			_this3.state = { cards: [] };
+			console.log("card constructor");
+			return _this3;
+		}
+	
+		_createClass(Card, [{
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				var _this4 = this;
+	
+				axios.get('http://localhost:8080/api/creditCards').then(function (res) {
+					var cards = res.data._embedded.creditCards;
+					console.log("credit cardssss " + JSON.stringify(res.data._embedded.creditCards));
+					_this4.setState({ cards: cards });
+				});
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				return React.createElement(
+					'div',
+					null,
+					React.createElement(
+						'table',
+						null,
+						React.createElement(
+							'tr',
+							null,
+							React.createElement(
+								'th',
+								null,
+								'Date'
+							),
+							React.createElement(
+								'th',
+								null,
+								'LoginId'
+							),
+							React.createElement(
+								'th',
+								null,
+								'Amount'
+							)
+						),
+						this.state.cards.map(function (card) {
+							return React.createElement(
+								'tr',
+								null,
+								React.createElement(
+									'td',
+									null,
+									card.expirationDate
+								),
+								React.createElement(
+									'td',
+									null,
+									card.loginId
+								),
+								React.createElement(
+									'td',
+									null,
+									card.monthlyLimit
+								)
+							);
+						})
+					)
+				);
+			}
+		}]);
+	
+		return Card;
 	}(React.Component);
 	
 	/*

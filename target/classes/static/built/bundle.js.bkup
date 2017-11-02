@@ -193,9 +193,9 @@
 				var _this4 = this;
 	
 				axios.get('http://localhost:8080/api/creditCards').then(function (res) {
-					var cards = res.data._embedded.creditCards;
-					console.log("credit cardssss " + JSON.stringify(res.data._embedded.creditCards));
-					_this4.setState({ cards: cards });
+					var creditCards = res.data._embedded.creditCards;
+					console.log("credit card " + res.data._embedded.creditCards);
+					_this4.setState({ creditCards: creditCards });
 				});
 			}
 		}, {
@@ -218,7 +218,7 @@
 							React.createElement(
 								'th',
 								null,
-								'LoginId'
+								'Login'
 							),
 							React.createElement(
 								'th',
