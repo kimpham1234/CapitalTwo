@@ -1,4 +1,4 @@
-package com.greglturnquist.payroll;
+package capitaltwo;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -10,9 +10,11 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
 @Entity
+@Table(name="Account")
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
-public abstract class Account {
-    @Id private String loginId;
+public class Account {
+    @Id
+    private String loginId;
     private String password;
     private String phoneNo;
     private String email;
@@ -35,7 +37,7 @@ public abstract class Account {
     public void setPhoneNo(String phoneNo){
         this.phoneNo = phoneNo;
     }
-    public void setEmail(String email){
+    public void setEmail(String email) {
         this.email = email;
     }
     public String getLoginId(){
@@ -50,5 +52,4 @@ public abstract class Account {
     public String getEmail(){
         return email;
     }
-
 }

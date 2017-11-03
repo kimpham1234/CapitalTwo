@@ -1,4 +1,4 @@
-package com.greglturnquist.payroll;
+package capitaltwo;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.jpa.repository.JpaRepository;

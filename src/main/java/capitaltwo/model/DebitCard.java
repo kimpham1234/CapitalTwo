@@ -1,5 +1,4 @@
-package com.greglturnquist.payroll;
-
+package capitaltwo;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -8,15 +7,22 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
 @Entity
+@Table(name="DebitCard")
 public class DebitCard extends Card {
 
     private double balance;
-
-    protected DebitCard(){}
-
-    public DebitCard(Date expirationDate, String loginId, double balance) {
-        super(expirationDate, loginId);
+    public DebitCard() {}
+    public DebitCard(Date expirationDate, double balance) {
+        super(expirationDate);
         this.balance = balance;
+    }
+
+    public boolean charge(double cost) {
+        if (balance - cost >= 0) {
+            balance -= cost;
+            return true;
+        }
+        return false;
     }
 
     public double getBalance() { return this.balance; }
