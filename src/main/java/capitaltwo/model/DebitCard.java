@@ -7,7 +7,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
 @Entity
-@Table(name="DebitCard")
 public class DebitCard extends Card {
 
     private double balance;

@@ -7,12 +7,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-//import javax.persistence.OneToMany;
+import javax.persistence.OneToMany;
 import java.sql.Date;
 import java.util.Set;
 
 @Entity
-@Table(name="CustomerAccount")
 public class CustomerAccount extends Account {
 
     private String firstName;
@@ -24,16 +23,22 @@ public class CustomerAccount extends Account {
     private long rewardPoints;
     private long income;
 
-    //private Set<Card> customerCards;
+    @OneToMany(targetEntity=Card.class)
+    private Set<Card> customerCards;
 
     public CustomerAccount() {}
-    public CustomerAccount(String firstName,
+    public CustomerAccount(String loginId,
+                           String password,
+                           String phoneNo,
+                           String email,
+                           String firstName,
                            String middleName,
                            String lastName,
                            Ethnicity ethnicity,
                            Gender gender,
                            Date birthday,
                            long income) {
+        super(loginId, password, phoneNo, email);
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;

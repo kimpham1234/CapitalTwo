@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import java.sql.Date;
+import java.util.ArrayList;
 
 @Component
 public class DatabaseLoader implements CommandLineRunner {
@@ -11,17 +12,17 @@ public class DatabaseLoader implements CommandLineRunner {
     private final UserRepository userRepo;
     private final CreditCardRepository creditCardRepo;
     private final DebitCardRepository debitCardRepo;
-    //private final CustomerAccountRepository customerRepo;
+    private final CustomerAccountRepository customerRepo;
 
     @Autowired
     public DatabaseLoader(UserRepository userRepo,
                           CreditCardRepository creditRepo,
-                          DebitCardRepository debitRepo) {
-                          //CustomerAccountRepository customerRepo) {
+                          DebitCardRepository debitRepo,
+                          CustomerAccountRepository customerRepo) {
         this.userRepo = userRepo;
         this.creditCardRepo = creditRepo;
         this.debitCardRepo = debitRepo;
-        //this.customerRepo = customerRepo;
+        this.customerRepo = customerRepo;
     }
 
     @Override
@@ -41,17 +42,30 @@ public class DatabaseLoader implements CommandLineRunner {
         //this.customerRepo.save(new CustomerAccount("AW", "123456", "4088133264", "email4@email.com", "Anna Wong",
         //                     Ethnicity.ASIAN, Gender.FEMALE, new Date(1980, 1, 23), 59000));
 
-        // public CreditCard(Date expirationDate, String loginId, double monthlyLimit) 
-        this.creditCardRepo.save(new CreditCard(new Date(2020, 10, 19), 1000));
-        this.creditCardRepo.save(new CreditCard(new Date(2020, 10, 19), 2000));
-        this.creditCardRepo.save(new CreditCard(new Date(2020, 10, 19), 1000));
-        this.creditCardRepo.save(new CreditCard(new Date(2020, 10, 19), 3000));
+        this.customerRepo.save(
+            new CustomerAccount("secritboy", "hunter2", "123-456-7890", "therealdonald@gmail.com",
+                                "Donald", "Dumbass", "Drumpf",
+                                Ethnicity.WHITE, Gender.MALE, new Date(1776, 7, 4),
+                                200000)
+        );
 
-        //public DebitCard(Date expirationDate, String loginId, double balance) {
-        this.debitCardRepo.save(new DebitCard(new Date(2020, 10, 19), 10000));
-        this.debitCardRepo.save(new DebitCard(new Date(2020, 10, 19), 20000));
-        this.debitCardRepo.save(new DebitCard(new Date(2020, 10, 19), 10000));
-        this.debitCardRepo.save(new DebitCard(new Date(2020, 10, 19), 30000));
+        ArrayList<CreditCard> ccards = new ArrayList<CreditCard>();
+        ccards.add(new CreditCard(new Date(2020, 10, 19), 1000));
+        ccards.add(new CreditCard(new Date(2020, 10, 19), 2000));
+        ccards.add(new CreditCard(new Date(2020, 10, 19), 1000));
+        ccards.add(new CreditCard(new Date(2020, 10, 19), 3000));
+        for (CreditCard c : ccards) {
+            this.creditCardRepo.save(c);
+        }
+
+        ArrayList<DebitCard> dcards = new ArrayList<DebitCard>();
+        dcards.add(new DebitCard(new Date(2020, 10, 19), 10000));
+        dcards.add(new DebitCard(new Date(2020, 10, 19), 20000));
+        dcards.add(new DebitCard(new Date(2020, 10, 19), 10000));
+        dcards.add(new DebitCard(new Date(2020, 10, 19), 30000));
+        for (DebitCard c : dcards) {
+            this.debitCardRepo.save(c);
+        }
 
         /*
         CustomerAccount acct = new CustomerAccount(

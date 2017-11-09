@@ -10,10 +10,11 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
 @Entity
-@Table(name="Account")
-@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy=InheritanceType.JOINED)
 public class Account {
     @Id
+    @GeneratedValue(strategy=GenerationType.TABLE)
+    private Long accountId;
     private String loginId;
     private String password;
     private String phoneNo;
