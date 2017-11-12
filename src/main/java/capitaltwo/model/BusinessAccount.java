@@ -1,5 +1,4 @@
-package com.greglturnquist.payroll;
-
+package capitaltwo;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
