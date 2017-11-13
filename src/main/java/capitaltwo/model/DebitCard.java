@@ -2,7 +2,6 @@ package capitaltwo;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.sql.Date;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
@@ -11,8 +10,12 @@ public class DebitCard extends Card {
 
     private double balance;
     public DebitCard() {}
-    public DebitCard(Date expirationDate, double balance) {
-        super(expirationDate);
+    public DebitCard(CustomerAccount account,
+                     int year,
+                     int month,
+                     int day,
+                     double balance) {
+        super(account, year, month, day);
         this.balance = balance;
     }
 

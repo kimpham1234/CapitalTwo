@@ -2,7 +2,6 @@ package capitaltwo;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.sql.Date;
 
 @Entity
 public class CreditCard extends Card {
@@ -11,8 +10,12 @@ public class CreditCard extends Card {
     private double monthlySpent;
 
     protected CreditCard() {}
-    public CreditCard(Date expirationDate, double monthlyLimit) {
-        super(expirationDate);
+    public CreditCard(CustomerAccount account,
+                      int expirationYear,
+                      int expirationMonth,
+                      int expirationDay,
+                      double monthlyLimit) {
+        super(account, expirationYear, expirationMonth, expirationDay);
         this.monthlyLimit = monthlyLimit;
         this.monthlySpent = monthlyLimit;
     }
