@@ -1,6 +1,8 @@
+import {Button} from 'react-bootstrap'
 const React = require('react');
 const ReactDOM = require('react-dom');
 const axios = require('axios');
+
 
 class App extends React.Component {
 
@@ -18,24 +20,14 @@ class App extends React.Component {
 		        this.setState({ employees });
 		        console.log("employees "+ this.state.employees);
 		        console.log("axios "+ JSON.stringify(res.data._embedded.customerAccounts));
-		      });
-		      /*
-		axios.get('http://localhost:8080/api/customerAccounts')
-			.then(function(response){
-			//	console.log("axios "+ JSON.stringify(response));
-			//	console.log("axios 1"+ JSON.stringify(response.data));
-			//	console.log("axios 2"+ JSON.stringify(response.data._embedded));
-				console.log("axios"+ JSON.stringify(response.data._embedded.customerAccounts));
-			//	console.log("axios 3"+ JSON.stringify(response.data._embedded.customerAccounts[0]));
-			    that.setState(employees: response.data._embedded.customerAccounts);
-				console.log("employees:");
-			    console.log("axios");
-			}.bind(this));*/
+		      }); 
 	}
 
 	render() {
 		return (
 	      <div>
+	      	<Button bsStyle="primary">Primary</Button>
+	      	<p>Hello</p>
 	        <table>
 	        	<tr>
 	        		<th>Name</th>
@@ -84,13 +76,11 @@ class Card extends React.Component{
 		        <table>
 		        	<tr>
 		        		<th>Date</th>
-		        		<th>LoginId</th>
 		        		<th>Amount</th>
 		        	</tr>
 		        	{this.state.cards.map(card =>
 		             <tr>
 		             	<td>{card.expirationDate}</td>
-		             	<td>{card.loginId}</td>
 		             	<td>{card.monthlyLimit}</td>
 		             </tr>
 		          	)}
@@ -100,16 +90,4 @@ class Card extends React.Component{
 	}
 }
 
-
-
-/*
-{this.state.employees.map(employee =>
-	            <li key={employee.name}>{employee.email}</li>
-	          )}
-*/
-
-
-ReactDOM.render(
-	<App />,
-	document.getElementById('react')
-)
+export default App;

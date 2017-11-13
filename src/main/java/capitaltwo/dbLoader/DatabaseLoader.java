@@ -9,17 +9,14 @@ import java.util.ArrayList;
 @Component
 public class DatabaseLoader implements CommandLineRunner {
 
-    private final UserRepository userRepo;
     private final CreditCardRepository creditCardRepo;
     private final DebitCardRepository debitCardRepo;
     private final CustomerAccountRepository customerRepo;
 
     @Autowired
-    public DatabaseLoader(UserRepository userRepo,
-                          CreditCardRepository creditRepo,
+    public DatabaseLoader(CreditCardRepository creditRepo,
                           DebitCardRepository debitRepo,
                           CustomerAccountRepository customerRepo) {
-        this.userRepo = userRepo;
         this.creditCardRepo = creditRepo;
         this.debitCardRepo = debitRepo;
         this.customerRepo = customerRepo;
@@ -27,21 +24,22 @@ public class DatabaseLoader implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
+        /*
         this.userRepo.save(new User("name1", "email1@email.com"));
         this.userRepo.save(new User("name2", "email2@email.com"));
         this.userRepo.save(new User("name3", "email3@email.com"));
-        this.userRepo.save(new User("name4", "email4@email.com"));
+        this.userRepo.save(new User("name4", "email4@email.com"));*/
 
-		
-		//this.customerRepo.save(new CustomerAccount("SJ", "123456", "4087138244", "email1@email.com", "Smith Johnson",
-		//					 Ethnicity.BLACK, Gender.MALE, new Date(1984, 10, 23), 50000));
-        //this.customerRepo.save(new CustomerAccount("WB", "123456", "4086136224", "email2@email.com", "William Brown",
-        //                     Ethnicity.WHITE, Gender.MALE, new Date(1985, 6, 12), 45000));
-        //this.customerRepo.save(new CustomerAccount("MJ", "123456", "4087134294", "email3@email.com", "Mary Jones",
-        //                     Ethnicity,WHITE, Gender.FEMALE, new Date(1990, 11, 14), 57000));
-        //this.customerRepo.save(new CustomerAccount("AW", "123456", "4088133264", "email4@email.com", "Anna Wong",
-        //                     Ethnicity.ASIAN, Gender.FEMALE, new Date(1980, 1, 23), 59000));
-
+		/*
+		this.customerRepo.save(new CustomerAccount("SJ", "123456", "4087138244", "email1@email.com", "Smith Johnson",
+							 Ethnicity.BLACK, Gender.MALE, new Date(1984, 10, 23), 50000));
+        this.customerRepo.save(new CustomerAccount("WB", "123456", "4086136224", "email2@email.com", "William Brown",
+                             Ethnicity.WHITE, Gender.MALE, new Date(1985, 6, 12), 45000));
+        this.customerRepo.save(new CustomerAccount("MJ", "123456", "4087134294", "email3@email.com", "Mary Jones",
+                             Ethnicity,WHITE, Gender.FEMALE, new Date(1990, 11, 14), 57000));
+        this.customerRepo.save(new CustomerAccount("AW", "123456", "4088133264", "email4@email.com", "Anna Wong",
+                             Ethnicity.ASIAN, Gender.FEMALE, new Date(1980, 1, 23), 59000));
+        */
         this.customerRepo.save(
             new CustomerAccount("secritboy", "hunter2", "123-456-7890", "therealdonald@gmail.com",
                                 "Donald", "Dumbass", "Drumpf",
