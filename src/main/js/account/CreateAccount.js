@@ -2,7 +2,7 @@ import {Button, FormGroup, FormControl, Col, Form, ControlLabel} from 'react-boo
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-class CreateCustomer extends React.Component {
+class CreateAccount extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -45,4 +45,4 @@ class CreateCustomer extends React.Component {
 	 }
 }
 
-export default CreateCustomer;
+export default CreateAccount;

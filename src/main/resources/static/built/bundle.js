@@ -66,9 +66,9 @@
 	
 	var _Login2 = _interopRequireDefault(_Login);
 	
-	var _CreateCustomer = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./account/CreateCustomer.js\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var _CreateAccount = __webpack_require__(534);
 	
-	var _CreateCustomer2 = _interopRequireDefault(_CreateCustomer);
+	var _CreateAccount2 = _interopRequireDefault(_CreateAccount);
 	
 	var _CustomerProfile = __webpack_require__(535);
 	
@@ -77,6 +77,10 @@
 	var _Transaction = __webpack_require__(536);
 	
 	var _Transaction2 = _interopRequireDefault(_Transaction);
+	
+	var _BusinessProfile = __webpack_require__(537);
+	
+	var _BusinessProfile2 = _interopRequireDefault(_BusinessProfile);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -88,9 +92,10 @@
 			{ path: '/', component: _AppNavigationBar2.default },
 			_react2.default.createElement(_reactRouter.IndexRoute, { component: _Login2.default }),
 			_react2.default.createElement(_reactRouter.Route, { path: '/login', component: _Login2.default }),
-			_react2.default.createElement(_reactRouter.Route, { path: '/newCustomer', component: _CreateCustomer2.default }),
+			_react2.default.createElement(_reactRouter.Route, { path: '/newCustomer', component: _CreateAccount2.default }),
 			_react2.default.createElement(_reactRouter.Route, { path: '/customerProfile', component: _CustomerProfile2.default }),
-			_react2.default.createElement(_reactRouter.Route, { path: '/transaction', component: _Transaction2.default })
+			_react2.default.createElement(_reactRouter.Route, { path: '/transaction', component: _Transaction2.default }),
+			_react2.default.createElement(_reactRouter.Route, { path: '/businessProfile', component: _BusinessProfile2.default })
 		)
 	), document.getElementById('react'));
 
@@ -49729,6 +49734,8 @@
 	
 	var _reactRouter = __webpack_require__(184);
 	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -49744,24 +49751,43 @@
 		function Login(props) {
 			_classCallCheck(this, Login);
 	
-			return _possibleConstructorReturn(this, (Login.__proto__ || Object.getPrototypeOf(Login)).call(this, props));
+			var _this = _possibleConstructorReturn(this, (Login.__proto__ || Object.getPrototypeOf(Login)).call(this, props));
+	
+			_this.state = {
+				loginId: "",
+				password: "",
+				userType: ""
+			};
+	
+			_this.handleChange = _this.handleChange.bind(_this);
+			return _this;
 		}
 	
 		_createClass(Login, [{
-			key: 'handleCustomerSignIn',
-			value: function handleCustomerSignIn(e) {
-				e.preventDefault();
-				_reactRouter.hashHistory.push("/customerProfile");
+			key: 'handleChange',
+			value: function handleChange(event) {
+				var target = event.target;
+				var value = target.value;
+				var name = target.name;
+	
+				this.setState(_defineProperty({}, name, value));
 			}
 		}, {
-			key: 'handleBusinessSignIn',
-			value: function handleBusinessSignIn(e) {
-				e.preventDefault();
-				alert("Feature not yet available");
+			key: 'handleSignIn',
+			value: function handleSignIn(event) {
+				event.preventDefault();
+				alert("Login Id is " + this.state.loginId + " type " + this.state.userType);
+	
+				if (this.state.userType == "customer") _reactRouter.hashHistory.push("/customerProfile");else _reactRouter.hashHistory.push("/businessProfile");
 			}
 		}, {
 			key: 'render',
 			value: function render() {
+	
+				var checkboxStyle = {
+					height: "20px !important"
+				};
+	
 				return React.createElement(
 					'div',
 					null,
@@ -49772,7 +49798,7 @@
 					),
 					React.createElement(
 						_reactBootstrap.Form,
-						{ horizontal: true },
+						{ horizontal: true, onSubmit: this.handleSignIn.bind(this) },
 						React.createElement(
 							_reactBootstrap.FormGroup,
 							{ controlId: 'formHorizontalEmail' },
@@ -49783,8 +49809,148 @@
 							),
 							React.createElement(
 								_reactBootstrap.Col,
+								{ sm: 6 },
+								React.createElement(_reactBootstrap.FormControl, { type: 'text', name: 'loginId', placeholder: 'Login id', value: this.state.loginId,
+									onChange: this.handleChange })
+							)
+						),
+						React.createElement(
+							_reactBootstrap.FormGroup,
+							{ controlId: 'formHorizontalPassword' },
+							React.createElement(
+								_reactBootstrap.Col,
+								{ componentClass: _reactBootstrap.ControlLabel, sm: 2 },
+								'Password'
+							),
+							React.createElement(
+								_reactBootstrap.Col,
+								{ sm: 6 },
+								React.createElement(_reactBootstrap.FormControl, { type: 'password', name: 'password', placeholder: 'Password', value: this.state.password,
+									onChange: this.handleChange })
+							)
+						),
+						React.createElement(
+							_reactBootstrap.FormGroup,
+							null,
+							React.createElement(
+								_reactBootstrap.Col,
+								{ smOffset: 2, sm: 1, style: checkboxStyle },
+								React.createElement(_reactBootstrap.FormControl, { type: 'radio', name: 'userType', value: 'customer', onChange: this.handleChange })
+							),
+							React.createElement(
+								_reactBootstrap.Col,
+								{ componentClass: _reactBootstrap.ControlLabel, sm: 1 },
+								'Customer'
+							)
+						),
+						React.createElement(
+							_reactBootstrap.FormGroup,
+							null,
+							React.createElement(
+								_reactBootstrap.Col,
+								{ smOffset: 2, sm: 1, style: checkboxStyle },
+								React.createElement(_reactBootstrap.FormControl, { type: 'radio', name: 'userType', value: 'business', onChange: this.handleChange })
+							),
+							React.createElement(
+								_reactBootstrap.Col,
+								{ componentClass: _reactBootstrap.ControlLabel, sm: 1 },
+								'Business'
+							)
+						),
+						React.createElement(
+							_reactBootstrap.FormGroup,
+							null,
+							React.createElement(
+								_reactBootstrap.Col,
+								{ smOffset: 2, sm: 10 },
+								React.createElement(
+									_reactBootstrap.Button,
+									{ type: 'submit' },
+									'Customer Sign-in'
+								)
+							)
+						),
+						React.createElement(
+							_reactBootstrap.FormGroup,
+							null,
+							React.createElement(
+								_reactBootstrap.Col,
+								{ smOffset: 2, sm: 10 },
+								React.createElement(
+									_reactRouter.Link,
+									{ to: '/newCustomer' },
+									'Create Account'
+								)
+							)
+						)
+					)
+				);
+			}
+		}]);
+	
+		return Login;
+	}(React.Component);
+	
+	exports.default = Login;
+
+/***/ }),
+/* 534 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _reactBootstrap = __webpack_require__(248);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(37);
+	
+	var CreateAccount = function (_React$Component) {
+		_inherits(CreateAccount, _React$Component);
+	
+		function CreateAccount(props) {
+			_classCallCheck(this, CreateAccount);
+	
+			return _possibleConstructorReturn(this, (CreateAccount.__proto__ || Object.getPrototypeOf(CreateAccount)).call(this, props));
+		}
+	
+		_createClass(CreateAccount, [{
+			key: 'render',
+			value: function render() {
+				return React.createElement(
+					'div',
+					null,
+					React.createElement(
+						'h3',
+						null,
+						'Create a new account'
+					),
+					React.createElement(
+						_reactBootstrap.Form,
+						{ horizontal: true },
+						React.createElement(
+							_reactBootstrap.FormGroup,
+							{ controlId: 'formHorizontalEmail' },
+							React.createElement(
+								_reactBootstrap.Col,
+								{ componentClass: _reactBootstrap.ControlLabel, sm: 2 },
+								'Login id'
+							),
+							React.createElement(
+								_reactBootstrap.Col,
 								{ sm: 10 },
-								React.createElement(_reactBootstrap.FormControl, { type: 'text', placeholder: 'Login id' })
+								React.createElement(_reactBootstrap.FormControl, { type: 'text', placeholder: 'Id' })
 							)
 						),
 						React.createElement(
@@ -49809,27 +49975,9 @@
 								{ smOffset: 2, sm: 10 },
 								React.createElement(
 									_reactBootstrap.Button,
-									{ type: 'submit', onClick: 'handleCustomerSignIn(e)' },
-									'Customer Sign-in'
+									{ type: 'submit' },
+									'Create'
 								)
-							),
-							React.createElement(
-								_reactBootstrap.Col,
-								{ smOffset: 2, sm: 10 },
-								React.createElement(
-									_reactBootstrap.Button,
-									{ type: 'submit', onClick: 'handleBusinessSignIn(e)' },
-									'Business Sign-in'
-								)
-							)
-						),
-						React.createElement(
-							Formgroup,
-							null,
-							React.createElement(
-								Link,
-								{ to: true, path: '/newCustomer' },
-								'Create Account'
 							)
 						)
 					)
@@ -49837,13 +49985,12 @@
 			}
 		}]);
 	
-		return Login;
+		return CreateAccount;
 	}(React.Component);
 	
-	exports.default = Login;
+	exports.default = CreateAccount;
 
 /***/ }),
-/* 534 */,
 /* 535 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -49938,6 +50085,54 @@
 	}(React.Component);
 	
 	exports.default = Transaction;
+
+/***/ }),
+/* 537 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _reactBootstrap = __webpack_require__(248);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(37);
+	
+	var BusinessProfile = function (_React$Component) {
+		_inherits(BusinessProfile, _React$Component);
+	
+		function BusinessProfile(props) {
+			_classCallCheck(this, BusinessProfile);
+	
+			return _possibleConstructorReturn(this, (BusinessProfile.__proto__ || Object.getPrototypeOf(BusinessProfile)).call(this, props));
+		}
+	
+		_createClass(BusinessProfile, [{
+			key: 'render',
+			value: function render() {
+				return React.createElement(
+					'div',
+					null,
+					'Business Profile'
+				);
+			}
+		}]);
+	
+		return BusinessProfile;
+	}(React.Component);
+	
+	exports.default = BusinessProfile;
 
 /***/ })
 /******/ ]);
