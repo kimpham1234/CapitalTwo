@@ -15,9 +15,9 @@ render((
 			<IndexRoute component={Login}/>
 			<Route path="/login" component={Login}/>
 			<Route path="/newCustomer" component={CreateAccount}/>
-			<Route path="/customerProfile" component={CustomerProfile}/>
+			<Route path="/customerProfile/:loginId" component={CustomerProfile}/>
 			<Route path="/transaction" component={Transaction}/>
-			<Route path="/businessProfile" component={BusinessProfile}/>
+			<Route path="/businessProfile/:loginId" component={BusinessProfile}/>
 		</Route>
 	</Router>
 ),document.getElementById('react'))

@@ -33,9 +33,9 @@ class Login extends React.Component {
 		alert("Login Id is "+this.state.loginId + " type "+this.state.userType);
 
 		if(this.state.userType == "customer")
-			hashHistory.push("/customerProfile");
+			hashHistory.push("/customerProfile/"+this.state.loginId);
 		else
-			hashHistory.push("/businessProfile");
+			hashHistory.push("/businessProfile/"+this.state.loginId);
 	}
 
 	render() {
@@ -89,7 +89,7 @@ class Login extends React.Component {
 			    <FormGroup>
 			      <Col smOffset={2} sm={10}>
 			        <Button type="submit">
-			          Customer Sign-in
+			          Sign-in
 			        </Button>
 			      </Col>
 			    </FormGroup>

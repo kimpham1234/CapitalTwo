@@ -4,7 +4,7 @@ const ReactDOM = require('react-dom');
 
 
 
-class Transaction extends React.Component {
+class BusinessTransaction extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -16,7 +16,7 @@ class Transaction extends React.Component {
 	      <div>
 	      	{this.props.transaction.map((trans)=>
 	      		<li key={trans.id}> 
-	      			{trans.item} : ${trans.cost}
+	      			{trans.month} : ${trans.amount}
 	      		</li>
 	      	)};
 	      </div>
@@ -24,4 +24,4 @@ class Transaction extends React.Component {
 	 }
 }
 
-export default Transaction;
+export default BusinessTransaction;

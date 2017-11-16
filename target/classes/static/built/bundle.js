@@ -93,9 +93,9 @@
 			_react2.default.createElement(_reactRouter.IndexRoute, { component: _Login2.default }),
 			_react2.default.createElement(_reactRouter.Route, { path: '/login', component: _Login2.default }),
 			_react2.default.createElement(_reactRouter.Route, { path: '/newCustomer', component: _CreateAccount2.default }),
-			_react2.default.createElement(_reactRouter.Route, { path: '/customerProfile', component: _CustomerProfile2.default }),
+			_react2.default.createElement(_reactRouter.Route, { path: '/customerProfile/:loginId', component: _CustomerProfile2.default }),
 			_react2.default.createElement(_reactRouter.Route, { path: '/transaction', component: _Transaction2.default }),
-			_react2.default.createElement(_reactRouter.Route, { path: '/businessProfile', component: _BusinessProfile2.default })
+			_react2.default.createElement(_reactRouter.Route, { path: '/businessProfile/:loginId', component: _BusinessProfile2.default })
 		)
 	), document.getElementById('react'));
 
@@ -49778,7 +49778,7 @@
 				event.preventDefault();
 				alert("Login Id is " + this.state.loginId + " type " + this.state.userType);
 	
-				if (this.state.userType == "customer") _reactRouter.hashHistory.push("/customerProfile");else _reactRouter.hashHistory.push("/businessProfile");
+				if (this.state.userType == "customer") _reactRouter.hashHistory.push("/customerProfile/" + this.state.loginId);else _reactRouter.hashHistory.push("/businessProfile/" + this.state.loginId);
 			}
 		}, {
 			key: 'render',
@@ -49866,7 +49866,7 @@
 								React.createElement(
 									_reactBootstrap.Button,
 									{ type: 'submit' },
-									'Customer Sign-in'
+									'Sign-in'
 								)
 							)
 						),
@@ -49907,6 +49907,10 @@
 	
 	var _reactBootstrap = __webpack_require__(248);
 	
+	var _reactRouter = __webpack_require__(184);
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -49922,10 +49926,36 @@
 		function CreateAccount(props) {
 			_classCallCheck(this, CreateAccount);
 	
-			return _possibleConstructorReturn(this, (CreateAccount.__proto__ || Object.getPrototypeOf(CreateAccount)).call(this, props));
+			var _this = _possibleConstructorReturn(this, (CreateAccount.__proto__ || Object.getPrototypeOf(CreateAccount)).call(this, props));
+	
+			_this.state = {
+				loginId: "",
+				password: "",
+				userType: ""
+			};
+	
+			_this.handleChange = _this.handleChange.bind(_this);
+			return _this;
 		}
 	
 		_createClass(CreateAccount, [{
+			key: 'handleChange',
+			value: function handleChange(event) {
+				var target = event.target;
+				var value = target.value;
+				var name = target.name;
+	
+				this.setState(_defineProperty({}, name, value));
+			}
+		}, {
+			key: 'handleSubmit',
+			value: function handleSubmit(event) {
+				event.preventDefault();
+				alert("Login Id is " + this.state.loginId + " type " + this.state.userType);
+	
+				if (this.state.userType == "customer") _reactRouter.hashHistory.push("/customerProfile/" + this.state.loginId);else _reactRouter.hashHistory.push("/businessProfile/" + this.state.loginId);
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 				return React.createElement(
@@ -49938,7 +49968,7 @@
 					),
 					React.createElement(
 						_reactBootstrap.Form,
-						{ horizontal: true },
+						{ horizontal: true, onSubmit: this.handleSubmit.bind(this) },
 						React.createElement(
 							_reactBootstrap.FormGroup,
 							{ controlId: 'formHorizontalEmail' },
@@ -49950,7 +49980,7 @@
 							React.createElement(
 								_reactBootstrap.Col,
 								{ sm: 10 },
-								React.createElement(_reactBootstrap.FormControl, { type: 'text', placeholder: 'Id' })
+								React.createElement(_reactBootstrap.FormControl, { type: 'text', name: 'loginId', placeholder: 'Login Id' })
 							)
 						),
 						React.createElement(
@@ -49964,7 +49994,35 @@
 							React.createElement(
 								_reactBootstrap.Col,
 								{ sm: 10 },
-								React.createElement(_reactBootstrap.FormControl, { type: 'password', placeholder: 'Password' })
+								React.createElement(_reactBootstrap.FormControl, { type: 'password', name: 'password', placeholder: 'Password' })
+							)
+						),
+						React.createElement(
+							_reactBootstrap.FormGroup,
+							null,
+							React.createElement(
+								_reactBootstrap.Col,
+								{ smOffset: 2, sm: 1 },
+								React.createElement(_reactBootstrap.FormControl, { type: 'radio', name: 'userType', value: 'customer', onChange: this.handleChange })
+							),
+							React.createElement(
+								_reactBootstrap.Col,
+								{ componentClass: _reactBootstrap.ControlLabel, sm: 1 },
+								'Customer'
+							)
+						),
+						React.createElement(
+							_reactBootstrap.FormGroup,
+							null,
+							React.createElement(
+								_reactBootstrap.Col,
+								{ smOffset: 2, sm: 1 },
+								React.createElement(_reactBootstrap.FormControl, { type: 'radio', name: 'userType', value: 'business', onChange: this.handleChange })
+							),
+							React.createElement(
+								_reactBootstrap.Col,
+								{ componentClass: _reactBootstrap.ControlLabel, sm: 1 },
+								'Business'
 							)
 						),
 						React.createElement(
@@ -50004,6 +50062,12 @@
 	
 	var _reactBootstrap = __webpack_require__(248);
 	
+	var _Transaction = __webpack_require__(536);
+	
+	var _Transaction2 = _interopRequireDefault(_Transaction);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -50013,13 +50077,29 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(37);
 	
+	var sampleUser = {
+		firstName: "James",
+		middleName: "",
+		lastName: "Brolin",
+		age: 35,
+		income: 100000,
+		rewardPoints: 123
+	};
+	
+	var trans = [{ id: 1, item: "egg", cost: 2 }, { id: 2, item: "turkey", cost: 5 }, { id: 3, item: "ham", cost: 20 }, { id: 4, item: "cranberries", cost: 3 }, { id: 5, item: "potatoes", cost: 2.39 }, { id: 6, item: "sodas", cost: 3.99 }];
+	
 	var CustomerProfile = function (_React$Component) {
 		_inherits(CustomerProfile, _React$Component);
 	
 		function CustomerProfile(props) {
 			_classCallCheck(this, CustomerProfile);
 	
-			return _possibleConstructorReturn(this, (CustomerProfile.__proto__ || Object.getPrototypeOf(CustomerProfile)).call(this, props));
+			var _this = _possibleConstructorReturn(this, (CustomerProfile.__proto__ || Object.getPrototypeOf(CustomerProfile)).call(this, props));
+	
+			_this.state = {
+				user: sampleUser
+			};
+			return _this;
 		}
 	
 		_createClass(CustomerProfile, [{
@@ -50028,7 +50108,51 @@
 				return React.createElement(
 					'div',
 					null,
-					'CustomerProfile'
+					React.createElement(
+						'h2',
+						null,
+						'CustomerProfile'
+					),
+					React.createElement(
+						'h3',
+						null,
+						'Hello ',
+						this.props.params.loginId
+					),
+					React.createElement(
+						'h2',
+						null,
+						'Personal Info'
+					),
+					React.createElement(
+						'div',
+						null,
+						React.createElement(
+							'ul',
+							null,
+							React.createElement(
+								'li',
+								null,
+								'Name: ',
+								this.state.user.firstName,
+								' \xA0 ',
+								this.state.user.lastName
+							),
+							React.createElement(
+								'li',
+								null,
+								'Reward Earned: ',
+								this.state.user.rewardPoints,
+								' points'
+							)
+						)
+					),
+					React.createElement(
+						'p',
+						null,
+						'Your transaction will go here'
+					),
+					React.createElement(_Transaction2.default, { transaction: trans })
 				);
 			}
 		}]);
@@ -50076,7 +50200,16 @@
 				return React.createElement(
 					'div',
 					null,
-					'Transaction'
+					this.props.transaction.map(function (trans) {
+						return React.createElement(
+							'li',
+							{ key: trans.id },
+							trans.item,
+							' : $',
+							trans.cost
+						);
+					}),
+					';'
 				);
 			}
 		}]);
@@ -50100,6 +50233,12 @@
 	
 	var _reactBootstrap = __webpack_require__(248);
 	
+	var _BusinessTransaction = __webpack_require__(538);
+	
+	var _BusinessTransaction2 = _interopRequireDefault(_BusinessTransaction);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -50109,13 +50248,26 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(37);
 	
+	var monTomon = [{ id: 1, month: "Jan", amount: 500000 }, { id: 2, month: "Feb", amount: 50000 }, { id: 3, month: "Mar", amount: 700000 }, { id: 4, month: "Apr", amount: 200000 }, { id: 5, month: "May", amount: 40000 }, { id: 6, month: "June", amount: 340000 }, { id: 7, month: "July", amount: 640000 }, { id: 8, month: "Aug", amount: 55000 }, { id: 9, month: "Sep", amount: 530000 }, { id: 10, month: "Oct", amount: 2400000 }, { id: 11, month: "Nov", amount: 40000 }];
+	
+	var sampleBusiness = {
+		name: "Walmart",
+		storeCity: "San Jose",
+		expiration: "12/2020"
+	};
+	
 	var BusinessProfile = function (_React$Component) {
 		_inherits(BusinessProfile, _React$Component);
 	
 		function BusinessProfile(props) {
 			_classCallCheck(this, BusinessProfile);
 	
-			return _possibleConstructorReturn(this, (BusinessProfile.__proto__ || Object.getPrototypeOf(BusinessProfile)).call(this, props));
+			var _this = _possibleConstructorReturn(this, (BusinessProfile.__proto__ || Object.getPrototypeOf(BusinessProfile)).call(this, props));
+	
+			_this.state = {
+				store: sampleBusiness
+			};
+			return _this;
 		}
 	
 		_createClass(BusinessProfile, [{
@@ -50124,7 +50276,46 @@
 				return React.createElement(
 					'div',
 					null,
-					'Business Profile'
+					React.createElement(
+						'h2',
+						null,
+						'Business Profile'
+					),
+					React.createElement(
+						'h3',
+						null,
+						'Hello ',
+						this.props.params.loginId
+					),
+					React.createElement(
+						'h2',
+						null,
+						'Your Store Info'
+					),
+					React.createElement(
+						'p',
+						null,
+						'Name: ',
+						this.state.store.name
+					),
+					React.createElement(
+						'p',
+						null,
+						'Location: ',
+						this.state.store.city
+					),
+					React.createElement(
+						'p',
+						null,
+						'Partnership Expiration: ',
+						this.state.store.expiration
+					),
+					React.createElement(
+						'h3',
+						null,
+						'Your month-to-month transaction will go here'
+					),
+					React.createElement(_BusinessTransaction2.default, { transaction: monTomon })
 				);
 			}
 		}]);
@@ -50133,6 +50324,63 @@
 	}(React.Component);
 	
 	exports.default = BusinessProfile;
+
+/***/ }),
+/* 538 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _reactBootstrap = __webpack_require__(248);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(37);
+	
+	var BusinessTransaction = function (_React$Component) {
+		_inherits(BusinessTransaction, _React$Component);
+	
+		function BusinessTransaction(props) {
+			_classCallCheck(this, BusinessTransaction);
+	
+			return _possibleConstructorReturn(this, (BusinessTransaction.__proto__ || Object.getPrototypeOf(BusinessTransaction)).call(this, props));
+		}
+	
+		_createClass(BusinessTransaction, [{
+			key: 'render',
+			value: function render() {
+				return React.createElement(
+					'div',
+					null,
+					this.props.transaction.map(function (trans) {
+						return React.createElement(
+							'li',
+							{ key: trans.id },
+							trans.month,
+							' : $',
+							trans.amount
+						);
+					}),
+					';'
+				);
+			}
+		}]);
+	
+		return BusinessTransaction;
+	}(React.Component);
+	
+	exports.default = BusinessTransaction;
 
 /***/ })
 /******/ ]);
