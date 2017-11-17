@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
-import java.sql.Date;
 import java.util.Set;
 
 @Entity
@@ -19,9 +18,11 @@ public class CustomerAccount extends Account {
     private String lastName;
     private Ethnicity ethnicity;
     private Gender gender;
-    private Date birthday;
     private long rewardPoints;
     private long income;
+    private int birthYear;
+    private int birthMonth;
+    private int birthDay;
 
     @OneToMany(targetEntity=Card.class)
     private Set<Card> customerCards;
@@ -36,7 +37,9 @@ public class CustomerAccount extends Account {
                            String lastName,
                            Ethnicity ethnicity,
                            Gender gender,
-                           Date birthday,
+                           int birthYear,
+                           int birthMonth,
+                           int birthDay,
                            long income) {
         super(loginId, password, phoneNo, email);
         this.firstName = firstName;
@@ -44,7 +47,13 @@ public class CustomerAccount extends Account {
         this.lastName = lastName;
         this.ethnicity = ethnicity;
         this.gender = gender;
-        this.birthday = birthday;
+
+        /* java.util.Date only starts at year 1900, use them only
+         * as timestamps for transactions
+         */
+        this.birthYear = birthYear;
+        this.birthMonth = birthMonth;
+        this.birthDay = birthDay;
         this.income = income;
         this.rewardPoints = 0;
     }
@@ -64,8 +73,15 @@ public class CustomerAccount extends Account {
     public Gender getGender() { return this.gender; };
     public void setGender(Gender gender) { this.gender = gender; };
 
-    public Date getBirthday() { return this.birthday; };
-    public void setBirthday(Date birthday) { this.birthday = birthday; };
+    public int getBirthDay() { return this.birthDay; };
+    public int getBirthMonth() { return this.birthMonth; };
+    public int getBirthYear() { return this.birthYear; };
+
+    public void setBirthDate(int year, int month, int day) {
+        this.birthYear = year;
+        this.birthMonth = month;
+        this.birthDay = day;
+    }
 
     public long getIncome() { return this.income; };
     public void setIncome(long income) { this.income = income; };
@@ -73,7 +89,9 @@ public class CustomerAccount extends Account {
     public long getRewardPoints() { return this.rewardPoints; };
     public void setRewardPoints(long points) { this.rewardPoints = points; };
 
-    //@OneToMany(mappedBy="card")
-    //public Set<Card> getCards() { return this.customerCards; };
+    public Set<Card> getCards() { return this.customerCards; };
+    public void addCard(Card card) { this.customerCards.add(card); };
+    public void setCards(Set<Card> cards) { this.customerCards = cards; };
+
 }
 
