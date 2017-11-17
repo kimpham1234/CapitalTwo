@@ -12,7 +12,7 @@ var sampleUser = {
 	rewardPoints: 123
 }
 
-var trans = [
+var sampleTrans = [
 	{id: 1 ,item: "egg", cost: 2},
 	{id: 2 ,item: "turkey", cost: 5},
 	{id: 3 ,item: "ham", cost: 20},
@@ -26,8 +26,16 @@ class CustomerProfile extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			user: sampleUser
+			user: sampleUser,
+			trans: sampleTrans
 		}
+		this.addTransaction = this.addTransaction.bind(this);
+	}
+
+	addTransaction(){
+		var trans = this.state.trans.slice();
+		trans.push({id:7, item:"something", cost: 2.99});
+		this.setState({trans: trans});
 	}
 
 
@@ -44,8 +52,11 @@ class CustomerProfile extends React.Component {
 	      			<li>Reward Earned: {this.state.user.rewardPoints} points</li>
 	      		</ul>
 	      	</div>
+
 	      	<p>Your transaction will go here</p>
-	      	<Transaction transaction={trans}/>
+	      	<Button class="primary" onClick={this.addTransaction}>Add transaction</Button>
+
+	      	<Transaction transaction={this.state.trans}/>
 	      </div>
 	    );
 	 }

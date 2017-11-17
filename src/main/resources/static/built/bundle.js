@@ -50086,7 +50086,7 @@
 		rewardPoints: 123
 	};
 	
-	var trans = [{ id: 1, item: "egg", cost: 2 }, { id: 2, item: "turkey", cost: 5 }, { id: 3, item: "ham", cost: 20 }, { id: 4, item: "cranberries", cost: 3 }, { id: 5, item: "potatoes", cost: 2.39 }, { id: 6, item: "sodas", cost: 3.99 }];
+	var sampleTrans = [{ id: 1, item: "egg", cost: 2 }, { id: 2, item: "turkey", cost: 5 }, { id: 3, item: "ham", cost: 20 }, { id: 4, item: "cranberries", cost: 3 }, { id: 5, item: "potatoes", cost: 2.39 }, { id: 6, item: "sodas", cost: 3.99 }];
 	
 	var CustomerProfile = function (_React$Component) {
 		_inherits(CustomerProfile, _React$Component);
@@ -50097,12 +50097,21 @@
 			var _this = _possibleConstructorReturn(this, (CustomerProfile.__proto__ || Object.getPrototypeOf(CustomerProfile)).call(this, props));
 	
 			_this.state = {
-				user: sampleUser
+				user: sampleUser,
+				trans: sampleTrans
 			};
+			_this.addTransaction = _this.addTransaction.bind(_this);
 			return _this;
 		}
 	
 		_createClass(CustomerProfile, [{
+			key: 'addTransaction',
+			value: function addTransaction() {
+				var trans = this.state.trans.slice();
+				trans.push({ id: 7, item: "something", cost: 2.99 });
+				this.setState({ trans: trans });
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 				return React.createElement(
@@ -50152,7 +50161,12 @@
 						null,
 						'Your transaction will go here'
 					),
-					React.createElement(_Transaction2.default, { transaction: trans })
+					React.createElement(
+						_reactBootstrap.Button,
+						{ 'class': 'primary', onClick: this.addTransaction },
+						'Add transaction'
+					),
+					React.createElement(_Transaction2.default, { transaction: this.state.trans })
 				);
 			}
 		}]);
