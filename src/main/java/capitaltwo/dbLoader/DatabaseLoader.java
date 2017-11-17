@@ -26,8 +26,13 @@ public class DatabaseLoader implements CommandLineRunner {
     private final ItemRepository itemRepo;
     private final TransactionRepository transactionRepo;
     private final TransactionItemRepository transactionItemRepo;
+    private final BusinessRepository businessRepo;
+    private final BusinessAccountRepository businessAccountRepo;
+    private final CategoryRepository categoryRepo;
 
     private ArrayList<Item> items;
+    private ArrayList<Business> businesses;
+    private ArrayList<Category> categories;
 
     /* low to high inclusive */
     private static int randomInt(int low, int high) {
@@ -41,7 +46,10 @@ public class DatabaseLoader implements CommandLineRunner {
                           CustomerAccountRepository customerRepo,
                           ItemRepository itemRepo,
                           TransactionRepository transactionRepo,
-                          TransactionItemRepository transactionItemRepo) {
+                          TransactionItemRepository transactionItemRepo,
+                          BusinessRepository businessRepo,
+                          BusinessAccountRepository businessAccountRepo,
+                          CategoryRepository categoryRepo) {
         this.userRepo = userRepo;
         this.creditCardRepo = creditRepo;
         this.debitCardRepo = debitRepo;
@@ -49,21 +57,57 @@ public class DatabaseLoader implements CommandLineRunner {
         this.itemRepo = itemRepo;
         this.transactionRepo = transactionRepo;
         this.transactionItemRepo = transactionItemRepo;
+        this.businessRepo = businessRepo;
+        this.businessAccountRepo = businessAccountRepo;
+        this.categoryRepo = categoryRepo;
 
         this.items = new ArrayList<Item>();
+        this.businesses = new ArrayList<Business>();
+        this.categories = new ArrayList<Category>();
     }
 
+    public static String[] CATEGORY = {
+        "Food",
+        "Electronics",
+        "Clothing",
+        "Utility",
+        "Service"
+    };
+    public static String[] CATEGORY_DESCRIPTIONS = {
+        "edible items",
+        "techy thingies",
+        "soft things",
+        "useful things",
+        "not goods"
+    };
+
+    public void generateCategories() {
+        for (int i = 0; i < this.CATEGORY.length; ++i) {
+            this.categories.add(
+                new Category(CATEGORY[i], CATEGORY_DESCRIPTIONS[i])
+            );
+            this.categoryRepo.save(categories.get(i));
+        }
+    }
+
+    public static String[] ITEMS = {
+        "sock",
+        "shoe",
+        "clothing",
+        "fruit",
+        "veggies",
+        "tv",
+        "computer",
+        "pencils"
+    };
+
     public void generateItems() {
-        this.items.add(new Item("sock", "put on ur feet"));
-        this.items.add(new Item("shoe", "description here"));
-        this.items.add(new Item("clothing", "description here"));
-        this.items.add(new Item("fruit", "description here"));
-        this.items.add(new Item("veggies", "description here"));
-        this.items.add(new Item("tv", "description here"));
-        this.items.add(new Item("computer", "description here"));
-        this.items.add(new Item("pencils", "description here"));
-        for (Item i : items) {
-            itemRepo.save(i);
+        for (String i : ITEMS) {
+            Item it = new Item(i, "description here",
+                this.categories.get(randomInt(0, this.categories.size()-1))
+            );
+            this.items.add(it);
+            itemRepo.save(it);
         }
     }
 
@@ -91,6 +135,7 @@ public class DatabaseLoader implements CommandLineRunner {
             generateState(),
             generateCity(),
             card,
+            this.businesses.get(randomInt(0, businesses.size()-1)),
             null
         );
         this.transactionRepo.save(transaction);
@@ -113,6 +158,23 @@ public class DatabaseLoader implements CommandLineRunner {
         }
         transaction.setTransactionItems(ti);
         this.transactionRepo.save(transaction);
+    }
+
+    public static String[] BUSINESS_NAME = {
+        "google",
+        "facebook",
+        "microsoft",
+        "amazon",
+        "apple",
+        "grocery outlet bargain market"
+    };
+    public void generateBusinesses() {
+        for (int i = 0; i < BUSINESS_NAME.length; ++i) {
+            this.businesses.add(new Business(
+                this.BUSINESS_NAME[i], (double)randomInt(1, 5)
+            ));
+            this.businessRepo.save(businesses.get(i));
+        }
     }
 
     public void generateAccounts() {
@@ -190,8 +252,10 @@ public class DatabaseLoader implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
         
+        generateCategories();
         generateAccounts();
         generateItems();
+        generateBusinesses();
 
         CustomerAccount acc = this.customerRepo.findAll().get(0);
 
