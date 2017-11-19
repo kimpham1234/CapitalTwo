@@ -1,5 +1,7 @@
 import {Button, FormGroup, FormControl, Col, Form, ControlLabel} from 'react-bootstrap'
 import {hashHistory} from 'react-router'
+import * as firebase from 'firebase'
+
 const React = require('react');
 const ReactDOM = require('react-dom');
 
@@ -29,12 +31,25 @@ class CreateAccount extends React.Component {
 
 	handleSubmit(event){
 		event.preventDefault();
-		alert("Login Id is "+this.state.loginId + " type "+this.state.userType);
+		//alert("Login Id is "+this.state.loginId + " type "+this.state.userType);
+		var loginId = this.state.loginId;
+		var password = this.state.password;
+		var userType = this.state.userType;
 
-		if(this.state.userType == "customer")
-			hashHistory.push("/customerProfile/"+ this.state.loginId);
-		else
-			hashHistory.push("/businessProfile/"+ this.state.loginId);
+		firebase.auth().createUserWithEmailAndPassword(loginId, password)
+		.then(function(){
+			console.log("Account created");
+			if(userType == "customer")
+				hashHistory.push("/customerProfile/"+loginId);
+			else
+				hashHistory.push("/businessProfile/"+loginId);
+		})
+		.catch(function(error) {
+		  // Handle Errors here.
+		  var errorCode = error.code;
+		  var errorMessage = error.message;
+		  console.log(errorMessage);
+		});
 	}
 
 	render() {

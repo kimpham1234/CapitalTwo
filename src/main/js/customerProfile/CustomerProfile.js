@@ -1,7 +1,10 @@
 import {Button} from 'react-bootstrap'
 import Transaction from './Transaction.js'
+import * as firebase from 'firebase'
+
 const React = require('react');
 const ReactDOM = require('react-dom');
+const axios = require('axios');
 
 var sampleUser = {
 	firstName: "James",
@@ -26,16 +29,19 @@ class CustomerProfile extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			user: sampleUser,
+			user: this.props.params.loginId,
 			trans: sampleTrans
 		}
 		this.addTransaction = this.addTransaction.bind(this);
 	}
 
-	addTransaction(){
-		var trans = this.state.trans.slice();
-		trans.push({id:7, item:"something", cost: 2.99});
-		this.setState({trans: trans});
+	componentDidMount(){
+		axios.get('http://localhost:8080/api/transactions')
+	      .then(res => {
+	        const transactions = res.data._embedded.transactions;//.map(obj => obj.data);
+	        this.setState({trans: transactions });
+	        console.log("axios "+ JSON.stringify(res.data._embedded.transactions));
+	      }); 
 	}
 
 
@@ -52,10 +58,9 @@ class CustomerProfile extends React.Component {
 	      			<li>Reward Earned: {this.state.user.rewardPoints} points</li>
 	      		</ul>
 	      	</div>
-
+	      	
 	      	<p>Your transaction will go here</p>
-	      	<Button class="primary" onClick={this.addTransaction}>Add transaction</Button>
-
+	   
 	      	<Transaction transaction={this.state.trans}/>
 	      </div>
 	    );

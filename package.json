@@ -27,7 +27,8 @@
     "axios": "^0.17.0",
     "react-router": "^2.0.0",
     "react-bootstrap": "^0.31.5",
-    "history": "^4.7.2"
+    "history": "^4.7.2",
+    "firebase": "^4.6.2"
   },
   "scripts": {
     "watch": "webpack --watch -d",

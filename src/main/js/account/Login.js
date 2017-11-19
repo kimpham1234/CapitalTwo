@@ -1,7 +1,12 @@
 import {Button, FormGroup, FormControl, Col, Form, ControlLabel} from 'react-bootstrap'
 import {hashHistory, Link} from 'react-router'
+import * as firebase from 'firebase'
+
+
+
 const React = require('react');
 const ReactDOM = require('react-dom');
+const axios = require('axios');
 
 
 
@@ -22,7 +27,6 @@ class Login extends React.Component {
 		const target = event.target;
 		const value = target.value;
 		const name = target.name;
-
 		this.setState({
 			[name]: value
 		});
@@ -30,12 +34,25 @@ class Login extends React.Component {
 
 	handleSignIn(event){
 		event.preventDefault();
-		alert("Login Id is "+this.state.loginId + " type "+this.state.userType);
+		//alert("Login Id is "+this.state.loginId + " type "+this.state.userType);
+		var loginId = this.state.loginId;
+		var password = this.state.password;
+		var userType = this.state.userType;
 
-		if(this.state.userType == "customer")
-			hashHistory.push("/customerProfile/"+this.state.loginId);
-		else
-			hashHistory.push("/businessProfile/"+this.state.loginId);
+		firebase.auth().signInWithEmailAndPassword(loginId, password)
+		.then(function(){
+			console.log("sign in success");
+			if(userType == "customer")
+				hashHistory.push("/customerProfile/"+loginId);
+			else
+				hashHistory.push("/businessProfile/"+loginId);
+		})
+		.catch(function(error) {
+		  // Handle Errors here.
+		  var errorCode = error.code;
+		  var errorMessage = error.message;
+		  
+		});
 	}
 
 	render() {

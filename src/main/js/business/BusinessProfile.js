@@ -45,6 +45,11 @@ class BusinessProfile extends React.Component {
 	      	<p>Location: {this.state.store.city}</p>
 	      	<p>Partnership Expiration: {this.state.store.expiration}</p>
 
+
+
+
+
+
 	      	<h3>Your month-to-month transaction will go here</h3>
 	      	<BusinessTransaction transaction={monTomon}/>
 	      </div>

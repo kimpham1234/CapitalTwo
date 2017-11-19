@@ -16,7 +16,7 @@ class Transaction extends React.Component {
 	      <div>
 	      	{this.props.transaction.map((trans)=>
 	      		<li key={trans.id}> 
-	      			{trans.item} : ${trans.cost}
+	      			{trans.id} : ${trans.date} - {trans.cost} - {trans.city} - {trans.state}
 	      		</li>
 	      	)};
 	      </div>

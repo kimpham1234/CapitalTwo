@@ -1,5 +1,7 @@
 import {Button, Nav, NavItem, Navbar, NavDropdown, MenuItem} from 'react-bootstrap'
-import {Link} from 'react-router'
+import {hashHistory, Link} from 'react-router'
+import * as firebase from 'firebase'
+
 
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -9,11 +11,25 @@ class AppNavigationBar extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {employees: []};
+		this.logOut = this.logOut.bind(this);
 	}
 
 	componentDidMount() {
 		console.log("component did mount");
 	}
+
+
+	logOut(event){
+		event.preventDefault();
+		firebase.auth().signOut()
+		.then(function(){
+			hashHistory.push("/");
+		})
+		.catch(function(error){
+			var errorMessage = error.message;
+		});
+	}
+
 
 	render() {
 		return (
@@ -35,7 +51,7 @@ class AppNavigationBar extends React.Component {
 			        </NavDropdown>
 			      </Nav>
 			      <Nav pullRight>
-			        <NavItem eventKey={1} href="#">Link Right</NavItem>
+			        <NavItem><Button class="primary" onClick={this.logOut}>Log Out</Button></NavItem>
 			        <NavItem eventKey={2} href="#">Link Right</NavItem>
 			      </Nav>
 			    </Navbar.Collapse>
