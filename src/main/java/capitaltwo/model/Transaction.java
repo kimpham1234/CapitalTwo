@@ -22,7 +22,8 @@ public class Transaction {
 
     @ManyToOne(targetEntity=Card.class)
     private Card card;
-    //private Business business;
+    @ManyToOne(targetEntity=Business.class)
+    private Business business;
     @OneToMany(mappedBy="transaction")
     private Set<TransactionItem> transactionItems;
 
@@ -34,7 +35,7 @@ public class Transaction {
                        String state,
                        String city,
                        Card card,
-                       //Business business,
+                       Business business,
                        Set<TransactionItem> items
     ) {
         System.out.println("creating transaction via not null");
@@ -42,7 +43,7 @@ public class Transaction {
         this.state = state;
         this.city = city;
         this.card = card;
-        //this.business = business;
+        this.business = business;
         this.transactionItems = items;
         this.cost = computeCost();
     }
