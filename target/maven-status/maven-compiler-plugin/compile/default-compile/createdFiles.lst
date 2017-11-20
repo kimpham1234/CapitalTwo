@@ -5,11 +5,14 @@ capitaltwo/DebitCardRepository.class
 capitaltwo/DebitCard.class
 capitaltwo/DatabaseLoader.class
 capitaltwo/Gender.class
+capitaltwo/BusinessRepository.class
 capitaltwo/Card.class
 capitaltwo/Account.class
 capitaltwo/HomeController.class
 capitaltwo/CustomerAccount.class
 capitaltwo/Ethnicity.class
+capitaltwo/Business.class
+capitaltwo/CategoryRepository.class
 capitaltwo/CreditCard.class
 capitaltwo/User.class
 capitaltwo/BusinessAccountRepository.class
@@ -18,3 +21,4 @@ capitaltwo/Application.class
 capitaltwo/UserRepository.class
 capitaltwo/BusinessAccount.class
 capitaltwo/MainController.class
+capitaltwo/Category.class

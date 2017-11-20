@@ -62,7 +62,7 @@ class CreateAccount extends React.Component {
 			        Login id
 			      </Col>
 			      <Col sm={10}>
-			        <FormControl type="text" name="loginId" placeholder="Login Id" />
+			        <FormControl type="email" name="loginId" placeholder="Login Id" onChange={this.handleChange} />
 			      </Col>
 			    </FormGroup>
 
@@ -71,7 +71,7 @@ class CreateAccount extends React.Component {
 			        Password
 			      </Col>
 			      <Col sm={10}>
-			        <FormControl type="password" name="password" placeholder="Password" />
+			        <FormControl type="password" name="password" placeholder="Password" onChange={this.handleChange}/>
 			      </Col>
 			    </FormGroup>
 

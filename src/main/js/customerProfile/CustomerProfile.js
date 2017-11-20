@@ -32,18 +32,8 @@ class CustomerProfile extends React.Component {
 			user: this.props.params.loginId,
 			trans: sampleTrans
 		}
-		this.addTransaction = this.addTransaction.bind(this);
+		console.log("Profile constructor");
 	}
-
-	componentDidMount(){
-		axios.get('http://localhost:8080/api/transactions')
-	      .then(res => {
-	        const transactions = res.data._embedded.transactions;//.map(obj => obj.data);
-	        this.setState({trans: transactions });
-	        console.log("axios "+ JSON.stringify(res.data._embedded.transactions));
-	      }); 
-	}
-
 
 	render() {
 		return (

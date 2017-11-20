@@ -51,7 +51,7 @@ class AppNavigationBar extends React.Component {
 			        </NavDropdown>
 			      </Nav>
 			      <Nav pullRight>
-			        <NavItem><Button class="primary" onClick={this.logOut}>Log Out</Button></NavItem>
+			        <NavItem><Button className="primary" onClick={this.logOut}>Log Out</Button></NavItem>
 			        <NavItem eventKey={2} href="#">Link Right</NavItem>
 			      </Nav>
 			    </Navbar.Collapse>

@@ -38,12 +38,15 @@ class Login extends React.Component {
 		var loginId = this.state.loginId;
 		var password = this.state.password;
 		var userType = this.state.userType;
-
+		//hashHistory.push("/customerProfile/kim");
+		
 		firebase.auth().signInWithEmailAndPassword(loginId, password)
 		.then(function(){
 			console.log("sign in success");
-			if(userType == "customer")
-				hashHistory.push("/customerProfile/"+loginId);
+			if(userType == "customer"){
+				var path = "/customerProfile/"+loginId;
+				hashHistory.push(path);
+			}
 			else
 				hashHistory.push("/businessProfile/"+loginId);
 		})
@@ -51,7 +54,7 @@ class Login extends React.Component {
 		  // Handle Errors here.
 		  var errorCode = error.code;
 		  var errorMessage = error.message;
-		  
+		  console.log(errorMessage);
 		});
 	}
 

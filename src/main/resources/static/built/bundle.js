@@ -75557,14 +75557,19 @@
 				var loginId = this.state.loginId;
 				var password = this.state.password;
 				var userType = this.state.userType;
+				//hashHistory.push("/customerProfile/kim");
 	
 				firebase.auth().signInWithEmailAndPassword(loginId, password).then(function () {
 					console.log("sign in success");
-					if (userType == "customer") _reactRouter.hashHistory.push("/customerProfile/" + loginId);else _reactRouter.hashHistory.push("/businessProfile/" + loginId);
+					if (userType == "customer") {
+						var path = "/customerProfile/" + loginId;
+						_reactRouter.hashHistory.push(path);
+					} else _reactRouter.hashHistory.push("/businessProfile/" + loginId);
 				}).catch(function (error) {
 					// Handle Errors here.
 					var errorCode = error.code;
 					var errorMessage = error.message;
+					console.log(errorMessage);
 				});
 			}
 		}, {
@@ -75784,7 +75789,7 @@
 							React.createElement(
 								_reactBootstrap.Col,
 								{ sm: 10 },
-								React.createElement(_reactBootstrap.FormControl, { type: 'text', name: 'loginId', placeholder: 'Login Id' })
+								React.createElement(_reactBootstrap.FormControl, { type: 'email', name: 'loginId', placeholder: 'Login Id', onChange: this.handleChange })
 							)
 						),
 						React.createElement(
@@ -75798,7 +75803,7 @@
 							React.createElement(
 								_reactBootstrap.Col,
 								{ sm: 10 },
-								React.createElement(_reactBootstrap.FormControl, { type: 'password', name: 'password', placeholder: 'Password' })
+								React.createElement(_reactBootstrap.FormControl, { type: 'password', name: 'password', placeholder: 'Password', onChange: this.handleChange })
 							)
 						),
 						React.createElement(
@@ -75911,22 +75916,11 @@
 				user: _this.props.params.loginId,
 				trans: sampleTrans
 			};
-			_this.addTransaction = _this.addTransaction.bind(_this);
+			console.log("Profile constructor");
 			return _this;
 		}
 	
 		_createClass(CustomerProfile, [{
-			key: 'componentDidMount',
-			value: function componentDidMount() {
-				var _this2 = this;
-	
-				axios.get('http://localhost:8080/api/transactions').then(function (res) {
-					var transactions = res.data._embedded.transactions; //.map(obj => obj.data);
-					_this2.setState({ trans: transactions });
-					console.log("axios " + JSON.stringify(res.data._embedded.transactions));
-				});
-			}
-		}, {
 			key: 'render',
 			value: function render() {
 				return React.createElement(
