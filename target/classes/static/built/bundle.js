@@ -78,7 +78,7 @@
 	
 	var _Transaction2 = _interopRequireDefault(_Transaction);
 	
-	var _BusinessProfile = __webpack_require__(696);
+	var _BusinessProfile = __webpack_require__(697);
 	
 	var _BusinessProfile2 = _interopRequireDefault(_BusinessProfile);
 	
@@ -49733,7 +49733,7 @@
 									null,
 									React.createElement(
 										_reactBootstrap.Button,
-										{ 'class': 'primary', onClick: this.logOut },
+										{ className: 'primary', onClick: this.logOut },
 										'Log Out'
 									)
 								),
@@ -75875,6 +75875,10 @@
 	
 	var _Transaction2 = _interopRequireDefault(_Transaction);
 	
+	var _CustomerInfo = __webpack_require__(696);
+	
+	var _CustomerInfo2 = _interopRequireDefault(_CustomerInfo);
+	
 	var _firebase = __webpack_require__(533);
 	
 	var firebase = _interopRequireWildcard(_firebase);
@@ -75913,7 +75917,7 @@
 			var _this = _possibleConstructorReturn(this, (CustomerProfile.__proto__ || Object.getPrototypeOf(CustomerProfile)).call(this, props));
 	
 			_this.state = {
-				user: _this.props.params.loginId,
+				user: [],
 				trans: sampleTrans
 			};
 			console.log("Profile constructor");
@@ -75921,8 +75925,22 @@
 		}
 	
 		_createClass(CustomerProfile, [{
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				var _this2 = this;
+	
+				axios.get('http://localhost:8080/api/customerAccounts/search/findByEmail?email=' + this.props.params.loginId).then(function (res) {
+					console.log("axios " + JSON.stringify(res));
+					var resUser = res.data;
+					_this2.setState({ user: resUser });
+				});
+			}
+		}, {
 			key: 'render',
 			value: function render() {
+				{
+					console.log("user " + this.state.user);
+				}
 				return React.createElement(
 					'div',
 					null,
@@ -75931,40 +75949,7 @@
 						null,
 						'CustomerProfile'
 					),
-					React.createElement(
-						'h3',
-						null,
-						'Hello ',
-						this.props.params.loginId
-					),
-					React.createElement(
-						'h2',
-						null,
-						'Personal Info'
-					),
-					React.createElement(
-						'div',
-						null,
-						React.createElement(
-							'ul',
-							null,
-							React.createElement(
-								'li',
-								null,
-								'Name: ',
-								this.state.user.firstName,
-								' \xA0 ',
-								this.state.user.lastName
-							),
-							React.createElement(
-								'li',
-								null,
-								'Reward Earned: ',
-								this.state.user.rewardPoints,
-								' points'
-							)
-						)
-					),
+					React.createElement(_CustomerInfo2.default, { customer: this.state.user }),
 					React.createElement(
 						'p',
 						null,
@@ -76057,7 +76042,90 @@
 	
 	var _reactBootstrap = __webpack_require__(248);
 	
-	var _BusinessTransaction = __webpack_require__(697);
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(37);
+	
+	var CustomerInfo = function (_React$Component) {
+		_inherits(CustomerInfo, _React$Component);
+	
+		function CustomerInfo(props) {
+			_classCallCheck(this, CustomerInfo);
+	
+			return _possibleConstructorReturn(this, (CustomerInfo.__proto__ || Object.getPrototypeOf(CustomerInfo)).call(this, props));
+		}
+	
+		_createClass(CustomerInfo, [{
+			key: 'render',
+			value: function render() {
+				return React.createElement(
+					'div',
+					null,
+					React.createElement(
+						'h3',
+						null,
+						'Customer Info'
+					),
+					'First Name: ',
+					this.props.customer.firstName,
+					'Last Name: ',
+					this.props.customer.lastName,
+					'Phone: ',
+					this.props.customer.phoneNo,
+					'Ethnicity: ',
+					this.props.customer.ethnicity,
+					'Gender: ',
+					this.props.customer.gender,
+					'Reward Points: ',
+					this.props.customer.rewardPoints,
+					'Income: ',
+					this.props.customer.income,
+					'DOB: ',
+					this.props.customer.birthYear
+				);
+			}
+		}]);
+	
+		return CustomerInfo;
+	}(React.Component);
+	
+	exports.default = CustomerInfo;
+	
+	/*
+	<div>
+		      	<p>Welcome back, {this.props.user.loginId} </p>
+		      	<p>PhoneNumber: {this.props.user.phoneNo}</p>
+		      	<p>Email: {this.props.user.email}</p>
+		      	<p>Firstname: {this.props.user.firstName}</p>
+		      	<p>Lastname: {this.props.user.lastName}</p>
+		      	<p>Ethnicity: {this.props.user.ethnicity}</p>
+		      	<p>Gender: {this.props.user.gender}</p>
+		      	<p>Reward Points: {this.user.props.rewardPoints}</p>
+		      	<p>Income: {this.props.user.income}</p>
+		      	<p>DOB: {this.props.user.birthMonth}/{this.props.user.birthDay}/{this.props.user.birthYear}</p>	      	
+		      </div>
+		      */
+
+/***/ }),
+/* 697 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _reactBootstrap = __webpack_require__(248);
+	
+	var _BusinessTransaction = __webpack_require__(698);
 	
 	var _BusinessTransaction2 = _interopRequireDefault(_BusinessTransaction);
 	
@@ -76150,7 +76218,7 @@
 	exports.default = BusinessProfile;
 
 /***/ }),
-/* 697 */
+/* 698 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';

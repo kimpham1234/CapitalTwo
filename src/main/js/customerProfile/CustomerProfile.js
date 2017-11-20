@@ -1,5 +1,6 @@
 import {Button} from 'react-bootstrap'
 import Transaction from './Transaction.js'
+import CustomerInfo from './CustomerInfo.js'
 import * as firebase from 'firebase'
 
 const React = require('react');
@@ -29,25 +30,27 @@ class CustomerProfile extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			user: this.props.params.loginId,
+			user: [],
 			trans: sampleTrans
 		}
 		console.log("Profile constructor");
 	}
 
+	componentDidMount(){
+		axios.get('http://localhost:8080/api/customerAccounts/search/findByEmail?email='+this.props.params.loginId)
+	      .then(res => {
+	        console.log("axios "+ JSON.stringify(res));
+	        const resUser = res.data;
+	        this.setState({user: resUser});
+	      }); 
+	}
+
 	render() {
+		{console.log("user " + this.state.user)}
 		return (
 	      <div>
 	      	<h2>CustomerProfile</h2>
-	      	<h3>Hello {this.props.params.loginId}</h3>
-
-	      	<h2>Personal Info</h2>
-	      	<div>
-	      		<ul>
-	      			<li>Name: {this.state.user.firstName} &nbsp; {this.state.user.lastName}</li>
-	      			<li>Reward Earned: {this.state.user.rewardPoints} points</li>
-	      		</ul>
-	      	</div>
+	      	<CustomerInfo customer={this.state.user}/>
 	      	
 	      	<p>Your transaction will go here</p>
 	   

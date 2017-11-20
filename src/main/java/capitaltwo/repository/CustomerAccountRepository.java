@@ -2,6 +2,8 @@ package capitaltwo;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
+import java.util.List;
 
 
 // This will be AUTO IMPLEMENTED by Spring into a Bean called userRepository
@@ -9,4 +11,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CustomerAccountRepository extends BaseAccountRepository<CustomerAccount> {
 
+	CustomerAccount findByEmail(@Param("email") String email);
 }
