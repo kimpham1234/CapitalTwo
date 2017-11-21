@@ -177,6 +177,18 @@ public class DatabaseLoader implements CommandLineRunner {
         }
     }
 
+    public void generateBusinessAccounts(){
+        for(Business b : businesses){
+            Set<BusinessAccount> accountSet = new HashSet<BusinessAccount>();
+            b.setAccounts(accountSet);
+            BusinessAccount newAccount = new BusinessAccount(b.getName(), "123456", "408-415-7292",
+                            b.getName().split(" ")[0]+"@gmail.com", randomInt(2020, 2025), randomInt(1,12),
+                            randomInt(1,30), "Partner", true, b);
+            b.addAccount(newAccount);
+            businessAccountRepo.save(newAccount);
+        }
+    }
+
     public void generateAccounts() {
         ArrayList<CustomerAccount> customers = new ArrayList<CustomerAccount>();
         customers.add(new CustomerAccount(
@@ -256,6 +268,7 @@ public class DatabaseLoader implements CommandLineRunner {
         generateAccounts();
         generateItems();
         generateBusinesses();
+        generateBusinessAccounts();
 
         CustomerAccount acc = this.customerRepo.findAll().get(0);
 

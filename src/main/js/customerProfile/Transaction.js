@@ -4,9 +4,6 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const axios = require('axios');
 
-var date = new Date();
-var dateValue = date.getYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
-
 class Transaction extends React.Component {
 
 	constructor(props) {
@@ -19,29 +16,13 @@ class Transaction extends React.Component {
 			inputCity: "",
 			inputState: ""
 		}
-		
+
 		this.addTransaction = this.addTransaction.bind(this);
 		this.toggle = this.toggle.bind(this);
 		this.handleChange = this.handleChange.bind(this);
+		this.showAll = this.showAll.bind(this);
 	}
-
-	componentDidMount(){
-		axios.get('http://localhost:8080/api/transactions')
-	      .then(res => {
-	        const resTrans = res.data._embedded.transactions;
-	        console.log("axios "+ JSON.stringify(resTrans));
-	        this.setState({transactions: resTrans});
-        });
-	}
-
-	setDatePickerValue(){
-		var date = new Date();
-		var day = date.getDate();
-		var month = date.getMonth()+1;
-		var year = date.getYear();
-		return year+"-"+month+"-"+day;
-	}
-
+	
 	toggle(){
 		var open = !this.state.open;
 		this.setState({open: open});
@@ -63,16 +44,36 @@ class Transaction extends React.Component {
 		var transactions = this.state.transactions.slice();
 		var submitted = {date: this.state.inputDate, city: this.state.inputCity, state: this.state.inputState};
 		transactions.push(submitted);
-		alert("Submitted " + JSON.stringify(submitted));
-		console.log(JSON.stringify(transactions));
+		alert("Submitted " + JSON.stringify(transactions));
 		this.setState({transactions: transactions});
+	}
+
+	showAll(){
+		axios.get('http://localhost:8080/api/transactions')
+	      .then(res => {
+	        const resTrans = res.data._embedded.transactions;
+	        console.log("axios "+ JSON.stringify(resTrans));
+	        this.setState({transactions: resTrans});
+        });
+	}
+
+	componentDidMount(){
+		/*
+		axios.get('http://localhost:8080/api/transactions')
+	      .then(res => {
+	        const resTrans = res.data._embedded.transactions;
+	        console.log("axios "+ JSON.stringify(resTrans));
+	        this.setState({transactions: resTrans});
+        });*/
 	}
 
 	render() {
 		return (
-	      <div id="container2">
-	      	<h1>Transaction of {this.props.params.loginId}</h1>
-	      	<Button className="primary" onClick={this.toggle}>Add Transaction</Button>
+		<div id="container2">
+	      <h1>Transaction of {this.props.params.loginId}</h1>
+
+	      <Button className="primary" onClick={this.showAll}>Show All Transactions</Button> 
+	      <Button className="primary" onClick={this.toggle}>Add Transaction</Button>
 	      	<Panel collapsible expanded={this.state.open}>
 		      	<Form inline onSubmit={this.addTransaction}>
 				    <FormGroup controlId="formInlineName">
@@ -114,7 +115,7 @@ class Transaction extends React.Component {
 		      	)}
 	      	</tbody>
 	      	</Table>
-	      </div>
+	    </div>
 	    );
 	 }
 }

@@ -76008,9 +76008,6 @@
 	var ReactDOM = __webpack_require__(37);
 	var axios = __webpack_require__(506);
 	
-	var date = new Date();
-	var dateValue = date.getYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-	
 	var Transaction = function (_React$Component) {
 		_inherits(Transaction, _React$Component);
 	
@@ -76030,30 +76027,11 @@
 			_this.addTransaction = _this.addTransaction.bind(_this);
 			_this.toggle = _this.toggle.bind(_this);
 			_this.handleChange = _this.handleChange.bind(_this);
+			_this.showAll = _this.showAll.bind(_this);
 			return _this;
 		}
 	
 		_createClass(Transaction, [{
-			key: 'componentDidMount',
-			value: function componentDidMount() {
-				var _this2 = this;
-	
-				axios.get('http://localhost:8080/api/transactions').then(function (res) {
-					var resTrans = res.data._embedded.transactions;
-					console.log("axios " + JSON.stringify(resTrans));
-					_this2.setState({ transactions: resTrans });
-				});
-			}
-		}, {
-			key: 'setDatePickerValue',
-			value: function setDatePickerValue() {
-				var date = new Date();
-				var day = date.getDate();
-				var month = date.getMonth() + 1;
-				var year = date.getYear();
-				return year + "-" + month + "-" + day;
-			}
-		}, {
 			key: 'toggle',
 			value: function toggle() {
 				var open = !this.state.open;
@@ -76076,9 +76054,30 @@
 				var transactions = this.state.transactions.slice();
 				var submitted = { date: this.state.inputDate, city: this.state.inputCity, state: this.state.inputState };
 				transactions.push(submitted);
-				alert("Submitted " + JSON.stringify(submitted));
-				console.log(JSON.stringify(transactions));
+				alert("Submitted " + JSON.stringify(transactions));
 				this.setState({ transactions: transactions });
+			}
+		}, {
+			key: 'showAll',
+			value: function showAll() {
+				var _this2 = this;
+	
+				axios.get('http://localhost:8080/api/transactions').then(function (res) {
+					var resTrans = res.data._embedded.transactions;
+					console.log("axios " + JSON.stringify(resTrans));
+					_this2.setState({ transactions: resTrans });
+				});
+			}
+		}, {
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				/*
+	   axios.get('http://localhost:8080/api/transactions')
+	        .then(res => {
+	          const resTrans = res.data._embedded.transactions;
+	          console.log("axios "+ JSON.stringify(resTrans));
+	          this.setState({transactions: resTrans});
+	         });*/
 			}
 		}, {
 			key: 'render',
@@ -76091,6 +76090,11 @@
 						null,
 						'Transaction of ',
 						this.props.params.loginId
+					),
+					React.createElement(
+						_reactBootstrap.Button,
+						{ className: 'primary', onClick: this.showAll },
+						'Show All Transactions'
 					),
 					React.createElement(
 						_reactBootstrap.Button,
