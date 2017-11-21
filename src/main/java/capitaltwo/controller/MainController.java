@@ -6,9 +6,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import capitaltwo.User;
-import capitaltwo.UserRepository;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+import java.util.List;
+
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.Json;
+
+import java.math.BigInteger;
+
 
 @Controller    // This means that this class is a Controller
 @RequestMapping(path="/demo") // This means URL's start with /demo (after Application path)
@@ -20,6 +32,12 @@ public class MainController {
     private CreditCardRepository creditRepo;
     @Autowired
     private DebitCardRepository debitRepo;
+
+    @Autowired
+    private CustomerAccountRepository customerRepo;
+
+    @Autowired
+    private EntityManager em;
 
 	@GetMapping(path="/add") // Map ONLY GET Requests
 	public @ResponseBody String addNewUser (@RequestParam String name
@@ -41,7 +59,89 @@ public class MainController {
 	}
 
     @GetMapping(path="/credit")
-    public @ResponseBody Iterable<CreditCard> getAllCreditCards() {
-        return creditRepo.findAll();
+    public @ResponseBody Iterable<CustomerAccount> getAllCreditCards() {
+        //return customerRepo.getCustomers();
+        Query q = em.createNativeQuery(
+            "SELECT * FROM customer_account, transaction"
+        );
+        return q.getResultList();
+        //return null;
     }
+
+    private String queryResults(String query, String[] columns) {
+        JsonArray jsonArray =
+            toJson(em.createNativeQuery(query).getResultList(), columns);
+        return Json.createObjectBuilder().add("results", jsonArray)
+            .build().toString();
+    }
+
+    private JsonArray toJson(List<Object[]> queryResults,
+                          String[] fieldNames) {
+        if (queryResults.size() == 0)
+            return null;
+        if (queryResults.get(0).length != fieldNames.length) {
+            System.out.println("ERROR: LENGTHS ARE NOT EQUAL");
+        }
+        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
+        for (int i = 0; i < queryResults.size(); ++i) {
+            JsonObjectBuilder jsonObject = Json.createObjectBuilder();
+            Object[] obj = queryResults.get(i);
+            for (int j = 0; j < obj.length; ++j) {
+                Class c = obj[j].getClass();
+                if (c == String.class) {
+                    String str = (String)obj[j];
+                    jsonObject.add(fieldNames[j], str);
+                }
+                else if (c == BigInteger.class) {
+                    BigInteger num = (BigInteger)obj[j];
+                    jsonObject.add(fieldNames[j], num);
+                }
+                else if (c == Integer.class) {
+                    Integer num = (Integer)obj[j];
+                    jsonObject.add(fieldNames[j], num);
+                }
+                else if (c == Long.class) {
+                    Long num = (Long)obj[j];
+                    jsonObject.add(fieldNames[j], num);
+                }
+                else if (c == Double.class) { 
+                    Double num = (Double)obj[j];
+                    jsonObject.add(fieldNames[j], num);
+                }
+                else if (c == Boolean.class) {
+                    Boolean val = (Boolean)obj[j];
+                    jsonObject.add(fieldNames[j], val);
+                }
+                else {
+                    System.out.println("ERROR UNKNOWN CLASS TYPE: " + c);
+                    String str = (String)obj[j];
+                    jsonObject.add(fieldNames[j], str);
+                }
+            }
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray.build();
+    }
+
+    @RequestMapping(value="/testjson", 
+                    method=RequestMethod.GET,
+                    produces = "application/json")
+    @ResponseBody
+    public String getCustomerAccounts() {
+
+        String[] cols = {"id", "email", "login", "name"};
+        String query = String.join("\n"
+            ,"SELECT"
+            ,    "account.account_id as id,"
+            ,    "account.email as email,"
+            ,    "account.login_id as login,"
+            ,    "customer_account.first_name as name"
+            ,"FROM"
+            ,    "account, customer_account"
+            ,"WHERE"
+            ,    "account.account_id = customer_account.account_id"
+        );
+        return queryResults(query, cols);
+    }
+
 }
