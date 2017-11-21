@@ -14,15 +14,22 @@ class CustomerInfo extends React.Component {
 	render() {
 		return (
 	      <div>
-	      	<h3>Customer Info</h3>
-	     	First Name: {this.props.customer.firstName}
-	     	Last Name: {this.props.customer.lastName}
-	     	Phone: {this.props.customer.phoneNo}
-	     	Ethnicity: {this.props.customer.ethnicity}
-	     	Gender: {this.props.customer.gender}
-	     	Reward Points: {this.props.customer.rewardPoints}
-	     	Income: {this.props.customer.income}
-	     	DOB: {this.props.customer.birthYear}
+	      	<h3>Your Info</h3>
+	      	<hr id="divider"></hr>
+	      	<div className="container">
+	      		<div className="inner-container">
+	      			First Name: {this.props.customer.firstName}<br></br>
+			     	Last Name: {this.props.customer.lastName}<br></br>
+			     	Phone: {this.props.customer.phoneNo}<br></br>
+			     	DOB: {this.props.customer.birthYear}
+	      		</div>
+	      		<div className="inner-container">
+	      			Ethnicity: {this.props.customer.ethnicity}<br></br>
+			     	Gender: {this.props.customer.gender}<br></br>
+			     	Reward Points: {this.props.customer.rewardPoints}<br></br>
+			     	Income: {this.props.customer.income}
+	      		</div>
+	      	</div>
 	      </div>
 	    );
 	 }

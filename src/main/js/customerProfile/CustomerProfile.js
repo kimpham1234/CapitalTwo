@@ -1,6 +1,8 @@
 import {Button} from 'react-bootstrap'
 import Transaction from './Transaction.js'
 import CustomerInfo from './CustomerInfo.js'
+import Card from './Card.js'
+import {hashHistory} from 'react-router'
 import * as firebase from 'firebase'
 
 const React = require('react');
@@ -34,27 +36,42 @@ class CustomerProfile extends React.Component {
 			trans: sampleTrans
 		}
 		console.log("Profile constructor");
+		this.handleViewTransaction = this.handleViewTransaction.bind(this);
 	}
 
 	componentDidMount(){
-		axios.get('http://localhost:8080/api/customerAccounts/search/findByEmail?email='+this.props.params.loginId)
-	      .then(res => {
-	        console.log("axios "+ JSON.stringify(res));
-	        const resUser = res.data;
-	        this.setState({user: resUser});
-	      }); 
+		var currentUser = firebase.auth().currentUser;
+		if(currentUser == null){
+			hashHistory.push("/login");
+		}
+		else{
+			var toLookup = currentUser.email;
+			axios.get('http://localhost:8080/api/customerAccounts/search/findByEmail?email='+toLookup)
+		      .then(res => {
+		        console.log("axios "+ JSON.stringify(res));
+		        const resUser = res.data;
+		        this.setState({
+		        	user: resUser
+		        });
+		      }); 
+	 	}
+	}
+
+	handleViewTransaction(){
+		hashHistory.push("/transactions/"+firebase.auth().currentUser.email);
 	}
 
 	render() {
-		{console.log("user " + this.state.user)}
 		return (
 	      <div>
-	      	<h2>CustomerProfile</h2>
+	      	<h1>Customer Profile</h1>
 	      	<CustomerInfo customer={this.state.user}/>
 	      	
-	      	<p>Your transaction will go here</p>
-	   
-	      	<Transaction transaction={this.state.trans}/>
+	      	{this.state.user.cards!=null &&
+		      	<Card cards={this.state.user.cards}/>
+	      	}
+
+		    <Button className="primary" onClick={this.handleViewTransaction}>View Transaction</Button>
 	      </div>
 	    );
 	 }

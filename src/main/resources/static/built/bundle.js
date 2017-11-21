@@ -78,7 +78,7 @@
 	
 	var _Transaction2 = _interopRequireDefault(_Transaction);
 	
-	var _BusinessProfile = __webpack_require__(697);
+	var _BusinessProfile = __webpack_require__(698);
 	
 	var _BusinessProfile2 = _interopRequireDefault(_BusinessProfile);
 	
@@ -106,11 +106,11 @@
 		_react2.default.createElement(
 			_reactRouter.Route,
 			{ path: '/', component: _AppNavigationBar2.default },
-			_react2.default.createElement(_reactRouter.IndexRoute, { component: _Login2.default }),
+			_react2.default.createElement(_reactRouter.IndexRoute, { component: _CustomerProfile2.default }),
 			_react2.default.createElement(_reactRouter.Route, { path: '/login', component: _Login2.default }),
 			_react2.default.createElement(_reactRouter.Route, { path: '/newCustomer', component: _CreateAccount2.default }),
-			_react2.default.createElement(_reactRouter.Route, { path: '/customerProfile/:loginId', component: _CustomerProfile2.default }),
-			_react2.default.createElement(_reactRouter.Route, { path: '/transaction', component: _Transaction2.default }),
+			_react2.default.createElement(_reactRouter.Route, { path: '/customerProfile', component: _CustomerProfile2.default }),
+			_react2.default.createElement(_reactRouter.Route, { path: '/transactions/:loginId', component: _Transaction2.default }),
 			_react2.default.createElement(_reactRouter.Route, { path: '/businessProfile/:loginId', component: _BusinessProfile2.default })
 		)
 	), document.getElementById('react'));
@@ -75562,7 +75562,7 @@
 				firebase.auth().signInWithEmailAndPassword(loginId, password).then(function () {
 					console.log("sign in success");
 					if (userType == "customer") {
-						var path = "/customerProfile/" + loginId;
+						var path = "/customerProfile";
 						_reactRouter.hashHistory.push(path);
 					} else _reactRouter.hashHistory.push("/businessProfile/" + loginId);
 				}).catch(function (error) {
@@ -75879,6 +75879,12 @@
 	
 	var _CustomerInfo2 = _interopRequireDefault(_CustomerInfo);
 	
+	var _Card = __webpack_require__(697);
+	
+	var _Card2 = _interopRequireDefault(_Card);
+	
+	var _reactRouter = __webpack_require__(184);
+	
 	var _firebase = __webpack_require__(533);
 	
 	var firebase = _interopRequireWildcard(_firebase);
@@ -75921,6 +75927,7 @@
 				trans: sampleTrans
 			};
 			console.log("Profile constructor");
+			_this.handleViewTransaction = _this.handleViewTransaction.bind(_this);
 			return _this;
 		}
 	
@@ -75929,33 +75936,43 @@
 			value: function componentDidMount() {
 				var _this2 = this;
 	
-				axios.get('http://localhost:8080/api/customerAccounts/search/findByEmail?email=' + this.props.params.loginId).then(function (res) {
-					console.log("axios " + JSON.stringify(res));
-					var resUser = res.data;
-					_this2.setState({ user: resUser });
-				});
+				var currentUser = firebase.auth().currentUser;
+				if (currentUser == null) {
+					_reactRouter.hashHistory.push("/login");
+				} else {
+					var toLookup = currentUser.email;
+					axios.get('http://localhost:8080/api/customerAccounts/search/findByEmail?email=' + toLookup).then(function (res) {
+						console.log("axios " + JSON.stringify(res));
+						var resUser = res.data;
+						_this2.setState({
+							user: resUser
+						});
+					});
+				}
+			}
+		}, {
+			key: 'handleViewTransaction',
+			value: function handleViewTransaction() {
+				_reactRouter.hashHistory.push("/transactions/" + firebase.auth().currentUser.email);
 			}
 		}, {
 			key: 'render',
 			value: function render() {
-				{
-					console.log("user " + this.state.user);
-				}
 				return React.createElement(
 					'div',
 					null,
 					React.createElement(
-						'h2',
+						'h1',
 						null,
-						'CustomerProfile'
+						'Customer Profile'
 					),
 					React.createElement(_CustomerInfo2.default, { customer: this.state.user }),
+					this.state.user.cards != null && React.createElement(_Card2.default, { cards: this.state.user.cards }),
 					React.createElement(
-						'p',
-						null,
-						'Your transaction will go here'
-					),
-					React.createElement(_Transaction2.default, { transaction: this.state.trans })
+						_reactBootstrap.Button,
+						{ className: 'primary', onClick: this.handleViewTransaction },
+						'View Transaction'
+					)
 				);
 			}
 		}]);
@@ -75979,6 +75996,8 @@
 	
 	var _reactBootstrap = __webpack_require__(248);
 	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -75987,6 +76006,10 @@
 	
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(37);
+	var axios = __webpack_require__(506);
+	
+	var date = new Date();
+	var dateValue = date.getYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
 	
 	var Transaction = function (_React$Component) {
 		_inherits(Transaction, _React$Component);
@@ -75994,31 +76017,183 @@
 		function Transaction(props) {
 			_classCallCheck(this, Transaction);
 	
-			return _possibleConstructorReturn(this, (Transaction.__proto__ || Object.getPrototypeOf(Transaction)).call(this, props));
+			var _this = _possibleConstructorReturn(this, (Transaction.__proto__ || Object.getPrototypeOf(Transaction)).call(this, props));
+	
+			_this.state = {
+				transactions: [],
+				open: false,
+				inputDate: "2017-11-20",
+				inputCity: "",
+				inputState: ""
+			};
+	
+			_this.addTransaction = _this.addTransaction.bind(_this);
+			_this.toggle = _this.toggle.bind(_this);
+			_this.handleChange = _this.handleChange.bind(_this);
+			return _this;
 		}
 	
 		_createClass(Transaction, [{
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				var _this2 = this;
+	
+				axios.get('http://localhost:8080/api/transactions').then(function (res) {
+					var resTrans = res.data._embedded.transactions;
+					console.log("axios " + JSON.stringify(resTrans));
+					_this2.setState({ transactions: resTrans });
+				});
+			}
+		}, {
+			key: 'setDatePickerValue',
+			value: function setDatePickerValue() {
+				var date = new Date();
+				var day = date.getDate();
+				var month = date.getMonth() + 1;
+				var year = date.getYear();
+				return year + "-" + month + "-" + day;
+			}
+		}, {
+			key: 'toggle',
+			value: function toggle() {
+				var open = !this.state.open;
+				this.setState({ open: open });
+			}
+		}, {
+			key: 'handleChange',
+			value: function handleChange(event) {
+				console.log("event " + event);
+				if (event != null) {
+					var target = event.target;
+					var value = target.value;
+					var name = target.name;
+					this.setState(_defineProperty({}, name, value));
+				}
+			}
+		}, {
+			key: 'addTransaction',
+			value: function addTransaction(e) {
+				var transactions = this.state.transactions.slice();
+				var submitted = { date: this.state.inputDate, city: this.state.inputCity, state: this.state.inputState };
+				transactions.push(submitted);
+				alert("Submitted " + JSON.stringify(submitted));
+				console.log(JSON.stringify(transactions));
+				this.setState({ transactions: transactions });
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 				return React.createElement(
 					'div',
-					null,
-					this.props.transaction.map(function (trans) {
-						return React.createElement(
-							'li',
-							{ key: trans.id },
-							trans.id,
-							' : $',
-							trans.date,
-							' - ',
-							trans.cost,
-							' - ',
-							trans.city,
-							' - ',
-							trans.state
-						);
-					}),
-					';'
+					{ id: 'container2' },
+					React.createElement(
+						'h1',
+						null,
+						'Transaction of ',
+						this.props.params.loginId
+					),
+					React.createElement(
+						_reactBootstrap.Button,
+						{ className: 'primary', onClick: this.toggle },
+						'Add Transaction'
+					),
+					React.createElement(
+						_reactBootstrap.Panel,
+						{ collapsible: true, expanded: this.state.open },
+						React.createElement(
+							_reactBootstrap.Form,
+							{ inline: true, onSubmit: this.addTransaction },
+							React.createElement(
+								_reactBootstrap.FormGroup,
+								{ controlId: 'formInlineName' },
+								React.createElement(
+									_reactBootstrap.ControlLabel,
+									null,
+									'Date'
+								),
+								' ',
+								React.createElement(_reactBootstrap.FormControl, { type: 'date', name: 'inputDate', value: this.state.inputDate, onChange: this.handleChange })
+							),
+							' ',
+							React.createElement(
+								_reactBootstrap.FormGroup,
+								{ controlId: 'formInlineEmail' },
+								React.createElement(
+									_reactBootstrap.ControlLabel,
+									null,
+									'City'
+								),
+								' ',
+								React.createElement(_reactBootstrap.FormControl, { type: 'text', name: 'inputCity', value: this.state.inputCity, onChange: this.handleChange })
+							),
+							' ',
+							React.createElement(
+								_reactBootstrap.FormGroup,
+								{ controlId: 'formInlineEmail' },
+								React.createElement(
+									_reactBootstrap.ControlLabel,
+									null,
+									'State'
+								),
+								' ',
+								React.createElement(_reactBootstrap.FormControl, { type: 'text', name: 'inputState', value: this.state.inputState, onChange: this.handleChange })
+							),
+							' ',
+							React.createElement(
+								_reactBootstrap.Button,
+								{ type: 'submit' },
+								'Add'
+							)
+						)
+					),
+					React.createElement(
+						_reactBootstrap.Table,
+						{ striped: true, bordered: true, condensed: true, hover: true },
+						React.createElement(
+							'thead',
+							null,
+							React.createElement(
+								'th',
+								null,
+								'Date'
+							),
+							React.createElement(
+								'th',
+								null,
+								'City'
+							),
+							React.createElement(
+								'th',
+								null,
+								'State'
+							)
+						),
+						React.createElement(
+							'tbody',
+							null,
+							this.state.transactions != null && this.state.transactions.map(function (trans, index) {
+								return React.createElement(
+									'tr',
+									{ key: index },
+									React.createElement(
+										'td',
+										null,
+										trans.date
+									),
+									React.createElement(
+										'td',
+										null,
+										trans.city
+									),
+									React.createElement(
+										'td',
+										null,
+										trans.state
+									)
+								);
+							})
+						)
+					)
 				);
 			}
 		}]);
@@ -76069,24 +76244,43 @@
 					React.createElement(
 						'h3',
 						null,
-						'Customer Info'
+						'Your Info'
 					),
-					'First Name: ',
-					this.props.customer.firstName,
-					'Last Name: ',
-					this.props.customer.lastName,
-					'Phone: ',
-					this.props.customer.phoneNo,
-					'Ethnicity: ',
-					this.props.customer.ethnicity,
-					'Gender: ',
-					this.props.customer.gender,
-					'Reward Points: ',
-					this.props.customer.rewardPoints,
-					'Income: ',
-					this.props.customer.income,
-					'DOB: ',
-					this.props.customer.birthYear
+					React.createElement('hr', { id: 'divider' }),
+					React.createElement(
+						'div',
+						{ className: 'container' },
+						React.createElement(
+							'div',
+							{ className: 'inner-container' },
+							'First Name: ',
+							this.props.customer.firstName,
+							React.createElement('br', null),
+							'Last Name: ',
+							this.props.customer.lastName,
+							React.createElement('br', null),
+							'Phone: ',
+							this.props.customer.phoneNo,
+							React.createElement('br', null),
+							'DOB: ',
+							this.props.customer.birthYear
+						),
+						React.createElement(
+							'div',
+							{ className: 'inner-container' },
+							'Ethnicity: ',
+							this.props.customer.ethnicity,
+							React.createElement('br', null),
+							'Gender: ',
+							this.props.customer.gender,
+							React.createElement('br', null),
+							'Reward Points: ',
+							this.props.customer.rewardPoints,
+							React.createElement('br', null),
+							'Income: ',
+							this.props.customer.income
+						)
+					)
 				);
 			}
 		}]);
@@ -76125,7 +76319,101 @@
 	
 	var _reactBootstrap = __webpack_require__(248);
 	
-	var _BusinessTransaction = __webpack_require__(698);
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(37);
+	
+	var sampleCards = [{ cardNumber: 12344, year: 2012 }, { cardNumber: 12344, year: 2012 }, { cardNumber: 12344, year: 2012 }, { cardNumber: 12344, year: 2012 }];
+	
+	var Card = function (_React$Component) {
+		_inherits(Card, _React$Component);
+	
+		function Card(props) {
+			_classCallCheck(this, Card);
+	
+			var _this = _possibleConstructorReturn(this, (Card.__proto__ || Object.getPrototypeOf(Card)).call(this, props));
+	
+			_this.state = {
+				cards: _this.props.cards,
+				open: false
+			};
+			_this.toggle = _this.toggle.bind(_this);
+			return _this;
+		}
+	
+		_createClass(Card, [{
+			key: 'toggle',
+			value: function toggle() {
+				var open = this.state.open;
+				open = !open;
+				this.setState({ open: open });
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				return React.createElement(
+					'div',
+					null,
+					React.createElement(
+						'h3',
+						{ className: 'collapse-trigger', onClick: this.toggle },
+						'View Cards'
+					),
+					React.createElement(
+						_reactBootstrap.Panel,
+						{ id: 'card-panel', collapsible: true, expanded: this.state.open },
+						this.state.cards.map(function (card, index) {
+							return React.createElement(
+								'li',
+								{ key: index },
+								'Card: ',
+								card.cardNumber == null ? index : card.cardNumber,
+								React.createElement('br', null),
+								'Monthly Limit: ',
+								card.monthlyLimit,
+								React.createElement('br', null),
+								'Monthly Spent: ',
+								card.monthlySpent,
+								React.createElement('br', null),
+								'Expiration Date: ',
+								card.expirationMonth,
+								'/',
+								card.expirationDay,
+								'/',
+								card.expirationYear
+							);
+						}),
+						';'
+					)
+				);
+			}
+		}]);
+	
+		return Card;
+	}(React.Component);
+	
+	exports.default = Card;
+
+/***/ }),
+/* 698 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _reactBootstrap = __webpack_require__(248);
+	
+	var _BusinessTransaction = __webpack_require__(699);
 	
 	var _BusinessTransaction2 = _interopRequireDefault(_BusinessTransaction);
 	
@@ -76218,7 +76506,7 @@
 	exports.default = BusinessProfile;
 
 /***/ }),
-/* 698 */
+/* 699 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';

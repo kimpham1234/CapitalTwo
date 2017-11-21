@@ -44,7 +44,7 @@ class Login extends React.Component {
 		.then(function(){
 			console.log("sign in success");
 			if(userType == "customer"){
-				var path = "/customerProfile/"+loginId;
+				var path = "/customerProfile";
 				hashHistory.push(path);
 			}
 			else

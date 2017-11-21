@@ -25,11 +25,11 @@ firebase.initializeApp(config);
 render((
 	<Router history={hashHistory}>
 		<Route path="/" component={AppNavigationBar}>
-			<IndexRoute component={Login}/>
+			<IndexRoute component={CustomerProfile}/>
 			<Route path="/login" component={Login}/>
 			<Route path="/newCustomer" component={CreateAccount}/>
-			<Route path="/customerProfile/:loginId" component={CustomerProfile}/>
-			<Route path="/transaction" component={Transaction}/>
+			<Route path="/customerProfile" component={CustomerProfile}/>
+			<Route path="/transactions/:loginId" component={Transaction}/>
 			<Route path="/businessProfile/:loginId" component={BusinessProfile}/>
 		</Route>
 	</Router>
