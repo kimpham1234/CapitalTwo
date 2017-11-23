@@ -128,7 +128,6 @@ public class MainController {
                     produces = "application/json")
     @ResponseBody
     public String getCustomerAccounts() {
-
         String[] cols = {"id", "email", "login", "name"};
         String query = String.join("\n"
             ,"SELECT"
@@ -143,5 +142,25 @@ public class MainController {
         );
         return queryResults(query, cols);
     }
+
+    @RequestMapping(value="/findBusiness",
+                    params = "email", 
+                    method=RequestMethod.GET,
+                    produces = "application/json")
+    @ResponseBody
+    public String getBusinessAccounts(@RequestParam("email") String email) {
+        String[] cols = {"name", "reward_rate", "expiration", "position","verified","email","phoneNo"};
+        String query = String.join("\n"
+            ,"SELECT"
+            ,    "*"
+            ,"FROM"
+            ,    "business_list"
+            ,"WHERE"
+            ,    "email = '"+email+"'"
+        );
+        return queryResults(query, cols);
+    }
+
+    
 
 }

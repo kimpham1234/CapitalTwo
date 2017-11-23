@@ -75550,6 +75550,19 @@
 				this.setState(_defineProperty({}, name, value));
 			}
 		}, {
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				axios.get('http://localhost:8080/demo/findBusiness', {
+					params: {
+						email: 'google@gmail.com'
+					}
+				}).then(function (res) {
+					console.log(JSON.stringify(res));
+				}).catch(function (error) {
+					console.log(error);
+				});
+			}
+		}, {
 			key: 'handleSignIn',
 			value: function handleSignIn(event) {
 				event.preventDefault();
@@ -76472,16 +76485,6 @@
 						console.log(that.state.accountInfo._links);
 					});
 					console.log(res.data);
-	
-					/*
-	    axios.get(res.data._embedded._links.business)
-	    	.then(res => {
-	    		console.log("business " + res.data._embedded);
-	    	});
-	    */
-					/*
-	    business link = res.data._embedded._links.business
-	    */
 				});
 			}
 		}, {

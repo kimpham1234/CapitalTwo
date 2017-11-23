@@ -1,0 +1,6 @@
+1. Create business_list view that contains business name, reward rate, expiration date, position, verified, phone number and login email
+
+CREATE VIEW business_list as
+select business.name, business.reward_rate,concat(business_account.expiration_month,'/',business_account.expiration_day,'/',business_account.expiration_year) as expiration, business_account.business_position, business_account.business_verified ,account.email, account.phone_no from business, business_account, account where business_account.account_id = account.account_id       and business_account.business_business_id = business.business_id;
+
+col: name| reward_rate | expiration | business_position | business_verified | email | phone_no
