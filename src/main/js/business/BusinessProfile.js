@@ -1,8 +1,9 @@
 import {Button} from 'react-bootstrap'
 import BusinessTransaction from './BusinessTransaction.js'
+
 const React = require('react');
 const ReactDOM = require('react-dom');
-
+const axios = require('axios');
 
 var monTomon = [
 	{id: 1, month: "Jan", amount: 500000},
@@ -30,8 +31,22 @@ class BusinessProfile extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			store: sampleBusiness
+			accountInfo: [],
+			businessInfo: []
 		}
+	}
+
+	componentDidMount(){
+		var that = this;
+		axios.get('http://localhost:8080/api/businessAccounts/search/findByEmail?email='+this.props.params.loginId)
+		      .then(res => {
+		      	const resAccountInfo = res.data._embedded;
+		      	this.setState({accountInfo: resAccountInfo}, ()=>{
+		      		//const businessLink = resAccountInfo._links;
+		      		console.log(that.state.accountInfo._links);
+		      	});
+		      	console.log(res.data);
+		      }); 
 	}
 
 	render() {
@@ -39,17 +54,6 @@ class BusinessProfile extends React.Component {
 	      <div>
 	      	<h2>Business Profile</h2>
 	      	<h3>Hello {this.props.params.loginId}</h3>
-
-	      	<h2>Your Store Info</h2>
-	      	<p>Name: {this.state.store.name}</p>
-	      	<p>Location: {this.state.store.city}</p>
-	      	<p>Partnership Expiration: {this.state.store.expiration}</p>
-
-
-
-
-
-
 	      	<h3>Your month-to-month transaction will go here</h3>
 	      	<BusinessTransaction transaction={monTomon}/>
 	      </div>

@@ -75564,7 +75564,10 @@
 					if (userType == "customer") {
 						var path = "/customerProfile";
 						_reactRouter.hashHistory.push(path);
-					} else _reactRouter.hashHistory.push("/businessProfile/" + loginId);
+					} else {
+						console.log("from login " + loginId);
+						_reactRouter.hashHistory.push("/businessProfile/" + loginId);
+					}
 				}).catch(function (error) {
 					// Handle Errors here.
 					var errorCode = error.code;
@@ -76431,6 +76434,7 @@
 	
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(37);
+	var axios = __webpack_require__(506);
 	
 	var monTomon = [{ id: 1, month: "Jan", amount: 500000 }, { id: 2, month: "Feb", amount: 50000 }, { id: 3, month: "Mar", amount: 700000 }, { id: 4, month: "Apr", amount: 200000 }, { id: 5, month: "May", amount: 40000 }, { id: 6, month: "June", amount: 340000 }, { id: 7, month: "July", amount: 640000 }, { id: 8, month: "Aug", amount: 55000 }, { id: 9, month: "Sep", amount: 530000 }, { id: 10, month: "Oct", amount: 2400000 }, { id: 11, month: "Nov", amount: 40000 }];
 	
@@ -76449,12 +76453,38 @@
 			var _this = _possibleConstructorReturn(this, (BusinessProfile.__proto__ || Object.getPrototypeOf(BusinessProfile)).call(this, props));
 	
 			_this.state = {
-				store: sampleBusiness
+				accountInfo: [],
+				businessInfo: []
 			};
 			return _this;
 		}
 	
 		_createClass(BusinessProfile, [{
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				var _this2 = this;
+	
+				var that = this;
+				axios.get('http://localhost:8080/api/businessAccounts/search/findByEmail?email=' + this.props.params.loginId).then(function (res) {
+					var resAccountInfo = res.data._embedded;
+					_this2.setState({ accountInfo: resAccountInfo }, function () {
+						//const businessLink = resAccountInfo._links;
+						console.log(that.state.accountInfo._links);
+					});
+					console.log(res.data);
+	
+					/*
+	    axios.get(res.data._embedded._links.business)
+	    	.then(res => {
+	    		console.log("business " + res.data._embedded);
+	    	});
+	    */
+					/*
+	    business link = res.data._embedded._links.business
+	    */
+				});
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 				return React.createElement(
@@ -76470,29 +76500,6 @@
 						null,
 						'Hello ',
 						this.props.params.loginId
-					),
-					React.createElement(
-						'h2',
-						null,
-						'Your Store Info'
-					),
-					React.createElement(
-						'p',
-						null,
-						'Name: ',
-						this.state.store.name
-					),
-					React.createElement(
-						'p',
-						null,
-						'Location: ',
-						this.state.store.city
-					),
-					React.createElement(
-						'p',
-						null,
-						'Partnership Expiration: ',
-						this.state.store.expiration
 					),
 					React.createElement(
 						'h3',

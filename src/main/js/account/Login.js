@@ -47,8 +47,10 @@ class Login extends React.Component {
 				var path = "/customerProfile";
 				hashHistory.push(path);
 			}
-			else
+			else{
+				console.log("from login " + loginId);
 				hashHistory.push("/businessProfile/"+loginId);
+			}
 		})
 		.catch(function(error) {
 		  // Handle Errors here.

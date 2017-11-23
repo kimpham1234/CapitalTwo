@@ -2,11 +2,8 @@ package capitaltwo;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
-<<<<<<< HEAD
 import org.springframework.data.repository.query.Param;
-=======
 import org.springframework.data.jpa.repository.Query;
->>>>>>> f15041f8eb6facc46887d23a051f690273b29b58
 import java.util.List;
 
 
