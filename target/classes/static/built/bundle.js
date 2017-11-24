@@ -75550,19 +75550,6 @@
 				this.setState(_defineProperty({}, name, value));
 			}
 		}, {
-			key: 'componentDidMount',
-			value: function componentDidMount() {
-				axios.get('http://localhost:8080/demo/findBusiness', {
-					params: {
-						email: 'google@gmail.com'
-					}
-				}).then(function (res) {
-					console.log(JSON.stringify(res));
-				}).catch(function (error) {
-					console.log(error);
-				});
-			}
-		}, {
 			key: 'handleSignIn',
 			value: function handleSignIn(event) {
 				event.preventDefault();
@@ -76266,7 +76253,7 @@
 						null,
 						'Your Info'
 					),
-					React.createElement('hr', { id: 'divider' }),
+					React.createElement('hr', { className: 'divider' }),
 					React.createElement(
 						'div',
 						{ className: 'container' },
@@ -76451,12 +76438,6 @@
 	
 	var monTomon = [{ id: 1, month: "Jan", amount: 500000 }, { id: 2, month: "Feb", amount: 50000 }, { id: 3, month: "Mar", amount: 700000 }, { id: 4, month: "Apr", amount: 200000 }, { id: 5, month: "May", amount: 40000 }, { id: 6, month: "June", amount: 340000 }, { id: 7, month: "July", amount: 640000 }, { id: 8, month: "Aug", amount: 55000 }, { id: 9, month: "Sep", amount: 530000 }, { id: 10, month: "Oct", amount: 2400000 }, { id: 11, month: "Nov", amount: 40000 }];
 	
-	var sampleBusiness = {
-		name: "Walmart",
-		storeCity: "San Jose",
-		expiration: "12/2020"
-	};
-	
 	var BusinessProfile = function (_React$Component) {
 		_inherits(BusinessProfile, _React$Component);
 	
@@ -76466,25 +76447,28 @@
 			var _this = _possibleConstructorReturn(this, (BusinessProfile.__proto__ || Object.getPrototypeOf(BusinessProfile)).call(this, props));
 	
 			_this.state = {
-				accountInfo: [],
-				businessInfo: []
+				business: []
 			};
 			return _this;
 		}
+	
+		//[{"name":"google","reward_rate":1,"expiration":"3/26/2025",
+		//"position":"Partner","verified":true,"email":"google@gmail.com","phoneNo":"408-415-7292"}]
 	
 		_createClass(BusinessProfile, [{
 			key: 'componentDidMount',
 			value: function componentDidMount() {
 				var _this2 = this;
 	
-				var that = this;
-				axios.get('http://localhost:8080/api/businessAccounts/search/findByEmail?email=' + this.props.params.loginId).then(function (res) {
-					var resAccountInfo = res.data._embedded;
-					_this2.setState({ accountInfo: resAccountInfo }, function () {
-						//const businessLink = resAccountInfo._links;
-						console.log(that.state.accountInfo._links);
-					});
-					console.log(res.data);
+				axios.get('http://localhost:8080/demo/findBusiness', {
+					params: {
+						email: this.props.params.loginId
+					}
+				}).then(function (res) {
+					console.log(JSON.stringify(res.data.results[0]));
+					_this2.setState({ business: res.data.results[0] });
+				}).catch(function (error) {
+					console.log(error);
 				});
 			}
 		}, {
@@ -76501,9 +76485,48 @@
 					React.createElement(
 						'h3',
 						null,
-						'Hello ',
-						this.props.params.loginId
+						'Info'
 					),
+					this.state.business && React.createElement(
+						'div',
+						null,
+						'Company: ',
+						React.createElement(
+							'span',
+							{ className: 'text' },
+							this.state.business.name
+						),
+						React.createElement('br', null),
+						'Position: ',
+						React.createElement(
+							'span',
+							{ className: 'text' },
+							this.state.business.position
+						),
+						React.createElement('br', null),
+						'Contact Number: ',
+						React.createElement(
+							'span',
+							{ className: 'text' },
+							this.state.business.phoneNo
+						),
+						React.createElement('br', null),
+						'Verified: ',
+						React.createElement(
+							'span',
+							{ className: 'text' },
+							this.state.business.verified ? "Verified" : "Not Verified"
+						),
+						React.createElement('br', null),
+						'Account Expiration Date: ',
+						React.createElement(
+							'span',
+							{ className: 'text' },
+							this.state.business.expiration
+						),
+						React.createElement('br', null)
+					),
+					React.createElement('hr', null),
 					React.createElement(
 						'h3',
 						null,

@@ -32,19 +32,6 @@ class Login extends React.Component {
 		});
 	}
 
-	componentDidMount(){
-		axios.get('http://localhost:8080/demo/findBusiness', {
-			params: {
-				email: 'google@gmail.com'
-			}
-		})
-		.then(res => {
-			console.log(JSON.stringify(res));
-		}).catch(error => {
-			console.log(error);
-		});
-	}
-
 	handleSignIn(event){
 		event.preventDefault();
 		//alert("Login Id is "+this.state.loginId + " type "+this.state.userType);

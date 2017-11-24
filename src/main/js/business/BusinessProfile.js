@@ -19,41 +19,47 @@ var monTomon = [
 	{id: 11, month: "Nov", amount: 40000},
 ]
 
-var sampleBusiness = {
-	name: "Walmart",
-	storeCity: "San Jose",
-	expiration: "12/2020"
-}
-
-
 class BusinessProfile extends React.Component {
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			accountInfo: [],
-			businessInfo: []
+			business: []
 		}
 	}
 
+	//[{"name":"google","reward_rate":1,"expiration":"3/26/2025",
+	//"position":"Partner","verified":true,"email":"google@gmail.com","phoneNo":"408-415-7292"}]
+
 	componentDidMount(){
-		var that = this;
-		axios.get('http://localhost:8080/api/businessAccounts/search/findByEmail?email='+this.props.params.loginId)
-		      .then(res => {
-		      	const resAccountInfo = res.data._embedded;
-		      	this.setState({accountInfo: resAccountInfo}, ()=>{
-		      		//const businessLink = resAccountInfo._links;
-		      		console.log(that.state.accountInfo._links);
-		      	});
-		      	console.log(res.data);
-		      }); 
+		axios.get('http://localhost:8080/demo/findBusiness', {
+			params: {
+				email: this.props.params.loginId
+			}
+		})
+		.then(res => {
+			console.log(JSON.stringify(res.data.results[0]));
+			this.setState({business: res.data.results[0]});
+		}).catch(error => {
+			console.log(error);
+		});
 	}
 
 	render() {
 		return (
 	      <div>
 	      	<h2>Business Profile</h2>
-	      	<h3>Hello {this.props.params.loginId}</h3>
+	      	<h3>Info</h3>
+	      	{this.state.business && 
+	      	<div>
+		      	Company: <span className="text">{this.state.business.name}</span><br></br>
+		      	Position: <span className="text">{this.state.business.position}</span><br></br>
+		      	Contact Number: <span className="text">{this.state.business.phoneNo}</span><br></br>
+		      	Verified: <span className="text">{this.state.business.verified ? "Verified" : "Not Verified"}</span><br></br>
+		      	Account Expiration Date: <span className="text">{this.state.business.expiration}</span><br></br>
+		    </div>
+	      	}
+	      	<hr></hr>
 	      	<h3>Your month-to-month transaction will go here</h3>
 	      	<BusinessTransaction transaction={monTomon}/>
 	      </div>

@@ -15,7 +15,7 @@ class CustomerInfo extends React.Component {
 		return (
 	      <div>
 	      	<h3>Your Info</h3>
-	      	<hr id="divider"></hr>
+	      	<hr className="divider"></hr>
 	      	<div className="container">
 	      		<div className="inner-container">
 	      			First Name: {this.props.customer.firstName}<br></br>
