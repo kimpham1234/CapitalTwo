@@ -53,12 +53,17 @@ class CustomerProfile extends React.Component {
 		        this.setState({
 		        	user: resUser
 		        });
-		      }); 
+		    }); 
 	 	}
 	}
 
 	handleViewTransaction(){
-		hashHistory.push("/transactions/"+firebase.auth().currentUser.email);
+		hashHistory.push({
+			pathname:"/transactions/"+firebase.auth().currentUser.email,
+			state: {
+				account_id: this.state.user._links.self.href.substring("http://localhost:8080/api/customerAccounts/".length)
+			}
+		});
 	}
 
 	render() {

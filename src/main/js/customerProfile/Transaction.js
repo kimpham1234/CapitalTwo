@@ -14,7 +14,8 @@ class Transaction extends React.Component {
 			open: false,
 			inputDate: "2017-11-20",
 			inputCity: "",
-			inputState: ""
+			inputState: "",
+			account_id: 0
 		}
 
 		this.addTransaction = this.addTransaction.bind(this);
@@ -49,22 +50,16 @@ class Transaction extends React.Component {
 	}
 
 	showAll(){
-		axios.get('http://localhost:8080/api/transactions')
-	      .then(res => {
-	        const resTrans = res.data._embedded.transactions;
-	        console.log("axios "+ JSON.stringify(resTrans));
-	        this.setState({transactions: resTrans});
-        });
-	}
-
-	componentDidMount(){
-		/*
-		axios.get('http://localhost:8080/api/transactions')
-	      .then(res => {
-	        const resTrans = res.data._embedded.transactions;
-	        console.log("axios "+ JSON.stringify(resTrans));
-	        this.setState({transactions: resTrans});
-        });*/
+		axios.get('http://localhost:8080/demo/getCustomerTrans', {
+			params: {
+				account_id: this.props.location.state.account_id
+			}
+		})
+		.then(res => {
+			this.setState({transactions: res.data.results});
+		}).catch(error => {
+			console.log(error);
+		});
 	}
 
 	render() {
@@ -72,7 +67,7 @@ class Transaction extends React.Component {
 		<div id="container2">
 	      <h1>Transaction of {this.props.params.loginId}</h1>
 
-	      <Button className="primary" onClick={this.showAll}>Show All Transactions</Button> 
+	      <Button className="primary" onClick={this.showAll()}>Show All Transactions</Button> 
 	      <Button className="primary" onClick={this.toggle}>Add Transaction</Button>
 	      	<Panel collapsible expanded={this.state.open}>
 		      	<Form inline onSubmit={this.addTransaction}>
@@ -101,16 +96,30 @@ class Transaction extends React.Component {
 	      	</Panel>
 	      	<Table striped bordered condensed hover>
 	      	<thead>
-	      		<th>Date</th>
-	      		<th>City</th>
-	      		<th>State</th>
+		      	<tr>
+		      		<th>Transaction_Id</th>
+		      		<th>City</th>
+		      		<th>Cost</th>
+		      		<th>Date</th>
+		      		<th>State</th>
+		      		<th>Quantity</th>
+		      		<th>Merchant</th>
+		      		<th>Category</th>
+		      		<th>Card Id</th>
+		      	</tr>
 	      	</thead>
 	      	<tbody>
-	      	{this.state.transactions !=null && this.state.transactions.map((trans, index)=>
+	      		{this.state.transactions !=null && this.state.transactions.map((trans, index)=>
 		      		<tr key={index}>
-		      			<td>{trans.date}</td>
+		      			<td>{trans.transaction_id}</td>
 		      			<td>{trans.city}</td>
+		      			<td>{trans.cost}</td>
+		      			<td>{trans.date}</td>
 		      			<td>{trans.state}</td>
+		      			<td>{trans.quantity}</td>
+		      			<td>{trans.name}</td>
+		      			<td>{trans.category}</td>
+		      			<td>{trans.card_id}</td>
 		      		</tr>
 		      	)}
 	      	</tbody>

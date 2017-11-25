@@ -20,6 +20,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.Json;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
 
 
 @Controller    // This means that this class is a Controller
@@ -114,7 +115,7 @@ public class MainController {
                 }
                 else {
                     System.out.println("ERROR UNKNOWN CLASS TYPE: " + c);
-                    String str = (String)obj[j];
+                    String str = (String)(obj[j]+"");
                     jsonObject.add(fieldNames[j], str);
                 }
             }
@@ -148,8 +149,8 @@ public class MainController {
                     method=RequestMethod.GET,
                     produces = "application/json")
     @ResponseBody
-    public String getBusinessAccounts(@RequestParam("email") String email) {
-        String[] cols = {"name", "reward_rate", "expiration", "position","verified","email","phoneNo"};
+    public String getBusinessAccount(@RequestParam("email") String email) {
+        String[] cols = {"business_id", "name", "reward_rate", "expiration", "position","verified","email","phoneNo"};
         String query = String.join("\n"
             ,"SELECT"
             ,    "*"
@@ -161,6 +162,68 @@ public class MainController {
         return queryResults(query, cols);
     }
 
-    
+    @RequestMapping(value="/findCustomerId",
+                    params = "email", 
+                    method=RequestMethod.GET,
+                    produces = "application/json")
+    @ResponseBody
+    public String getCustomerAccountID(@RequestParam("email") String email) {
+        String[] cols = {"account_id"};
+        String query = String.join("\n"
+            ,"SELECT"
+            ,    "account_id"
+            ,"FROM"
+            ,    "account"
+            ,"WHERE"
+            ,    "email = '"+email+"'"
+        );
+        return queryResults(query, cols);
+    }
 
+    @RequestMapping(value="/getCustomerTrans",
+                    params = "account_id", 
+                    method=RequestMethod.GET,
+                    produces = "application/json")
+    @ResponseBody
+    public String getCustomerTransaction(@RequestParam("account_id") Long account_id) {
+        String[] cols = {"transaction_id","city","cost","date","state","business_id","card_id","quantity","name","category"};
+        String query = String.join("\n"
+            ,"SELECT"
+            ,    "*"
+            ,"FROM"
+            ,    "transaction_list"
+            ,"WHERE"
+            ,    "card_id in"
+            ,"("
+                ,"SELECT"
+                ,"customer_cards_card_number"
+                ,"FROM"
+                ,"customer_account_customer_cards"
+                ,"WHERE"
+                ,"customer_account_account_id = "+account_id+")"
+        );
+        //return em.createNativeQuery(query).getResultList().toString();
+        return queryResults(query, cols);
+    }  
+
+     @RequestMapping(value="/getBusinessTrans",
+                    params = "business_id", 
+                    method=RequestMethod.GET,
+                    produces = "application/json")
+    @ResponseBody
+    public String getBusinessTransaction(@RequestParam("business_id") Long business_id) {
+        String[] cols = {"transaction_id","city","cost","date","state","business_id","card_id","quantity","name","category"};
+        String query = String.join("\n"
+            ,"SELECT"
+            ,    "*"
+            ,"FROM"
+            ,    "transaction_list"
+            ,"WHERE"
+            ,    "business_id = "+business_id
+            ,"ORDER BY"
+            ,"date, transaction_id"
+        );
+        //return em.createNativeQuery(query).getResultList().toString();
+        return queryResults(query, cols);
+    }    
 }

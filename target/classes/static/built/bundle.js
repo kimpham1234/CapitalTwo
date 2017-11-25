@@ -75956,7 +75956,12 @@
 		}, {
 			key: 'handleViewTransaction',
 			value: function handleViewTransaction() {
-				_reactRouter.hashHistory.push("/transactions/" + firebase.auth().currentUser.email);
+				_reactRouter.hashHistory.push({
+					pathname: "/transactions/" + firebase.auth().currentUser.email,
+					state: {
+						account_id: this.state.user._links.self.href.substring("http://localhost:8080/api/customerAccounts/".length)
+					}
+				});
 			}
 		}, {
 			key: 'render',
@@ -76024,7 +76029,8 @@
 				open: false,
 				inputDate: "2017-11-20",
 				inputCity: "",
-				inputState: ""
+				inputState: "",
+				account_id: 0
 			};
 	
 			_this.addTransaction = _this.addTransaction.bind(_this);
@@ -76065,22 +76071,15 @@
 			value: function showAll() {
 				var _this2 = this;
 	
-				axios.get('http://localhost:8080/api/transactions').then(function (res) {
-					var resTrans = res.data._embedded.transactions;
-					console.log("axios " + JSON.stringify(resTrans));
-					_this2.setState({ transactions: resTrans });
+				axios.get('http://localhost:8080/demo/getCustomerTrans', {
+					params: {
+						account_id: this.props.location.state.account_id
+					}
+				}).then(function (res) {
+					_this2.setState({ transactions: res.data.results });
+				}).catch(function (error) {
+					console.log(error);
 				});
-			}
-		}, {
-			key: 'componentDidMount',
-			value: function componentDidMount() {
-				/*
-	   axios.get('http://localhost:8080/api/transactions')
-	        .then(res => {
-	          const resTrans = res.data._embedded.transactions;
-	          console.log("axios "+ JSON.stringify(resTrans));
-	          this.setState({transactions: resTrans});
-	         });*/
 			}
 		}, {
 			key: 'render',
@@ -76096,7 +76095,7 @@
 					),
 					React.createElement(
 						_reactBootstrap.Button,
-						{ className: 'primary', onClick: this.showAll },
+						{ className: 'primary', onClick: this.showAll() },
 						'Show All Transactions'
 					),
 					React.createElement(
@@ -76160,19 +76159,53 @@
 							'thead',
 							null,
 							React.createElement(
-								'th',
+								'tr',
 								null,
-								'Date'
-							),
-							React.createElement(
-								'th',
-								null,
-								'City'
-							),
-							React.createElement(
-								'th',
-								null,
-								'State'
+								React.createElement(
+									'th',
+									null,
+									'Transaction_Id'
+								),
+								React.createElement(
+									'th',
+									null,
+									'City'
+								),
+								React.createElement(
+									'th',
+									null,
+									'Cost'
+								),
+								React.createElement(
+									'th',
+									null,
+									'Date'
+								),
+								React.createElement(
+									'th',
+									null,
+									'State'
+								),
+								React.createElement(
+									'th',
+									null,
+									'Quantity'
+								),
+								React.createElement(
+									'th',
+									null,
+									'Merchant'
+								),
+								React.createElement(
+									'th',
+									null,
+									'Category'
+								),
+								React.createElement(
+									'th',
+									null,
+									'Card Id'
+								)
 							)
 						),
 						React.createElement(
@@ -76185,7 +76218,7 @@
 									React.createElement(
 										'td',
 										null,
-										trans.date
+										trans.transaction_id
 									),
 									React.createElement(
 										'td',
@@ -76195,7 +76228,37 @@
 									React.createElement(
 										'td',
 										null,
+										trans.cost
+									),
+									React.createElement(
+										'td',
+										null,
+										trans.date
+									),
+									React.createElement(
+										'td',
+										null,
 										trans.state
+									),
+									React.createElement(
+										'td',
+										null,
+										trans.quantity
+									),
+									React.createElement(
+										'td',
+										null,
+										trans.name
+									),
+									React.createElement(
+										'td',
+										null,
+										trans.category
+									),
+									React.createElement(
+										'td',
+										null,
+										trans.card_id
 									)
 								);
 							})
@@ -76447,7 +76510,8 @@
 			var _this = _possibleConstructorReturn(this, (BusinessProfile.__proto__ || Object.getPrototypeOf(BusinessProfile)).call(this, props));
 	
 			_this.state = {
-				business: []
+				business: [],
+				transaction: []
 			};
 			return _this;
 		}
@@ -76458,17 +76522,70 @@
 		_createClass(BusinessProfile, [{
 			key: 'componentDidMount',
 			value: function componentDidMount() {
-				var _this2 = this;
-	
+				var that = this;
+				/*
+	   axios.get('http://localhost:8080/demo/findBusiness', {
+	   	params: {
+	   		email: this.props.params.loginId
+	   	}
+	   })
+	   .then(res => {
+	   	console.log(JSON.stringify(res.data.results[0]));
+	   	this.setState({business: res.data.results[0]});
+	   }).catch(error => {
+	   	console.log(error);
+	   });
+	   	axios.get('http://localhost:8080/demo/getBusinessTrans', {
+	   	params: {
+	   		business_id: 2
+	   	}
+	   })
+	   .then(res => {
+	   	console.log(JSON.stringify(res.data.results));
+	   	this.setState({transaction: res.data.results[0]});
+	   }).catch(error => {
+	   	console.log(error);
+	   });*/
+				/*
+	   axios.all([
+	   	axios.get('http://localhost:8080/demo/findBusiness', {
+	   		params: {
+	   			email: this.props.params.loginId
+	   		}
+	   	}),
+	   	axios.get('http://localhost:8080/demo/getBusinessTrans', {
+	   		params: {
+	   			business_id: 2
+	   		}
+	   	})
+	   ])
+	   .then(axios.spread(function (res1, res2){
+	   	console.log(JSON.stringify(res1.data.results));
+	   	console.log(JSON.stringify(res2.data.results));
+	   	var businessInfo = res1.data.results[0];
+	   	var transactions = res2.data.results
+	   	that.setState({
+	   		business: businessInfo,
+	   		transaction: transactions
+	   	})
+	   }))*/
 				axios.get('http://localhost:8080/demo/findBusiness', {
 					params: {
 						email: this.props.params.loginId
 					}
 				}).then(function (res) {
-					console.log(JSON.stringify(res.data.results[0]));
-					_this2.setState({ business: res.data.results[0] });
-				}).catch(function (error) {
-					console.log(error);
+					console.log("res " + JSON.stringify(res.data.results[0]));
+					return axios.get('http://localhost:8080/demo/getBusinessTrans', {
+						params: {
+							business_id: res.data.results[0].business_id
+						}
+					}).then(function (res2) {
+						console.log("res 2" + JSON.stringify(res2.data.results));
+						that.setState({
+							business: res.data.results[0],
+							transaction: res2.data.results
+						});
+					});
 				});
 			}
 		}, {
@@ -76532,7 +76649,8 @@
 						null,
 						'Your month-to-month transaction will go here'
 					),
-					React.createElement(_BusinessTransaction2.default, { transaction: monTomon })
+					console.log("transaction " + this.state.transaction),
+					React.createElement(_BusinessTransaction2.default, { transaction: this.state.transaction })
 				);
 			}
 		}]);
@@ -76574,22 +76692,117 @@
 			return _possibleConstructorReturn(this, (BusinessTransaction.__proto__ || Object.getPrototypeOf(BusinessTransaction)).call(this, props));
 		}
 	
+		//"transaction_id","city","cost","date","state","business_id","card_id","quantity","name","category"
+	
+	
 		_createClass(BusinessTransaction, [{
 			key: 'render',
 			value: function render() {
 				return React.createElement(
 					'div',
 					null,
-					this.props.transaction.map(function (trans) {
-						return React.createElement(
-							'li',
-							{ key: trans.id },
-							trans.month,
-							' : $',
-							trans.amount
-						);
-					}),
-					';'
+					React.createElement(
+						_reactBootstrap.Table,
+						{ striped: true, bordered: true, condensed: true, hover: true },
+						React.createElement(
+							'thead',
+							null,
+							React.createElement(
+								'tr',
+								null,
+								React.createElement(
+									'th',
+									null,
+									'Transaction_Id'
+								),
+								React.createElement(
+									'th',
+									null,
+									'City'
+								),
+								React.createElement(
+									'th',
+									null,
+									'Cost'
+								),
+								React.createElement(
+									'th',
+									null,
+									'Date'
+								),
+								React.createElement(
+									'th',
+									null,
+									'State'
+								),
+								React.createElement(
+									'th',
+									null,
+									'Quantity'
+								),
+								React.createElement(
+									'th',
+									null,
+									'Category'
+								),
+								React.createElement(
+									'th',
+									null,
+									'Card Id'
+								)
+							)
+						),
+						React.createElement(
+							'tbody',
+							null,
+							this.props.transaction != null && this.props.transaction.map(function (trans, index) {
+								return React.createElement(
+									'tr',
+									{ key: index },
+									React.createElement(
+										'td',
+										null,
+										trans.transaction_id
+									),
+									React.createElement(
+										'td',
+										null,
+										trans.city
+									),
+									React.createElement(
+										'td',
+										null,
+										trans.cost
+									),
+									React.createElement(
+										'td',
+										null,
+										trans.date
+									),
+									React.createElement(
+										'td',
+										null,
+										trans.state
+									),
+									React.createElement(
+										'td',
+										null,
+										trans.quantity
+									),
+									React.createElement(
+										'td',
+										null,
+										trans.category
+									),
+									React.createElement(
+										'td',
+										null,
+										trans.card_id
+									)
+								);
+							})
+						)
+					)
 				);
 			}
 		}]);

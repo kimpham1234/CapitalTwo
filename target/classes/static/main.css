@@ -26,6 +26,9 @@ td, th {
 	margin: 20px;
 }
 
+.text {
+	text-decoration: capitalize;
+}
 
 #divider {
 	width: 60%;

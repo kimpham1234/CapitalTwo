@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.List;
 
 @Component
 public class DatabaseLoader implements CommandLineRunner {
@@ -130,34 +131,39 @@ public class DatabaseLoader implements CommandLineRunner {
         HashSet<TransactionItem> ti = new HashSet<TransactionItem>();
         HashSet<Item> itemsSeen = new HashSet<Item>();
 
-        Transaction transaction = new Transaction(
-            new Date(),
-            generateState(),
-            generateCity(),
-            card,
-            this.businesses.get(randomInt(0, businesses.size()-1)),
-            null
-        );
-        this.transactionRepo.save(transaction);
+        for(int j = 0 ; j < 5; j++){
+            Transaction transaction = new Transaction(
+                new Date(),
+                generateState(),
+                generateCity(),
+                card,
+                this.businesses.get(randomInt(0, businesses.size()-1)),
+                null
+            );
+            this.transactionRepo.save(transaction);
+
+            int sz = items.size();
+            int r = randomInt(0, sz - 1);
+            for (int i = 0; i < sz; ++i) {
+                Item currItem = items.get(randomInt(0, sz-1));
+                if (itemsSeen.add(currItem)) { // no duplicates
+                    TransactionItem tItem = new TransactionItem(
+                        transaction,
+                        currItem,
+                        randomInt(1, 5),
+                        (double)randomInt(5, 100)
+                    );
+                    transactionItemRepo.save(tItem);
+                    ti.add(tItem);
+                }
+            }
+            transaction.setTransactionItems(ti);
+            this.transactionRepo.save(transaction);
+            }
+
+        
         //System.out.println(transaction);
 
-        int sz = items.size();
-        int r = randomInt(0, sz - 1);
-        for (int i = 0; i < sz; ++i) {
-            Item currItem = items.get(randomInt(0, sz-1));
-            if (itemsSeen.add(currItem)) { // no duplicates
-                TransactionItem tItem = new TransactionItem(
-                    transaction,
-                    currItem,
-                    randomInt(1, 5),
-                    (double)randomInt(5, 100)
-                );
-                transactionItemRepo.save(tItem);
-                ti.add(tItem);
-            }
-        }
-        transaction.setTransactionItems(ti);
-        this.transactionRepo.save(transaction);
     }
 
     public static String[] BUSINESS_NAME = {
@@ -270,6 +276,24 @@ public class DatabaseLoader implements CommandLineRunner {
         generateBusinesses();
         generateBusinessAccounts();
 
+        List<CustomerAccount> accounts = this.customerRepo.findAll();
+
+        for(CustomerAccount acc : accounts){
+            Set<Card> ccards = new HashSet<Card>();
+            ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 1000));
+            ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 2000));
+            ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 1000));
+            ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 3000));
+            for (Card c : ccards) {
+                CreditCard cc = (CreditCard)c;
+                this.creditCardRepo.save(cc);
+            } 
+            acc.setCards(ccards);
+            this.customerRepo.save(acc);
+            generateTransactionItems(ccards.iterator().next());
+        }
+
+        /*
         CustomerAccount acc = this.customerRepo.findAll().get(0);
 
         Set<Card> ccards = new HashSet<Card>();
@@ -284,14 +308,12 @@ public class DatabaseLoader implements CommandLineRunner {
 
         acc.setCards(ccards);
         this.customerRepo.save(acc);
+        */
 
         //Item i1 = new Item("sponge", "spongey thing to clean stuff");
         //Item i2 = new Item("soap", "bubbly thing that makes squeakies");
 
-        generateTransactionItems(ccards.iterator().next());
-
-        
-
+       
         //Transaction tr = new Transaction
 
         //ccards.get(0)

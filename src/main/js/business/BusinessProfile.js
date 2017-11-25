@@ -24,7 +24,8 @@ class BusinessProfile extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			business: []
+			business: [],
+			transaction: []
 		}
 	}
 
@@ -32,6 +33,8 @@ class BusinessProfile extends React.Component {
 	//"position":"Partner","verified":true,"email":"google@gmail.com","phoneNo":"408-415-7292"}]
 
 	componentDidMount(){
+		var that = this;
+		/*
 		axios.get('http://localhost:8080/demo/findBusiness', {
 			params: {
 				email: this.props.params.loginId
@@ -43,6 +46,61 @@ class BusinessProfile extends React.Component {
 		}).catch(error => {
 			console.log(error);
 		});
+
+		axios.get('http://localhost:8080/demo/getBusinessTrans', {
+			params: {
+				business_id: 2
+			}
+		})
+		.then(res => {
+			console.log(JSON.stringify(res.data.results));
+			this.setState({transaction: res.data.results[0]});
+		}).catch(error => {
+			console.log(error);
+		});*/
+		/*
+		axios.all([
+			axios.get('http://localhost:8080/demo/findBusiness', {
+				params: {
+					email: this.props.params.loginId
+				}
+			}),
+			axios.get('http://localhost:8080/demo/getBusinessTrans', {
+				params: {
+					business_id: 2
+				}
+			})
+		])
+		.then(axios.spread(function (res1, res2){
+			console.log(JSON.stringify(res1.data.results));
+			console.log(JSON.stringify(res2.data.results));
+			var businessInfo = res1.data.results[0];
+			var transactions = res2.data.results
+			that.setState({
+				business: businessInfo,
+				transaction: transactions
+			})
+		}))*/
+		axios.get('http://localhost:8080/demo/findBusiness', {
+			params: {
+				email: this.props.params.loginId
+			}
+		})
+		.then((res) => {
+			console.log("res "+ JSON.stringify(res.data.results[0]));
+			return axios.get('http://localhost:8080/demo/getBusinessTrans', {
+				params: {
+					business_id: res.data.results[0].business_id
+				}
+			})
+			.then((res2) => {
+				console.log("res 2" + JSON.stringify(res2.data.results));
+				that.setState({
+					business: res.data.results[0],
+					transaction: res2.data.results
+				})
+			})
+		})
 	}
 
 	render() {
@@ -61,7 +119,8 @@ class BusinessProfile extends React.Component {
 	      	}
 	      	<hr></hr>
 	      	<h3>Your month-to-month transaction will go here</h3>
-	      	<BusinessTransaction transaction={monTomon}/>
+	      	{console.log("transaction " + this.state.transaction)}
+	      	{<BusinessTransaction transaction={this.state.transaction}/>}
 	      </div>
 	    );
 	 }
