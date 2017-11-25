@@ -76076,7 +76076,31 @@
 						account_id: this.props.location.state.account_id
 					}
 				}).then(function (res) {
-					_this2.setState({ transactions: res.data.results });
+					var transactions = res.data.results;
+					var compressedTran = [];
+					var preTrans = -1;
+	
+					for (var i = 0; i < transactions.length; i++) {
+						if (transactions[i].transaction_id != preTrans) {
+							var t = {
+								transaction_id: transactions[i].transaction_id,
+								city: transactions[i].city,
+								state: transactions[i].state,
+								date: transactions[i].date,
+								cost: transactions[i].cost,
+								card_id: transactions[i].card_id,
+								business_id: transactions[i].business_id,
+								name: transactions[i].name,
+								items: [{ category: transactions[i].category, quantity: transactions[i].quantity }]
+								//console.log(JSON.stringify(t));
+							};preTrans = transactions[i].transaction_id;
+							compressedTran.push(t);
+						} else {
+							compressedTran[compressedTran.length - 1].items.push({ category: transactions[i].category, quantity: transactions[i].quantity });
+						}
+					}
+					console.log(JSON.stringify(compressedTran));
+					_this2.setState({ transactions: compressedTran });
 				}).catch(function (error) {
 					console.log(error);
 				});
@@ -76095,7 +76119,7 @@
 					),
 					React.createElement(
 						_reactBootstrap.Button,
-						{ className: 'primary', onClick: this.showAll() },
+						{ className: 'primary', onClick: this.showAll },
 						'Show All Transactions'
 					),
 					React.createElement(
@@ -76169,12 +76193,7 @@
 								React.createElement(
 									'th',
 									null,
-									'City'
-								),
-								React.createElement(
-									'th',
-									null,
-									'Cost'
+									'Location'
 								),
 								React.createElement(
 									'th',
@@ -76184,12 +76203,12 @@
 								React.createElement(
 									'th',
 									null,
-									'State'
+									'Cost'
 								),
 								React.createElement(
 									'th',
 									null,
-									'Quantity'
+									'Card Id'
 								),
 								React.createElement(
 									'th',
@@ -76200,11 +76219,6 @@
 									'th',
 									null,
 									'Category'
-								),
-								React.createElement(
-									'th',
-									null,
-									'Card Id'
 								)
 							)
 						),
@@ -76223,12 +76237,7 @@
 									React.createElement(
 										'td',
 										null,
-										trans.city
-									),
-									React.createElement(
-										'td',
-										null,
-										trans.cost
+										trans.city + ", " + trans.state
 									),
 									React.createElement(
 										'td',
@@ -76238,12 +76247,12 @@
 									React.createElement(
 										'td',
 										null,
-										trans.state
+										trans.cost
 									),
 									React.createElement(
 										'td',
 										null,
-										trans.quantity
+										trans.card_id
 									),
 									React.createElement(
 										'td',
@@ -76253,12 +76262,20 @@
 									React.createElement(
 										'td',
 										null,
-										trans.category
-									),
-									React.createElement(
-										'td',
-										null,
-										trans.card_id
+										React.createElement(
+											'ul',
+											null,
+											'Category - Quantity',
+											trans.items.map(function (items, index2) {
+												return React.createElement(
+													'li',
+													{ key: index2 },
+													items.category,
+													' - ',
+													items.quantity
+												);
+											})
+										)
 									)
 								);
 							})

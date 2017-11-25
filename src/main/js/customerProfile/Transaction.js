@@ -15,7 +15,8 @@ class Transaction extends React.Component {
 			inputDate: "2017-11-20",
 			inputCity: "",
 			inputState: "",
-			account_id: 0
+			account_id: 0,
+			totalBalance: 0
 		}
 
 		this.addTransaction = this.addTransaction.bind(this);
@@ -56,7 +57,39 @@ class Transaction extends React.Component {
 			}
 		})
 		.then(res => {
-			this.setState({transactions: res.data.results});
+			var transactions = res.data.results;
+			var compressedTran = [];
+			var preTrans = -1;
+			var totalBalance = 0;
+
+			for(var i = 0; i < transactions.length; i++){
+				if(transactions[i].transaction_id!=preTrans){
+					var t = {
+						transaction_id: transactions[i].transaction_id,
+						city: transactions[i].city,
+						state: transactions[i].state,
+						date: transactions[i].date,
+						cost: transactions[i].cost,
+						card_id: transactions[i].card_id,
+						business_id: transactions[i].business_id,
+						name: transactions[i].name,
+						items: [
+							{ category: transactions[i].category, quantity: transactions[i].quantity}
+						]
+					}
+					totalBalance += transactions[i].cost;
+					//console.log(JSON.stringify(t));
+					preTrans = transactions[i].transaction_id;
+					compressedTran.push(t);
+				}else{
+					compressedTran[compressedTran.length-1].items.push({ category: transactions[i].category, quantity: transactions[i].quantity});
+				}
+			}
+			console.log(JSON.stringify(compressedTran));
+			this.setState({
+				transactions: compressedTran,
+				totalBalance: totalBalance
+			});
 		}).catch(error => {
 			console.log(error);
 		});
@@ -66,8 +99,9 @@ class Transaction extends React.Component {
 		return (
 		<div id="container2">
 	      <h1>Transaction of {this.props.params.loginId}</h1>
+	      <p>Total spent: {this.state.totalBalance}</p>
 
-	      <Button className="primary" onClick={this.showAll()}>Show All Transactions</Button> 
+	      <Button className="primary" onClick={this.showAll}>Show All Transactions</Button> 
 	      <Button className="primary" onClick={this.toggle}>Add Transaction</Button>
 	      	<Panel collapsible expanded={this.state.open}>
 		      	<Form inline onSubmit={this.addTransaction}>
@@ -98,28 +132,32 @@ class Transaction extends React.Component {
 	      	<thead>
 		      	<tr>
 		      		<th>Transaction_Id</th>
-		      		<th>City</th>
-		      		<th>Cost</th>
+		      		<th>Location</th>
 		      		<th>Date</th>
-		      		<th>State</th>
-		      		<th>Quantity</th>
+		      		<th>Cost</th>
+		      		<th>Card Id</th>
 		      		<th>Merchant</th>
 		      		<th>Category</th>
-		      		<th>Card Id</th>
 		      	</tr>
 	      	</thead>
 	      	<tbody>
 	      		{this.state.transactions !=null && this.state.transactions.map((trans, index)=>
 		      		<tr key={index}>
 		      			<td>{trans.transaction_id}</td>
-		      			<td>{trans.city}</td>
-		      			<td>{trans.cost}</td>
+		      			<td>{trans.city + ", " + trans.state}</td>
 		      			<td>{trans.date}</td>
-		      			<td>{trans.state}</td>
-		      			<td>{trans.quantity}</td>
-		      			<td>{trans.name}</td>
-		      			<td>{trans.category}</td>
+		      			<td>{trans.cost}</td>
 		      			<td>{trans.card_id}</td>
+		      			<td>{trans.name}</td>
+		      			<td>
+		      				<ul>Category - Quantity
+		      				{trans.items.map((items, index2) =>
+		      					<li key={index2}>
+		      						{items.category} - {items.quantity}
+		      					</li>
+		      				)}
+		      				</ul>
+		      			</td>
 		      		</tr>
 		      	)}
 	      	</tbody>
