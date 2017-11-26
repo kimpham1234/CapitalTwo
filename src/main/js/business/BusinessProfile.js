@@ -27,6 +27,7 @@ class BusinessProfile extends React.Component {
 			business: [],
 			transaction: []
 		}
+		this.compressTransaction = this.compressTransaction.bind(this);
 	}
 
 	//[{"name":"google","reward_rate":1,"expiration":"3/26/2025",
@@ -34,53 +35,7 @@ class BusinessProfile extends React.Component {
 
 	componentDidMount(){
 		var that = this;
-		/*
-		axios.get('http://localhost:8080/demo/findBusiness', {
-			params: {
-				email: this.props.params.loginId
-			}
-		})
-		.then(res => {
-			console.log(JSON.stringify(res.data.results[0]));
-			this.setState({business: res.data.results[0]});
-		}).catch(error => {
-			console.log(error);
-		});
-
-		axios.get('http://localhost:8080/demo/getBusinessTrans', {
-			params: {
-				business_id: 2
-			}
-		})
-		.then(res => {
-			console.log(JSON.stringify(res.data.results));
-			this.setState({transaction: res.data.results[0]});
-		}).catch(error => {
-			console.log(error);
-		});*/
-		/*
-		axios.all([
-			axios.get('http://localhost:8080/demo/findBusiness', {
-				params: {
-					email: this.props.params.loginId
-				}
-			}),
-			axios.get('http://localhost:8080/demo/getBusinessTrans', {
-				params: {
-					business_id: 2
-				}
-			})
-		])
-		.then(axios.spread(function (res1, res2){
-			console.log(JSON.stringify(res1.data.results));
-			console.log(JSON.stringify(res2.data.results));
-			var businessInfo = res1.data.results[0];
-			var transactions = res2.data.results
-			that.setState({
-				business: businessInfo,
-				transaction: transactions
-			})
-		}))*/
+	
 		axios.get('http://localhost:8080/demo/findBusiness', {
 			params: {
 				email: this.props.params.loginId
@@ -95,12 +50,45 @@ class BusinessProfile extends React.Component {
 			})
 			.then((res2) => {
 				console.log("res 2" + JSON.stringify(res2.data.results));
+				var compressedTran = that.compressTransaction(res2.data.results);
 				that.setState({
 					business: res.data.results[0],
-					transaction: res2.data.results
+					transaction: compressedTran
 				})
 			})
 		})
+	}
+
+	compressTransaction(data){
+		var transactions = data;
+		var compressedTran = [];
+		var preTrans = -1;
+		var totalBalance = 0;
+
+		for(var i = 0; i < transactions.length; i++){
+			if(transactions[i].transaction_id!=preTrans){
+				var t = {
+					transaction_id: transactions[i].transaction_id,
+					city: transactions[i].city,
+					state: transactions[i].state,
+					date: transactions[i].date,
+					cost: transactions[i].cost,
+					card_id: transactions[i].card_id,
+					business_id: transactions[i].business_id,
+					name: transactions[i].name,
+					items: [
+						{ category: transactions[i].category, quantity: transactions[i].quantity}
+					]
+				}
+				totalBalance += transactions[i].cost;
+				//console.log(JSON.stringify(t));
+				preTrans = transactions[i].transaction_id;
+				compressedTran.push(t);
+			}else{
+				compressedTran[compressedTran.length-1].items.push({ category: transactions[i].category, quantity: transactions[i].quantity});
+			}
+		}
+		return compressedTran;
 	}
 
 	render() {
@@ -120,7 +108,7 @@ class BusinessProfile extends React.Component {
 	      	<hr></hr>
 	      	<h3>Your month-to-month transaction will go here</h3>
 	      	{console.log("transaction " + this.state.transaction)}
-	      	{<BusinessTransaction transaction={this.state.transaction}/>}
+	      	{<BusinessTransaction transactions={this.state.transaction}/>}
 	      </div>
 	    );
 	 }

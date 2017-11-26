@@ -16,28 +16,34 @@ class BusinessTransaction extends React.Component {
 	      <div>
 	      	<Table striped bordered condensed hover>
 	      	<thead>
-	      		<tr>
+		      	<tr>
 		      		<th>Transaction_Id</th>
-		      		<th>City</th>
-		      		<th>Cost</th>
+		      		<th>Location</th>
 		      		<th>Date</th>
-		      		<th>State</th>
-		      		<th>Quantity</th>
-		      		<th>Category</th>
+		      		<th>Cost</th>
 		      		<th>Card Id</th>
-	      		</tr>
+		      		<th>Merchant</th>
+		      		<th>Category</th>
+		      	</tr>
 	      	</thead>
 	      	<tbody>
-	      		{this.props.transaction !=null && this.props.transaction.map((trans, index)=>
+	      		{this.props.transactions !=null && this.props.transactions.map((trans, index)=>
 		      		<tr key={index}>
 		      			<td>{trans.transaction_id}</td>
-		      			<td>{trans.city}</td>
-		      			<td>{trans.cost}</td>
+		      			<td>{trans.city + ", " + trans.state}</td>
 		      			<td>{trans.date}</td>
-		      			<td>{trans.state}</td>
-		      			<td>{trans.quantity}</td>
-		      			<td>{trans.category}</td>
+		      			<td>{trans.cost}</td>
 		      			<td>{trans.card_id}</td>
+		      			<td>{trans.name}</td>
+		      			<td>
+		      				<ul>Category - Quantity
+		      				{trans.items.map((items, index2) =>
+		      					<li key={index2}>
+		      						{items.category} - {items.quantity}
+		      					</li>
+		      				)}
+		      				</ul>
+		      			</td>
 		      		</tr>
 		      	)}
 	      	</tbody>

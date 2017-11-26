@@ -1,4 +1,7 @@
 import {Button, Table, Panel, Form, FormGroup, FormControl, ControlLabel} from 'react-bootstrap'
+import {LineChart} from 'react-easy-chart';
+import BusinessTransaction from '../business/BusinessTransaction.js'
+
 
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -100,6 +103,20 @@ class Transaction extends React.Component {
 		<div id="container2">
 	      <h1>Transaction of {this.props.params.loginId}</h1>
 	      <p>Total spent: {this.state.totalBalance}</p>
+	      <LineChart
+				    axes
+				    margin={{top: 10, right: 10, bottom: 50, left: 50}}
+				    axisLabels={{x: 'Date', y: '$'}}
+				    width={250}
+				    height={250}
+				    data={[
+				      [
+				        { x: 1, y: 20 },
+				        { x: 2, y: 10 },
+				        { x: 3, y: 25 }
+				      ]
+				    ]}
+			/>
 
 	      <Button className="primary" onClick={this.showAll}>Show All Transactions</Button> 
 	      <Button className="primary" onClick={this.toggle}>Add Transaction</Button>
@@ -128,40 +145,7 @@ class Transaction extends React.Component {
 				    </Button>
 				</Form>
 	      	</Panel>
-	      	<Table striped bordered condensed hover>
-	      	<thead>
-		      	<tr>
-		      		<th>Transaction_Id</th>
-		      		<th>Location</th>
-		      		<th>Date</th>
-		      		<th>Cost</th>
-		      		<th>Card Id</th>
-		      		<th>Merchant</th>
-		      		<th>Category</th>
-		      	</tr>
-	      	</thead>
-	      	<tbody>
-	      		{this.state.transactions !=null && this.state.transactions.map((trans, index)=>
-		      		<tr key={index}>
-		      			<td>{trans.transaction_id}</td>
-		      			<td>{trans.city + ", " + trans.state}</td>
-		      			<td>{trans.date}</td>
-		      			<td>{trans.cost}</td>
-		      			<td>{trans.card_id}</td>
-		      			<td>{trans.name}</td>
-		      			<td>
-		      				<ul>Category - Quantity
-		      				{trans.items.map((items, index2) =>
-		      					<li key={index2}>
-		      						{items.category} - {items.quantity}
-		      					</li>
-		      				)}
-		      				</ul>
-		      			</td>
-		      		</tr>
-		      	)}
-	      	</tbody>
-	      	</Table>
+	      	<BusinessTransaction transactions={this.state.transactions}/>
 	    </div>
 	    );
 	 }

@@ -9,31 +9,12 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const axios = require('axios');
 
-var sampleUser = {
-	firstName: "James",
-	middleName: "",
-	lastName: "Brolin",
-	age: 35,
-	income: 100000,
-	rewardPoints: 123
-}
-
-var sampleTrans = [
-	{id: 1 ,item: "egg", cost: 2},
-	{id: 2 ,item: "turkey", cost: 5},
-	{id: 3 ,item: "ham", cost: 20},
-	{id: 4 ,item: "cranberries", cost: 3},
-	{id: 5 ,item: "potatoes", cost: 2.39},
-	{id: 6 ,item: "sodas", cost: 3.99}
-]
-
 class CustomerProfile extends React.Component {
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			user: [],
-			trans: sampleTrans
+			user: []
 		}
 		console.log("Profile constructor");
 		this.handleViewTransaction = this.handleViewTransaction.bind(this);
