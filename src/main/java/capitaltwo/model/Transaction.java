@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.CascadeType;
 import java.util.Set;
 import java.util.Date;
+import java.util.Calendar;
 
 @Entity
 public class Transaction {
@@ -16,6 +17,9 @@ public class Transaction {
     @GeneratedValue(strategy=GenerationType.TABLE)
     private Long transactionId;
     private Date date; // timestamp of purchase
+    private int day;
+    private int month;
+    private int year;
     private double cost;
     private String state;
     private String city;
@@ -36,10 +40,16 @@ public class Transaction {
                        String city,
                        Card card,
                        Business business,
-                       Set<TransactionItem> items
-    ) {
+                       Set<TransactionItem> items) {
         System.out.println("creating transaction via not null");
         this.date = date;
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        this.day = c.get(Calendar.DATE);
+        this.month = c.get(Calendar.MONTH);
+        this.year = c.get(Calendar.YEAR);
+
         this.state = state;
         this.city = city;
         this.card = card;
@@ -57,8 +67,6 @@ public class Transaction {
         return cost;
     }
 
-    public Long getId() { return this.transactionId; }
-    
     public void setDate(Date d) { this.date = d; }
     public void setState(String state) { this.state = state; }
     public void setCity(String city) { this.city = city; }
@@ -68,6 +76,10 @@ public class Transaction {
         this.cost = computeCost();
     }
 
+    public Long getId() { return this.transactionId; }
+    public int getDay() { return this.day; }
+    public int getMonth() { return this.month; }
+    public int getYear() { return this.year; }
     public Date getDate() { return this.date; }
     public String getState() { return this.state; }
     public String getCity() { return this.city; }
