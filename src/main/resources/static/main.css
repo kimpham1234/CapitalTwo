@@ -7,3 +7,61 @@ td, th {
     padding: 0.5rem;
     text-align: left;
 }
+
+.inner-container {
+	width: 30%;
+	margin-right: 5%;
+	margin-left: 20px;
+	float: left;
+	font-family: sans-serif;
+	font-size: 14px;
+}
+
+.container {
+	margin-left: 0px !important;
+	margin-top: 0px;
+}
+
+.container2 {
+	margin: 20px;
+}
+
+.text {
+	text-decoration: capitalize;
+}
+
+#divider {
+	width: 60%;
+	margin-left: 20px;
+	border-top: 2px solid grey !important;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+h3 {
+	margin-left: 20px;
+}
+
+#card-panel.collapse.in {
+	border-top: 2px solid grey !important;
+	width: 60%;
+	margin-left: 20px;
+}
+
+#card-panel.panel-default {
+	border-color: white !important;
+	width: 60%;
+	margin-left: 20px;
+}
+
+#card-panel.panel {
+	border: none;
+	width: 60%;
+	margin-left: 20px;
+}
+
+#card-panel.collapse-trigger {
+	display: inline-block;
+	border-radius: 2px;
+	background-color: whitesmoke;
+}

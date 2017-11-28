@@ -1,6 +1,7 @@
 package capitaltwo;
 
 import java.util.List;
+import java.util.ArrayList;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonArray;
@@ -22,6 +23,11 @@ public class QueryUtils {
     }
 
     public static JsonArray toJson(List<Object[]> queryResults,
+                          String[] fieldNames) {
+        return toJsonBuilder(queryResults, fieldNames).build();
+    }
+
+    public static JsonArray toJsonBuilder(List<Object[]> queryResults,
                           String[] fieldNames) {
         if (queryResults.size() == 0)
             return null;
@@ -58,14 +64,37 @@ public class QueryUtils {
                     Boolean val = (Boolean)obj[j];
                     jsonObject.add(fieldNames[j], val);
                 }
+                else if (c == JsonArrayBuilder.class) {
+                    JsonArrayBuilder jArr = (JsonArrayBuilder)obj[j];
+                    jsonArray.add(jArr);
+                }
+                else if (c == JsonObjectBuilder.class) {
+                    JsonObjectBuilder jObj = (JsonObjectBuilder)obj[j];
+                    jsonObject.add(jObj);
+                }
                 else {
                     System.out.println("ERROR UNKNOWN CLASS TYPE: " + c);
-                    String str = (String)obj[j];
+                    String str = (String)obj[j].toString();
                     jsonObject.add(fieldNames[j], str);
                 }
             }
             jsonArray.add(jsonObject);
         }
-        return jsonArray.build();
+        return jsonArray;
+    }
+
+    public static ArrayList<Integer> stringArrayListToInt(ArrayList<String> strs) {
+        ArrayList<Integer> ints = new ArrayList<Integer>(strs.size());
+        for (int i = 0; i < strs.size(); ++i) {
+            try {
+                ints[i] = Integer.parseInt(strs[i]);
+            }
+            catch (Exception e) {
+                System.out.println("ERROR: INVALID STRING PASSED");
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return ints;
     }
 }

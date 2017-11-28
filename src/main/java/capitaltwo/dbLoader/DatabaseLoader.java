@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.List;
 
 @Component
 public class DatabaseLoader implements CommandLineRunner {
@@ -127,34 +128,39 @@ public class DatabaseLoader implements CommandLineRunner {
         HashSet<TransactionItem> ti = new HashSet<TransactionItem>();
         HashSet<Item> itemsSeen = new HashSet<Item>();
 
-        Transaction transaction = new Transaction(
-            new Date(),
-            generateState(),
-            generateCity(),
-            card,
-            this.businesses.get(randomInt(0, businesses.size()-1)),
-            null
-        );
-        this.transactionRepo.save(transaction);
+        for(int j = 0 ; j < 5; j++){
+            Transaction transaction = new Transaction(
+                new Date(),
+                generateState(),
+                generateCity(),
+                card,
+                this.businesses.get(randomInt(0, businesses.size()-1)),
+                null
+            );
+            this.transactionRepo.save(transaction);
+
+            int sz = items.size();
+            int r = randomInt(0, sz - 1);
+            for (int i = 0; i < sz; ++i) {
+                Item currItem = items.get(randomInt(0, sz-1));
+                if (itemsSeen.add(currItem)) { // no duplicates
+                    TransactionItem tItem = new TransactionItem(
+                        transaction,
+                        currItem,
+                        randomInt(1, 5),
+                        (double)randomInt(5, 100)
+                    );
+                    transactionItemRepo.save(tItem);
+                    ti.add(tItem);
+                }
+            }
+            transaction.setTransactionItems(ti);
+            this.transactionRepo.save(transaction);
+            }
+
+        
         //System.out.println(transaction);
 
-        int sz = items.size();
-        int r = randomInt(0, sz - 1);
-        for (int i = 0; i < sz; ++i) {
-            Item currItem = items.get(randomInt(0, sz-1));
-            if (itemsSeen.add(currItem)) { // no duplicates
-                TransactionItem tItem = new TransactionItem(
-                    transaction,
-                    currItem,
-                    randomInt(1, 5),
-                    (double)randomInt(5, 100)
-                );
-                transactionItemRepo.save(tItem);
-                ti.add(tItem);
-            }
-        }
-        transaction.setTransactionItems(ti);
-        this.transactionRepo.save(transaction);
     }
 
     public static String[] BUSINESS_NAME = {
@@ -171,6 +177,18 @@ public class DatabaseLoader implements CommandLineRunner {
                 this.BUSINESS_NAME[i], (double)randomInt(1, 5)
             ));
             this.businessRepo.save(businesses.get(i));
+        }
+    }
+
+    public void generateBusinessAccounts(){
+        for(Business b : businesses){
+            Set<BusinessAccount> accountSet = new HashSet<BusinessAccount>();
+            b.setAccounts(accountSet);
+            BusinessAccount newAccount = new BusinessAccount(b.getName(), "123456", "408-415-7292",
+                            b.getName().split(" ")[0]+"@gmail.com", randomInt(2020, 2025), randomInt(1,12),
+                            randomInt(1,30), "Partner", true, b);
+            b.addAccount(newAccount);
+            businessAccountRepo.save(newAccount);
         }
     }
 
@@ -252,7 +270,26 @@ public class DatabaseLoader implements CommandLineRunner {
         generateAccounts();
         generateItems();
         generateBusinesses();
+        generateBusinessAccounts();
 
+        List<CustomerAccount> accounts = this.customerRepo.findAll();
+
+        for(CustomerAccount acc : accounts){
+            Set<Card> ccards = new HashSet<Card>();
+            ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 1000));
+            ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 2000));
+            ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 1000));
+            ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 3000));
+            for (Card c : ccards) {
+                CreditCard cc = (CreditCard)c;
+                this.creditCardRepo.save(cc);
+            } 
+            acc.setCards(ccards);
+            this.customerRepo.save(acc);
+            generateTransactionItems(ccards.iterator().next());
+        }
+
+        /*
         CustomerAccount acc = this.customerRepo.findAll().get(0);
 
         Set<Card> ccards = new HashSet<Card>();
@@ -267,14 +304,12 @@ public class DatabaseLoader implements CommandLineRunner {
 
         acc.setCards(ccards);
         this.customerRepo.save(acc);
+        */
 
         //Item i1 = new Item("sponge", "spongey thing to clean stuff");
         //Item i2 = new Item("soap", "bubbly thing that makes squeakies");
 
-        generateTransactionItems(ccards.iterator().next());
-
-        
-
+       
         //Transaction tr = new Transaction
 
         //ccards.get(0)
@@ -283,7 +318,6 @@ public class DatabaseLoader implements CommandLineRunner {
         for (CreditCard c : ccards) {
             this.creditCardRepo.save(c);
         }
-
         ArrayList<DebitCard> dcards = new ArrayList<DebitCard>();
         dcards.add(new DebitCard(new Date(2020, 10, 19), 10000));
         dcards.add(new DebitCard(new Date(2020, 10, 19), 20000));
@@ -304,7 +338,6 @@ public class DatabaseLoader implements CommandLineRunner {
             new Date(2000, 11, 11),
             10000
         );
-
         CreditCard c1 = new CreditCard(new Date(2017, 10, 7), 4000);
         DebitCard d1 = new DebitCard(new Date(2017, 10, 9), 8000);
         c1.setAccount(acct);
