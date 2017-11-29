@@ -10,6 +10,7 @@ import javax.json.Json;
 import javax.persistence.EntityManager;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
 
 public class QueryUtils {
 
@@ -24,17 +25,20 @@ public class QueryUtils {
 
     public static JsonArray toJson(List<Object[]> queryResults,
                           String[] fieldNames) {
+        System.out.println(queryResults);
+        System.out.println(fieldNames);
         return toJsonBuilder(queryResults, fieldNames).build();
     }
 
-    public static JsonArray toJsonBuilder(List<Object[]> queryResults,
+    public static JsonArrayBuilder toJsonBuilder(List<Object[]> queryResults,
                           String[] fieldNames) {
-        if (queryResults.size() == 0)
-            return null;
+        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
+        if (queryResults.size() == 0) {
+            return jsonArray;
+        }
         if (queryResults.get(0).length != fieldNames.length) {
             System.out.println("ERROR: LENGTHS ARE NOT EQUAL");
         }
-        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
         for (int i = 0; i < queryResults.size(); ++i) {
             JsonObjectBuilder jsonObject = Json.createObjectBuilder();
             Object[] obj = queryResults.get(i);
@@ -56,6 +60,10 @@ public class QueryUtils {
                     Long num = (Long)obj[j];
                     jsonObject.add(fieldNames[j], num);
                 }
+                else if (c == Timestamp.class) {
+                    String t = ((Timestamp)obj[j]).toString();
+                    jsonObject.add(fieldNames[j], t);
+                }
                 else if (c == Double.class) { 
                     Double num = (Double)obj[j];
                     jsonObject.add(fieldNames[j], num);
@@ -63,14 +71,6 @@ public class QueryUtils {
                 else if (c == Boolean.class) {
                     Boolean val = (Boolean)obj[j];
                     jsonObject.add(fieldNames[j], val);
-                }
-                else if (c == JsonArrayBuilder.class) {
-                    JsonArrayBuilder jArr = (JsonArrayBuilder)obj[j];
-                    jsonArray.add(jArr);
-                }
-                else if (c == JsonObjectBuilder.class) {
-                    JsonObjectBuilder jObj = (JsonObjectBuilder)obj[j];
-                    jsonObject.add(jObj);
                 }
                 else {
                     System.out.println("ERROR UNKNOWN CLASS TYPE: " + c);
@@ -81,20 +81,5 @@ public class QueryUtils {
             jsonArray.add(jsonObject);
         }
         return jsonArray;
-    }
-
-    public static ArrayList<Integer> stringArrayListToInt(ArrayList<String> strs) {
-        ArrayList<Integer> ints = new ArrayList<Integer>(strs.size());
-        for (int i = 0; i < strs.size(); ++i) {
-            try {
-                ints[i] = Integer.parseInt(strs[i]);
-            }
-            catch (Exception e) {
-                System.out.println("ERROR: INVALID STRING PASSED");
-                e.printStackTrace();
-                return null;
-            }
-        }
-        return ints;
     }
 }

@@ -7,11 +7,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import java.util.List;
+import java.util.Date;
+import java.util.HashSet;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import java.sql.Timestamp;
 
@@ -26,13 +31,25 @@ public class MainController {
     private CreditCardRepository creditRepo;
     @Autowired
     private DebitCardRepository debitRepo;
-
+    @Autowired
+    private TransactionRepository transactionRepo;
+    @Autowired
+    private TransactionItemRepository transactionItemRepo;
     @Autowired
     private CustomerAccountRepository customerRepo;
+    @Autowired
+    private ItemRepository itemRepo;
+    @Autowired
+    private CreditCardRepository creditCardRepo;
+    @Autowired
+    private DebitCardRepository debitCardRepo;
+    @Autowired
+    private BusinessRepository businessRepo;
 
     @Autowired
     private EntityManager em;
 
+    // TODO DELTE THIS LATER
     @GetMapping(path="/add") // Map ONLY GET Requests
     public @ResponseBody String addNewUser (@RequestParam String name
             , @RequestParam String email) {
@@ -61,6 +78,7 @@ public class MainController {
         return q.getResultList();
         //return null;
     }
+    //TODO END DELETE
 
     private String queryResults(String query, String[] columns) {
         return QueryUtils.queryResults(em, query, columns);
@@ -123,12 +141,28 @@ public class MainController {
     }
 
     @RequestMapping(value="/getCustomerTrans",
-                    params = "account_id", 
+                    params = {"account_id", "start", "end", "item_id"},
                     method=RequestMethod.GET,
                     produces = "application/json")
     @ResponseBody
-    public String getCustomerTransaction(@RequestParam("account_id") Long account_id) {
-        String[] cols = {"transaction_id","city","cost","date","state","business_id","card_id","quantity","name","category"};
+    public String getCustomerTransaction(
+        @RequestParam("account_id") Long account_id,
+        @RequestParam("start") String start,
+        @RequestParam("end") String end,
+        @RequestParam("item_id") Long item_id) { // default is -1
+        String[] cols = {
+            "transaction_id","city","cost","date","state","business_id",
+            "card_id","quantity","name","category", "item_id"
+        };
+
+        String dateJoin = getDateJoinString(start, end);
+        if (dateJoin != "") {
+            dateJoin = " AND " + dateJoin;
+        }
+        String itemJoin = "";
+        if (item_id != null || item_id != -1) {
+            itemJoin = "AND transaction_list.item_id = " + item_id;
+        }
         String query = String.join("\n"
             ,"SELECT"
             ,    "*"
@@ -142,13 +176,16 @@ public class MainController {
                 ,"FROM"
                 ,"customer_account_customer_cards"
                 ,"WHERE"
-                ,"customer_account_account_id = "+account_id+")"
+                ,"customer_account_account_id = "+account_id
+                ,itemJoin
+            ,")"
+            ,dateJoin
         );
         //return em.createNativeQuery(query).getResultList().toString();
         return queryResults(query, cols);
     }  
 
-     @RequestMapping(value="/getBusinessTrans",
+    @RequestMapping(value="/getBusinessTrans",
                     params={"business_id", "start", "end"},
                     method=RequestMethod.GET,
                     produces="application/json")
@@ -159,20 +196,13 @@ public class MainController {
         @RequestParam("end") String end) {
         String[] cols = {
             "transaction_id","city","cost","date","state","business_id",
-            "card_id","quantity","name","category"
+            "card_id","quantity","name","category", "item_id"
         };
 
-        String dateJoin = "";
-        if (start != null && start != "") {
-            dateJoin += "date >= " + start;
-            if (end != null && end != "") {
-                dateJoin += " AND ";
-            }
+        String dateJoin = getDateJoinString(start, end);
+        if (dateJoin != "") {
+            dateJoin = " AND " + dateJoin;
         }
-        if (end != null && end != "") {
-            dateJoin += "date <= " + end;
-        }
-
         String query = String.join("\n"
             ,"SELECT"
             ,    "*"
@@ -185,110 +215,174 @@ public class MainController {
             ,"date, transaction_id"
         );
         return queryResults(query, cols);
-    }    
-
-
-    /****************** UNUSED ************/
-    /*
-    Example output:
-    {
-        results: {
-            city: 
-            cost:
-            date:
-            state:
-            business:
-            card_number:
-            transaction_items: [
-                {
-                    name:
-                    description:
-                    unit_price:
-                    quantity:
-                }
-            ]
-        }
     }
-    */
-    @RequestMapping(value="/getAllCustomerTrans",
-                    params={"email", "start", "end"},
+
+    // group: year=0, month=1
+    @RequestMapping(value="/getBusinessTransTotalByGroup",
+                    params={"business_id", "start", "end", "group"},
                     method=RequestMethod.GET,
                     produces="application/json")
     @ResponseBody
-    public String getAllCustomerTransaction(@RequestParam("email") String email,
-                                            @RequestParam("start") String start,
-                                            @RequestParam("end") String end) {
-        //ArrayList<Integer> startDate;
-        //ArrayList<Integer> endDate;
-        //if (!((start == null || start.equals("")) ||
-        //     (end == null || end.equals("")))) {
-        //    ArrayList<String> startParams = start.split("/");
-        //    ArrayList<String> endParams = end.split("/");
-        //    if (startParams.size() != endParams.size() != 3) { 
-        //        System.out.println("ERROR: INVALID PARAMETERS");
-        //        return "";
-        //    }
-        //    startDate = stringArrayListToInt(startDate);
-        //    endDate = stringArrayListToInt(endParams);
-        //} else {
-        //    startDate = Arrays.asList(DEFAULT_START_DATE);
-        //    endDate = Arrays.asList(DEFAULT_END_DATE);
-        //}
-        String[] cols = {
-            "city", "cost", "date", "state", "business", "card_number"};
-        //    "transaction_items"
-        //};
-        String query = String.join("\n"
-            ,"SELECT"
-            ,"   transaction.transaction_id"
-            ,"   transaction.city,"
-            ,"   transaction.cost,"
-            ,"   transaction.date,"
-            ,"   transaction.state,"
-            ,"   business.name,"
-            ,"   card.card_number"
-            ,"FROM"
-            ,"   account,"
-            ,"   card,"
-            ,"   transaction,"
-            ,"   business"
-            ,"WHERE"
-            ,   "account.email =" + email + "AND"
-            ,"   account.account_id = card.account_account_id AND"
-            ,"   card.card_number = transaction.card_card_number AND"
-            ,"   transaction.business_business_id = business.business_id AND"
-            ,"   transaction.date >= start AND transaction.date <= end;"
-        );
-        List<Object[]> queryResults = em.createNativeQuery(query).getResultList();
+    public String getBusinessTransactionTotalByGroup(
+        @RequestParam("business_id") Long business_id,
+        @RequestParam("start") String start,
+        @RequestParam("end") String end,
+        @RequestParam("group") Integer group) {
+        String[] cols;
+        if (group == 0) {
+            cols = new String[]{ "total", "year" };
+        }
+        else {
+            cols = new String[]{ "total", "month", "year" };
+        }
+        String dateJoin = getDateJoinString(start, end);
+        if (dateJoin != "") {
+            dateJoin = "WHERE " + dateJoin;
+        }
 
-        //String[] subCols = {
-        //    
-        //};
-        //for (Object[] obj : queryResults) {
-        //    BigInteger transId = (BigInteger)obj[0];
-        //    String subquery = String.join("\n"
-        //        ,"SELECT"
-        //        ,"    transaction_item.quantity,"
-        //        ,"    transaction_item.unit_price,"
-        //        ,"    item.name,"
-        //        ,"    item.description"
-        //        ,"FROM"
-        //        ,"    transaction_item,"
-        //        ,"    item"
-        //        ,"WHERE"
-        //        ,"    transaction_item.item_item_id = item.item_id AND"
-        //        ,"    transaction_item.transaction_transaction_id = " + transId + ";"
-        //    );
-        //    ArrayList<Object> objArrList = new ArrayList<Object>(Arrays.asList(obj));
-        //    objArrList.
-        //}
-        return Json.createObjectBuilder().add("results", toJson(queryResults, cols))
-            .build().toString();
+        String groupBy = group == 0 ?
+            "transaction.year" : "transaction.month, transaction.year";
+        
+        String query = String.join("\n"
+			,"SELECT                                "
+			,"	SUM(transaction.cost),              "
+            , groupBy
+			,"FROM                                  "
+			,"	transaction                         "
+            , dateJoin
+			,"GROUP BY                              "
+			, groupBy
+        );
+        return queryResults(query, cols);
     }
 
-    //private String getTransactionItemsHelper(
+    private String getDateJoinString(String start, String end) {
+        String dateJoin = "";
+        if (start != null && !start.equals("") && !start.equals("NONE")) {
+            dateJoin += "date >= \"" + start + "\"";
+            if (end != null && !end.equals("") && !end.equals("NONE")) {
+                dateJoin += " AND ";
+            }
+        }
+        if (end != null && !end.equals("") && !end.equals("NONE")) {
+            dateJoin += "date <= \"" + end + "\"";
+        }
+        System.out.println(dateJoin);
+        return dateJoin;
+    }
 
-    /* {Date, Month, Year} */
-    private static Integer[] DEFAULT_START_DATE = {1, 1, 0};
-    private static Integer[] DEFAULT_END_DATE = {1, 1, 9990};
+    @RequestMapping(value = "/createTransaction",
+                    params={"date", "state", "city", "card_id",
+                            "business_id", "items[]"},
+                    method = RequestMethod.GET)
+    public @ResponseBody String addTransaction (
+        @RequestParam("date") String date,
+        @RequestParam("state") String state,
+        @RequestParam("city") String city,
+        @RequestParam("card_id") Long card_id,
+        @RequestParam("business_id") Long business_id,
+        @RequestParam("items[]") String[] items) {
+
+		DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
+
+        Card currCard = creditCardRepo.findById(card_id);
+        if (currCard == null) {
+            currCard = debitCardRepo.findById(card_id);
+            if (currCard == null) {
+                System.out.println("failed at card");
+                return "Failure";
+            }
+        }
+        Business currBusiness = businessRepo.findById(business_id);
+        if (currBusiness == null) {
+            System.out.println("failed at business");
+            return "Failure";
+        }
+
+        Date d = null;
+        try {
+            d = df.parse(date);
+        }
+        catch (Exception e) {
+            System.out.println("INVALID DATE FORMAT");
+            e.printStackTrace();
+            System.out.println("failed at date format");
+            return "Failure";
+        }
+
+        Transaction trans = new Transaction(
+            d,
+            state,
+            city,
+            currCard,
+            currBusiness,
+            null
+        );
+        System.out.println("Creating transaction...");
+        System.out.println(trans);
+        this.transactionRepo.save(trans);
+
+        HashSet<TransactionItem> ti = new HashSet<TransactionItem>();
+        for (String s : items) {
+            String[] strs = s.split(",");
+            Item currItem = itemRepo.findById(Long.parseLong(strs[0]));
+            if (currItem == null) {
+                System.out.println("FAILED TO FIND ITEM");
+                return "FAILED";
+            }
+            TransactionItem tItem = new TransactionItem(
+                trans,
+                currItem,
+                Integer.parseInt(strs[1]),
+                Integer.parseInt(strs[2])
+            );
+            ti.add(tItem);
+            this.transactionItemRepo.save(tItem);
+        }
+        trans.setTransactionItems(ti);
+        this.transactionRepo.save(trans);
+        return "Success";
+    }
+
+
+    /*
+    Update fields
+        birth_day : integer
+        birth_month : integer
+        birth_year : integer
+        ethnicity : integer
+        gender : integer
+        first_name : string
+        middle_name : string
+        last_name : string
+        email : string (this has to change in firebase too)
+        password : string (this has to change in firebase too)
+    */
+    @Transactional // allows update or delete
+    @RequestMapping(value="/updateCustomerAccount",
+                    params={"account_id", "fields[]", "values[]"},
+                    method=RequestMethod.GET)
+    public @ResponseBody String updateCustomerAccountField (
+        @RequestParam("account_id") Long account_id,
+        @RequestParam("fields[]") String[] fields,
+        @RequestParam("values[]") String[] values) {
+
+        String fieldUpdates = "";
+        for (int i = 0; i < fields.length; ++i) {
+            fieldUpdates = fieldUpdates + fields[i] + " = " + values[i];
+            if (i != fields.length - 1) {
+                fieldUpdates = fieldUpdates + ", ";
+            }
+        }
+
+        String query = String.join("\n"
+            ,"UPDATE"
+            ,"account, customer_account"
+            ,"SET"
+            ,fieldUpdates
+            ,"WHERE account.account_id = " + account_id
+            ,"AND account.account_id = customer_account.account_id"
+        );
+        return em.createNativeQuery(query).executeUpdate() > 0 ? "Success" : "Fail";
+    }
 }

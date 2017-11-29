@@ -32,7 +32,7 @@ public class Transaction {
     private Set<TransactionItem> transactionItems;
 
     protected Transaction() {
-        System.out.println("Creating null transaction");
+        //System.out.println("Creating null transaction");
     }
 
     public Transaction(Date date,
@@ -41,13 +41,13 @@ public class Transaction {
                        Card card,
                        Business business,
                        Set<TransactionItem> items) {
-        System.out.println("creating transaction via not null");
+        //System.out.println("creating transaction via not null");
         this.date = date;
 
         Calendar c = Calendar.getInstance();
         c.setTime(date);
         this.day = c.get(Calendar.DATE);
-        this.month = c.get(Calendar.MONTH);
+        this.month = c.get(Calendar.MONTH) + 1;
         this.year = c.get(Calendar.YEAR);
 
         this.state = state;
@@ -67,7 +67,14 @@ public class Transaction {
         return cost;
     }
 
-    public void setDate(Date d) { this.date = d; }
+    public void setDate(Date d) {
+        this.date = d;
+        Calendar c = Calendar.getInstance();
+        c.setTime(d);
+        this.day = c.get(Calendar.DATE);
+        this.month = c.get(Calendar.MONTH) + 1;
+        this.year = c.get(Calendar.YEAR);
+    }
     public void setState(String state) { this.state = state; }
     public void setCity(String city) { this.city = city; }
     public void setCard(Card card) { this.card = card; }

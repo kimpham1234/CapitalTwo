@@ -54,6 +54,61 @@ class Transaction extends React.Component {
 	}
 
 	showAll(){
+
+        // TODO
+		axios.get('http://localhost:8080/demo/getCustomerTrans', {
+			params: {
+				account_id: this.props.location.state.account_id,
+                // TODO @KIM AXIOS GETS RID OF NULL PARAMETERS
+                start: "NONE",
+                end: "NONE",
+                item_id: 7
+			}
+		})
+
+        /*
+        // WORKING CREATE TRANSACTION EXAMPLE
+		axios.get('http://localhost:8080/demo/createTransaction', {
+            params: {
+                date: "2017-1-1",
+                state: "CA",
+                city: "SJ",
+                card_id: 26,
+                business_id: 16,
+                items: [
+                    "6,1,1",
+                    "7,1,1",
+                    "8,1,1",
+                ]
+            }
+		})
+		.then(function (response) {
+			console.log(response);
+		})
+		.catch(function (error) {
+			console.log(error);
+		});
+        */
+
+        
+        /*
+        // WORKING EXAMPLE, NOT SURE IF ALL FIELDS WORK
+		axios.get('http://localhost:8080/demo/updateCustomerAccount', {
+            params: {
+                account_id: 1,
+                fields: ["birth_day", "birth_month", "birth_year", "first_name"],
+                values: ["7", "8", "1999", "\"Dankold\""] // QUOTES NEEDED FOR STRINGS
+            }
+		})
+		.then(function (response) {
+			console.log(response);
+		})
+		.catch(function (error) {
+			console.log(error);
+		});
+        */
+
+
 		axios.get('http://localhost:8080/demo/getCustomerTrans', {
 			params: {
 				account_id: this.props.location.state.account_id
