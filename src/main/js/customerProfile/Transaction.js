@@ -21,7 +21,10 @@ class Transaction extends React.Component {
 			inputCity: "",
 			inputState: "",
 			account_id: 0,
-			totalBalance: 0
+			totalBalance: 0,
+			all: true,
+			from: Date,
+			to: Date
 		}
 
 		this.addTransaction = this.addTransaction.bind(this);
@@ -37,14 +40,20 @@ class Transaction extends React.Component {
 	}
 
 	handleChange(event){
-		console.log("event " + event);
-		if(event!=null){
-			const target = event.target;
-			const value = target.value;
-			const name = target.name;
-			this.setState({
-				[name]: value
-			});
+		if(event!=null && event.target.type == 'checkbox'){
+			var all = this.state.all;
+			this.setState({all: !all})
+			event.target.checked = !all;
+		}else{
+			//console.log("event " + event);
+			if(event!=null){
+				const target = event.target;
+				const value = target.value;
+				const name = target.name;
+				this.setState({
+					[name]: value
+				});
+			}
 		}
 	}
 
@@ -59,87 +68,39 @@ class Transaction extends React.Component {
 	showLineChart(){
 		var data = [];
 		var transactions = this.state.transactions.slice();
-		console.log("show line chart " + this.state.transactions);
-		
-		for(var i = 0; i < transactions.length; i++){
-			var p = {x: transactions.date, y: transactions.cost};
-			data.push(p);
-		}
-		data.reverse();
-		const chartData = [data];
 
 		
-		/*
+		for(var i = 0; i < transactions.length; i++){
+			var p = {x: transactions[i].date.substring(0,11), y: transactions[i].cost};
+			data.push(p);
+		}
+
+		data.reverse();
+		console.log("data " + JSON.stringify(data));		
+		
 		hashHistory.push({
 			pathname: "/lineChart",
 			state: {
-				data: chartData
+				data: [data]
 			}
-		});*/
+		});
+
 	}
 
 	showAll(){
+		var start = "";
+		var end = "";
 
-        // TODO
-        /*
+		if(!this.state.all){
+			start = this.state.from;
+			end = this.state.to
+		}
+		console.log("date " + start + " " +end);
 		axios.get('http://localhost:8080/demo/getCustomerTrans', {
 			params: {
 				account_id: this.props.location.state.account_id,
-                // TODO @KIM AXIOS GETS RID OF NULL PARAMETERS
-                start: "NONE",
-                end: "NONE",
-                item_id: 7
-			}
-		})*/
-
-        /*
-        // WORKING CREATE TRANSACTION EXAMPLE
-		axios.get('http://localhost:8080/demo/createTransaction', {
-            params: {
-                date: "2017-1-1",
-                state: "CA",
-                city: "SJ",
-                card_id: 26,
-                business_id: 16,
-                items: [
-                    "6,1,1",
-                    "7,1,1",
-                    "8,1,1",
-                ]
-            }
-		})
-		.then(function (response) {
-			console.log(response);
-		})
-		.catch(function (error) {
-			console.log(error);
-		});
-        */
-
-        
-        /*
-        // WORKING EXAMPLE, NOT SURE IF ALL FIELDS WORK
-		axios.get('http://localhost:8080/demo/updateCustomerAccount', {
-            params: {
-                account_id: 1,
-                fields: ["birth_day", "birth_month", "birth_year", "first_name"],
-                values: ["7", "8", "1999", "\"Dankold\""] // QUOTES NEEDED FOR STRINGS
-            }
-		})
-		.then(function (response) {
-			console.log(response);
-		})
-		.catch(function (error) {
-			console.log(error);
-		});
-        */
-
-
-		axios.get('http://localhost:8080/demo/getCustomerTrans', {
-			params: {
-				account_id: this.props.location.state.account_id,
-				start: "",
-				end: "",
+				start: start,
+				end: end,
 				item_id: -1
 			}
 		})
@@ -180,6 +141,47 @@ class Transaction extends React.Component {
 		}).catch(error => {
 			console.log(error);
 		});
+		/*
+        // WORKING CREATE TRANSACTION EXAMPLE
+		axios.get('http://localhost:8080/demo/createTransaction', {
+            params: {
+                date: "2017-1-1",
+                state: "CA",
+                city: "SJ",
+                card_id: 26,
+                business_id: 16,
+                items: [
+                    "6,1,1",
+                    "7,1,1",
+                    "8,1,1",
+                ]
+            }
+		})
+		.then(function (response) {
+			console.log(response);
+		})
+		.catch(function (error) {
+			console.log(error);
+		});
+        */
+
+        
+        /*
+        // WORKING EXAMPLE, NOT SURE IF ALL FIELDS WORK
+		axios.get('http://localhost:8080/demo/updateCustomerAccount', {
+            params: {
+                account_id: 1,
+                fields: ["birth_day", "birth_month", "birth_year", "first_name"],
+                values: ["7", "8", "1999", "\"Dankold\""] // QUOTES NEEDED FOR STRINGS
+            }
+		})
+		.then(function (response) {
+			console.log(response);
+		})
+		.catch(function (error) {
+			console.log(error);
+		});
+        */
 	}
 
 	render() {
@@ -187,7 +189,17 @@ class Transaction extends React.Component {
 		<div id="container2">
 	      <h1>Transaction of {this.props.params.loginId}</h1>
 	      <p>Total spent: {this.state.totalBalance}</p>
-	      <Button className="primary" onClick={this.showAll}>Show All Transactions</Button> 
+
+	      <div>
+	      	<Button className="primary" onClick={this.showAll}>Show All Transactions</Button>
+	      	<ControlLabel className="date-label">All Transactions</ControlLabel>
+		  	<FormControl id="all-checkbox" type="checkbox" name="all" onChange={this.handleChange} checked={this.state.all}/>
+		    <ControlLabel className="date-label">From</ControlLabel>
+		  	<FormControl className="date-input" type="date" name="from" value={this.state.from} onChange={this.handleChange}/>
+		    <ControlLabel className="date-label">To</ControlLabel>
+		    <FormControl className="date-input" type="date" name="to" value={this.state.to} onChange={this.handleChange}/>
+	      </div>
+
 	      <Button className="primary" onClick={this.toggle}>Add Transaction</Button>
 	      <Button className="primary" onClick={this.showLineChart}>Line Chart</Button>
 	      	<Panel collapsible expanded={this.state.open}>
@@ -222,3 +234,6 @@ class Transaction extends React.Component {
 }
 
 export default Transaction;
+
+
+        

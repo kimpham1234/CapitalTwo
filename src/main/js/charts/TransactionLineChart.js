@@ -15,12 +15,16 @@ class TransactionLineChart extends React.Component {
 			<div>
 			  <h1>Line chart</h1>
 		      <LineChart
-					    axes
-					    margin={{top: 10, right: 10, bottom: 50, left: 50}}
-					    axisLabels={{x: 'Date', y: '$'}}
-					    width={250}
-					    height={250}
-					    data={ this.props.location.state.data }
+		      	xType={'text'}
+			    axes
+			    grid
+			    dataPoints
+			    lineColors={['tomato']}
+			    margin={{top: 10, right: 30, bottom: 50, left: 50}}
+			    axisLabels={{x: 'Date', y: '$'}}
+			    width={750}
+			    height={500}
+			    data={ this.props.location.state.data }
 				/>
 			</div>
 	    );

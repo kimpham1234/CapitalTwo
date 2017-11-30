@@ -1,4 +1,5 @@
 import {Button} from 'react-bootstrap'
+import {hashHistory} from 'react-router'
 import BusinessTransaction from './BusinessTransaction.js'
 
 const React = require('react');
@@ -25,9 +26,10 @@ class BusinessProfile extends React.Component {
 		super(props);
 		this.state = {
 			business: [],
-			transaction: []
+			transactions: []
 		}
 		this.compressTransaction = this.compressTransaction.bind(this);
+		this.showLineChart = this.showLineChart.bind(this);
 	}
 
 	//[{"name":"google","reward_rate":1,"expiration":"3/26/2025",
@@ -45,7 +47,9 @@ class BusinessProfile extends React.Component {
 			console.log("res "+ JSON.stringify(res.data.results[0]));
 			return axios.get('http://localhost:8080/demo/getBusinessTrans', {
 				params: {
-					business_id: res.data.results[0].business_id
+					business_id: res.data.results[0].business_id,
+					start: "",
+					end: ""
 				}
 			})
 			.then((res2) => {
@@ -53,10 +57,33 @@ class BusinessProfile extends React.Component {
 				var compressedTran = that.compressTransaction(res2.data.results);
 				that.setState({
 					business: res.data.results[0],
-					transaction: compressedTran
+					transactions: compressedTran
 				})
 			})
 		})
+	}
+
+
+	showLineChart(){
+		var data = [];
+		var transactions = this.state.transactions.slice();
+
+		
+		for(var i = 0; i < transactions.length; i++){
+			var p = {x: transactions[i].date.substring(0,11), y: transactions[i].cost};
+			data.push(p);
+		}
+
+		data.reverse();
+		console.log("data " + JSON.stringify(data));		
+		
+		hashHistory.push({
+			pathname: "/lineChart",
+			state: {
+				data: [data]
+			}
+		});
+
 	}
 
 	compressTransaction(data){
@@ -107,8 +134,11 @@ class BusinessProfile extends React.Component {
 	      	}
 	      	<hr></hr>
 	      	<h3>Your month-to-month transaction will go here</h3>
-	      	{console.log("transaction " + this.state.transaction)}
-	      	{<BusinessTransaction transactions={this.state.transaction}/>}
+	      	<div className="button-panel"> 
+	      		<Button className="primary" onClick={this.showLineChart}>Line Chart</Button>
+	      	</div>
+	      	{console.log("transaction " + this.state.transactions)}
+	      	{<BusinessTransaction transactions={this.state.transactions}/>}
 	      </div>
 	    );
 	 }
