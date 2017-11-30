@@ -9,6 +9,7 @@ import CustomerProfile from './customerProfile/CustomerProfile.js'
 import Transaction from './customerProfile/Transaction.js'
 import BusinessProfile from './business/BusinessProfile.js'
 import TransactionLineChart from './charts/TransactionLineChart.js'
+import CategoryPieChart from './charts/CategoryPieChart.js'
 
 import * as firebase from 'firebase'
 
@@ -33,6 +34,7 @@ render((
 			<Route path="/transactions/:loginId" component={Transaction}/>
 			<Route path="/businessProfile/:loginId" component={BusinessProfile}/>
 			<Route path="/lineChart" component={TransactionLineChart}/>
+			<Route path="/pieChart" component={CategoryPieChart}/>
 		</Route>
 	</Router>
 ),document.getElementById('react'))

@@ -15,6 +15,7 @@ class Transaction extends React.Component {
 
 		this.state = {
 			transactions: [],
+			item_list:[],
 			open: false,
 			lineChartOpen: false,
 			inputDate: "2017-11-20",
@@ -77,7 +78,7 @@ class Transaction extends React.Component {
 		}
 
 		data.reverse();
-		console.log("data " + JSON.stringify(data));		
+		//console.log("data " + JSON.stringify(data));		
 		
 		hashHistory.push({
 			pathname: "/lineChart",
@@ -85,7 +86,14 @@ class Transaction extends React.Component {
 				data: [data]
 			}
 		});
+	}
 
+	componentDidMount(){
+		axios.get('http://localhost:8080/demo/getItemList')
+			.then(res =>{
+				console.log(JSON.stringify(res.data));
+				this.setState({item_list: res.data.results});
+			});
 	}
 
 	showAll(){
@@ -191,14 +199,31 @@ class Transaction extends React.Component {
 	      <h1>Transaction of {this.props.params.loginId}</h1>
 	      <p>Total spent: {this.state.totalBalance}</p>
 
-	      <div>
+
+	      <div id="filtering-panel">
+	      	{/*Get All transaction*/}
+
 	      	<Button className="primary" onClick={this.showAll}>Show All Transactions</Button>
 	      	<ControlLabel className="date-label">All Transactions</ControlLabel>
 		  	<FormControl id="all-checkbox" type="checkbox" name="all" onChange={this.handleChange} checked={this.state.all}/>
+
+		  	{/* Filter by Date Range */}
+
 		    <ControlLabel className="date-label">From</ControlLabel>
 		  	<FormControl className="date-input" type="date" name="from" value={this.state.from} onChange={this.handleChange}/>
 		    <ControlLabel className="date-label">To</ControlLabel>
 		    <FormControl className="date-input" type="date" name="to" value={this.state.to} onChange={this.handleChange}/>
+
+		    {/* Filter by Item Selection */}
+		    <ControlLabel className="date-label">Category</ControlLabel>
+		    <FormControl componentClass="select" className="date-input" placeholder="Category">
+		    	<option value="Category">Category</option>
+		    	{ this.state.item_list.map((item) => (
+		    		<option value={item.item_id}>{item.name}</option>
+		    	  )
+		    	)}
+		    </FormControl>
+
 	      </div>
 
 	      <Button className="primary" onClick={this.toggle}>Add Transaction</Button>

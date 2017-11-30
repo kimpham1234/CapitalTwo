@@ -140,6 +140,21 @@ public class MainController {
         return queryResults(query, cols);
     }
 
+    @RequestMapping(value="/getItemList",
+                    method=RequestMethod.GET,
+                    produces = "application/json")
+    @ResponseBody
+    public String getItemList() {
+        String[] cols = {"item_id", "description", "name"};
+        String query = String.join("\n"
+            ,"SELECT"
+            ,    "*"
+            ,"FROM"
+            ,    "item"
+        );
+        return queryResults(query, cols);
+    }
+
     @RequestMapping(value="/getCustomerTrans",
                     params = {"account_id", "start", "end", "item_id"},
                     method=RequestMethod.GET,
