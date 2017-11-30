@@ -160,9 +160,13 @@ public class MainController {
             dateJoin = " AND " + dateJoin;
         }
         String itemJoin = "";
-        if (item_id != null || item_id != -1) {
-            itemJoin = "AND transaction_list.item_id = " + item_id;
+        if (item_id != null && item_id != -1) {
+            itemJoin = " AND transaction_list.item_id = " + item_id;
         }
+
+        System.out.println("item join "+itemJoin);
+        System.out.println("date join " + dateJoin);
+
         String query = String.join("\n"
             ,"SELECT"
             ,    "*"
@@ -177,8 +181,8 @@ public class MainController {
                 ,"customer_account_customer_cards"
                 ,"WHERE"
                 ,"customer_account_account_id = "+account_id
-                ,itemJoin
             ,")"
+            ,itemJoin
             ,dateJoin
         );
         //return em.createNativeQuery(query).getResultList().toString();

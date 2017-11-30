@@ -81,6 +81,7 @@ class Transaction extends React.Component {
 	showAll(){
 
         // TODO
+        /*
 		axios.get('http://localhost:8080/demo/getCustomerTrans', {
 			params: {
 				account_id: this.props.location.state.account_id,
@@ -89,7 +90,7 @@ class Transaction extends React.Component {
                 end: "NONE",
                 item_id: 7
 			}
-		})
+		})*/
 
         /*
         // WORKING CREATE TRANSACTION EXAMPLE
@@ -136,7 +137,10 @@ class Transaction extends React.Component {
 
 		axios.get('http://localhost:8080/demo/getCustomerTrans', {
 			params: {
-				account_id: this.props.location.state.account_id
+				account_id: this.props.location.state.account_id,
+				start: "",
+				end: "",
+				item_id: -1
 			}
 		})
 		.then(res => {
