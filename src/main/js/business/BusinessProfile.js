@@ -1,4 +1,4 @@
-import {Button} from 'react-bootstrap'
+import {Button, ControlLabel, FormControl} from 'react-bootstrap'
 import {hashHistory} from 'react-router'
 import BusinessTransaction from './BusinessTransaction.js'
 
@@ -26,10 +26,17 @@ class BusinessProfile extends React.Component {
 		super(props);
 		this.state = {
 			business: [],
-			transactions: []
+			transactions: [],
+			all: true,
+			from: Date,
+			to: Date,
+			initial: true,
+			business_id: 0
 		}
 		this.compressTransaction = this.compressTransaction.bind(this);
 		this.showLineChart = this.showLineChart.bind(this);
+		this.handleChange = this.handleChange.bind(this);
+		this.handleShow = this.handleShow.bind(this);
 	}
 
 	//[{"name":"google","reward_rate":1,"expiration":"3/26/2025",
@@ -37,32 +44,80 @@ class BusinessProfile extends React.Component {
 
 	componentDidMount(){
 		var that = this;
-	
-		axios.get('http://localhost:8080/demo/findBusiness', {
+		if(this.state.initial || this.state.all){
+			//console.log("start " + start.toString() + " end " + end.toString());
+		
+			axios.get('http://localhost:8080/demo/findBusiness', {
+				params: {
+					email: this.props.params.loginId
+				}
+			})
+			.then((res) => {
+				console.log("res "+ JSON.stringify(res.data.results[0]));
+				that.setState({business_id: res.data.results[0].business_id});
+				return axios.get('http://localhost:8080/demo/getBusinessTrans', {
+					params: {
+						business_id: res.data.results[0].business_id,
+						start: "",
+						end: ""
+					}
+				})
+				.then((res2) => {
+					console.log("res 2" + JSON.stringify(res2.data.results));
+					var compressedTran = that.compressTransaction(res2.data.results);
+					that.setState({
+						business: res.data.results[0],
+						transactions: compressedTran
+					})
+				})
+			})
+			this.setState({initial: false});
+		}
+	}
+
+	handleChange(event){
+		console.log("event "+event);
+		if(event!=null && event.target.type == 'checkbox'){
+			var all = this.state.all;
+			this.setState({all: !all})
+			event.target.checked = !all;
+		}else{
+			//console.log("event " + event);
+			if(event!=null){
+				const target = event.target;
+				const value = target.value;
+				const name = target.name;
+				this.setState({
+					[name]: value
+				});
+			}
+		}
+	}
+
+	handleShow(){
+		var that = this;
+		var start = "";
+		var end = "";
+		if(!this.state.all){
+			start = this.state.from;
+			end = this.state.to;
+		}
+		console.log("start " + start.toString() + " end " + end.toString());
+
+		axios.get('http://localhost:8080/demo/getBusinessTrans', {
 			params: {
-				email: this.props.params.loginId
+				business_id: this.state.business_id,
+				start: start,
+				end: end
 			}
 		})
 		.then((res) => {
-			console.log("res "+ JSON.stringify(res.data.results[0]));
-			return axios.get('http://localhost:8080/demo/getBusinessTrans', {
-				params: {
-					business_id: res.data.results[0].business_id,
-					start: "",
-					end: ""
-				}
-			})
-			.then((res2) => {
-				console.log("res 2" + JSON.stringify(res2.data.results));
-				var compressedTran = that.compressTransaction(res2.data.results);
-				that.setState({
-					business: res.data.results[0],
-					transactions: compressedTran
-				})
-			})
-		})
+			var compressedTran = that.compressTransaction(res.data.results);
+			that.setState({
+				transactions: compressedTran
+			});
+		});
 	}
-
 
 	showLineChart(){
 		var data = [];
@@ -135,9 +190,17 @@ class BusinessProfile extends React.Component {
 	      	<hr></hr>
 	      	<h3>Your month-to-month transaction will go here</h3>
 	      	<div className="button-panel"> 
+	      		<div>
+	      			<Button className="primary" onClick={this.handleShow}>Show</Button>
+			      	<ControlLabel className="date-label">All Transactions</ControlLabel>
+				  	<FormControl id="all-checkbox" type="checkbox" name="all" onChange={this.handleChange} checked={this.state.all}/>
+				    <ControlLabel className="date-label">From</ControlLabel>
+				  	<FormControl className="date-input" type="date" name="from" value={this.state.from} onChange={this.handleChange}/>
+				    <ControlLabel className="date-label">To</ControlLabel>
+				    <FormControl className="date-input" type="date" name="to" value={this.state.to} onChange={this.handleChange}/>
+			     </div>
 	      		<Button className="primary" onClick={this.showLineChart}>Line Chart</Button>
 	      	</div>
-	      	{console.log("transaction " + this.state.transactions)}
 	      	{<BusinessTransaction transactions={this.state.transactions}/>}
 	      </div>
 	    );

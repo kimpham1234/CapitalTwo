@@ -32,6 +32,7 @@ class Transaction extends React.Component {
 		this.handleChange = this.handleChange.bind(this);
 		this.showAll = this.showAll.bind(this);
 		this.showLineChart = this.showLineChart.bind(this);
+		
 	}
 	
 	toggle(){
