@@ -10,5 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface BusinessRepository extends JpaRepository<Business, Long> {
 
+    @Query("SELECT b FROM Business b WHERE b.id=?1")
+    public Business findById(Long id);
 
 }
