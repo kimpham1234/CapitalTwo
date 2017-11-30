@@ -25,7 +25,8 @@ class Transaction extends React.Component {
 			totalBalance: 0,
 			all: true,
 			from: Date,
-			to: Date
+			to: Date,
+			selectedItem: -1
 		}
 
 		this.addTransaction = this.addTransaction.bind(this);
@@ -42,6 +43,7 @@ class Transaction extends React.Component {
 	}
 
 	handleChange(event){
+		console.log(event.target.value);
 		if(event!=null && event.target.type == 'checkbox'){
 			var all = this.state.all;
 			this.setState({all: !all})
@@ -99,18 +101,24 @@ class Transaction extends React.Component {
 	showAll(){
 		var start = "";
 		var end = "";
+		var item_id = -1;
 
 		if(!this.state.all){
 			start = this.state.from;
 			end = this.state.to
 		}
+
+		if(this.state.selectedItem!=-1){
+			item_id = this.state.selectedItem;
+		}
+
 		console.log("date " + start + " " +end);
 		axios.get('http://localhost:8080/demo/getCustomerTrans', {
 			params: {
 				account_id: this.props.location.state.account_id,
 				start: start,
 				end: end,
-				item_id: -1
+				item_id: item_id
 			}
 		})
 		.then(res => {
@@ -216,8 +224,8 @@ class Transaction extends React.Component {
 
 		    {/* Filter by Item Selection */}
 		    <ControlLabel className="date-label">Category</ControlLabel>
-		    <FormControl componentClass="select" className="date-input" placeholder="Category">
-		    	<option value="Category">Category</option>
+		    <FormControl componentClass="select" className="date-input" name="selectedItem" placeholder="Category" onChange={this.handleChange}>
+		    	<option value={-1}>Category</option>
 		    	{ this.state.item_list.map((item) => (
 		    		<option value={item.item_id}>{item.name}</option>
 		    	  )

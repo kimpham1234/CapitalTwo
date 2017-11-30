@@ -204,6 +204,37 @@ public class MainController {
         return queryResults(query, cols);
     }  
 
+    @RequestMapping(value="/getCustomerCategorizedTrans",
+                    params = {"start", "end"},
+                    method=RequestMethod.GET,
+                    produces = "application/json")
+    @ResponseBody
+    public String getCustomerCategorizedTransaction(
+        @RequestParam("start") String start,
+        @RequestParam("end") String end) {
+        String[] cols = {
+            "category", "amount"
+        };
+
+        String dateJoin = getDateJoinString(start, end);
+        if (dateJoin != "") {
+            dateJoin = " WHERE " + dateJoin;
+        }
+       
+        System.out.println("date join " + dateJoin);
+
+        String query = String.join("\n"
+            ,"SELECT"
+            ,    "category, sum(quantity)"
+            ,"FROM"
+            ,    "transaction_list"
+            ,dateJoin
+            ,"GROUP BY category"
+        );
+        //return em.createNativeQuery(query).getResultList().toString();
+        return queryResults(query, cols);
+    }  
+
     @RequestMapping(value="/getBusinessTrans",
                     params={"business_id", "start", "end"},
                     method=RequestMethod.GET,
@@ -404,4 +435,6 @@ public class MainController {
         );
         return em.createNativeQuery(query).executeUpdate() > 0 ? "Success" : "Fail";
     }
+
+
 }
