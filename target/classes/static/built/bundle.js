@@ -82,6 +82,10 @@
 	
 	var _BusinessProfile2 = _interopRequireDefault(_BusinessProfile);
 	
+	var _TransactionLineChart = __webpack_require__(819);
+	
+	var _TransactionLineChart2 = _interopRequireDefault(_TransactionLineChart);
+	
 	var _firebase = __webpack_require__(533);
 	
 	var firebase = _interopRequireWildcard(_firebase);
@@ -111,7 +115,8 @@
 			_react2.default.createElement(_reactRouter.Route, { path: '/newCustomer', component: _CreateAccount2.default }),
 			_react2.default.createElement(_reactRouter.Route, { path: '/customerProfile', component: _CustomerProfile2.default }),
 			_react2.default.createElement(_reactRouter.Route, { path: '/transactions/:loginId', component: _Transaction2.default }),
-			_react2.default.createElement(_reactRouter.Route, { path: '/businessProfile/:loginId', component: _BusinessProfile2.default })
+			_react2.default.createElement(_reactRouter.Route, { path: '/businessProfile/:loginId', component: _BusinessProfile2.default }),
+			_react2.default.createElement(_reactRouter.Route, { path: '/lineChart', component: _TransactionLineChart2.default })
 		)
 	), document.getElementById('react'));
 
@@ -75992,6 +75997,8 @@
 	
 	var _reactBootstrap = __webpack_require__(248);
 	
+	var _reactRouter = __webpack_require__(184);
+	
 	var _reactEasyChart = __webpack_require__(696);
 	
 	var _BusinessTransaction = __webpack_require__(815);
@@ -76023,6 +76030,7 @@
 			_this.state = {
 				transactions: [],
 				open: false,
+				lineChartOpen: false,
 				inputDate: "2017-11-20",
 				inputCity: "",
 				inputState: "",
@@ -76034,6 +76042,7 @@
 			_this.toggle = _this.toggle.bind(_this);
 			_this.handleChange = _this.handleChange.bind(_this);
 			_this.showAll = _this.showAll.bind(_this);
+			_this.showLineChart = _this.showLineChart.bind(_this);
 			return _this;
 		}
 	
@@ -76062,6 +76071,28 @@
 				transactions.push(submitted);
 				alert("Submitted " + JSON.stringify(transactions));
 				this.setState({ transactions: transactions });
+			}
+		}, {
+			key: 'showLineChart',
+			value: function showLineChart() {
+				var data = [];
+				var transactions = this.state.transactions.slice();
+				console.log("show line chart " + this.state.transactions);
+	
+				for (var i = 0; i < transactions.length; i++) {
+					var p = { x: transactions.date, y: transactions.cost };
+					data.push(p);
+				}
+				data.reverse();
+				var chartData = [data];
+	
+				/*
+	   hashHistory.push({
+	   	pathname: "/lineChart",
+	   	state: {
+	   		data: chartData
+	   	}
+	   });*/
 			}
 		}, {
 			key: 'showAll',
@@ -76126,14 +76157,6 @@
 						'Total spent: ',
 						this.state.totalBalance
 					),
-					React.createElement(_reactEasyChart.LineChart, {
-						axes: true,
-						margin: { top: 10, right: 10, bottom: 50, left: 50 },
-						axisLabels: { x: 'Date', y: '$' },
-						width: 250,
-						height: 250,
-						data: [[{ x: 1, y: 20 }, { x: 2, y: 10 }, { x: 3, y: 25 }]]
-					}),
 					React.createElement(
 						_reactBootstrap.Button,
 						{ className: 'primary', onClick: this.showAll },
@@ -76143,6 +76166,11 @@
 						_reactBootstrap.Button,
 						{ className: 'primary', onClick: this.toggle },
 						'Add Transaction'
+					),
+					React.createElement(
+						_reactBootstrap.Button,
+						{ className: 'primary', onClick: this.showLineChart },
+						'Line Chart'
 					),
 					React.createElement(
 						_reactBootstrap.Panel,
@@ -104647,6 +104675,79 @@
 	}(React.Component);
 	
 	exports.default = BusinessProfile;
+
+/***/ }),
+/* 819 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _reactEasyChart = __webpack_require__(696);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(37);
+	
+	var TransactionLineChart = function (_React$Component) {
+		_inherits(TransactionLineChart, _React$Component);
+	
+		function TransactionLineChart(props) {
+			_classCallCheck(this, TransactionLineChart);
+	
+			var _this = _possibleConstructorReturn(this, (TransactionLineChart.__proto__ || Object.getPrototypeOf(TransactionLineChart)).call(this, props));
+	
+			console.log("line chart constructor " + JSON.stringify(_this.props.location.state.data));
+			return _this;
+		}
+	
+		_createClass(TransactionLineChart, [{
+			key: 'render',
+			value: function render() {
+				return React.createElement(
+					'div',
+					null,
+					React.createElement(
+						'h1',
+						null,
+						'Line chart'
+					),
+					React.createElement(_reactEasyChart.LineChart, {
+						axes: true,
+						margin: { top: 10, right: 10, bottom: 50, left: 50 },
+						axisLabels: { x: 'Date', y: '$' },
+						width: 250,
+						height: 250,
+						data: this.props.location.state.data
+					})
+				);
+			}
+		}]);
+	
+		return TransactionLineChart;
+	}(React.Component);
+	
+	exports.default = TransactionLineChart;
+	
+	/*
+	{[
+	  [
+	    { x: 1, y: 20 },
+	    { x: 2, y: 10 },
+	    { x: 3, y: 25 }
+	  ]
+	]}
+	*/
 
 /***/ })
 /******/ ]);

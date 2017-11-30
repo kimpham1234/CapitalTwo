@@ -132,8 +132,10 @@ public class DatabaseLoader implements CommandLineRunner {
         HashSet<Item> itemsSeen = new HashSet<Item>();
 
         for(int j = 0 ; j < 5; j++){
+            Date date = new Date();
+            date.setDate(date.getDate()-j);
             Transaction transaction = new Transaction(
-                new Date(),
+                date,
                 generateState(),
                 generateCity(),
                 card,

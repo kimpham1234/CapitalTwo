@@ -8,6 +8,7 @@ import CreateAccount from './account/CreateAccount.js'
 import CustomerProfile from './customerProfile/CustomerProfile.js'
 import Transaction from './customerProfile/Transaction.js'
 import BusinessProfile from './business/BusinessProfile.js'
+import TransactionLineChart from './charts/TransactionLineChart.js'
 
 import * as firebase from 'firebase'
 
@@ -31,6 +32,7 @@ render((
 			<Route path="/customerProfile" component={CustomerProfile}/>
 			<Route path="/transactions/:loginId" component={Transaction}/>
 			<Route path="/businessProfile/:loginId" component={BusinessProfile}/>
+			<Route path="/lineChart" component={TransactionLineChart}/>
 		</Route>
 	</Router>
 ),document.getElementById('react'))

@@ -1,4 +1,5 @@
 import {Button, Table, Panel, Form, FormGroup, FormControl, ControlLabel} from 'react-bootstrap'
+import {hashHistory} from 'react-router'
 import {LineChart} from 'react-easy-chart';
 import BusinessTransaction from '../business/BusinessTransaction.js'
 
@@ -15,6 +16,7 @@ class Transaction extends React.Component {
 		this.state = {
 			transactions: [],
 			open: false,
+			lineChartOpen: false,
 			inputDate: "2017-11-20",
 			inputCity: "",
 			inputState: "",
@@ -26,6 +28,7 @@ class Transaction extends React.Component {
 		this.toggle = this.toggle.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.showAll = this.showAll.bind(this);
+		this.showLineChart = this.showLineChart.bind(this);
 	}
 	
 	toggle(){
@@ -51,6 +54,28 @@ class Transaction extends React.Component {
 		transactions.push(submitted);
 		alert("Submitted " + JSON.stringify(transactions));
 		this.setState({transactions: transactions});
+	}
+
+	showLineChart(){
+		var data = [];
+		var transactions = this.state.transactions.slice();
+		console.log("show line chart " + this.state.transactions);
+		
+		for(var i = 0; i < transactions.length; i++){
+			var p = {x: transactions.date, y: transactions.cost};
+			data.push(p);
+		}
+		data.reverse();
+		const chartData = [data];
+
+		
+		/*
+		hashHistory.push({
+			pathname: "/lineChart",
+			state: {
+				data: chartData
+			}
+		});*/
 	}
 
 	showAll(){
@@ -103,23 +128,9 @@ class Transaction extends React.Component {
 		<div id="container2">
 	      <h1>Transaction of {this.props.params.loginId}</h1>
 	      <p>Total spent: {this.state.totalBalance}</p>
-	      <LineChart
-				    axes
-				    margin={{top: 10, right: 10, bottom: 50, left: 50}}
-				    axisLabels={{x: 'Date', y: '$'}}
-				    width={250}
-				    height={250}
-				    data={[
-				      [
-				        { x: 1, y: 20 },
-				        { x: 2, y: 10 },
-				        { x: 3, y: 25 }
-				      ]
-				    ]}
-			/>
-
 	      <Button className="primary" onClick={this.showAll}>Show All Transactions</Button> 
 	      <Button className="primary" onClick={this.toggle}>Add Transaction</Button>
+	      <Button className="primary" onClick={this.showLineChart}>Line Chart</Button>
 	      	<Panel collapsible expanded={this.state.open}>
 		      	<Form inline onSubmit={this.addTransaction}>
 				    <FormGroup controlId="formInlineName">
