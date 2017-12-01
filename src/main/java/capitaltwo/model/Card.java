@@ -1,5 +1,6 @@
 package capitaltwo;
 
+import java.util.HashSet;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.GeneratedValue;
@@ -15,7 +16,8 @@ import javax.persistence.JoinColumn;
 public abstract class Card {
     @Id
     @GeneratedValue(strategy=GenerationType.TABLE)
-    private Long cardNumber;
+    private Long cardId;
+    private String cardNumber;
     private int expirationYear;
     private int expirationMonth;
     private int expirationDay;
@@ -30,6 +32,7 @@ public abstract class Card {
         this.expirationYear = year;
         this.expirationMonth = month;
         this.expirationDay = day;
+        this.cardNumber = cardNumberGenerator();
     }
 
     public void setExpirationDate(int year, int month, int day) {
@@ -46,5 +49,18 @@ public abstract class Card {
     public void setCustomerAccount(CustomerAccount acc) { this.account = acc; }
 
     public abstract boolean charge(double val);
+
+    private static HashSet<String> cardValues = new HashSet<String>();
+    private static int CARD_NUM_LEN = 16;
+    private static String cardNumberGenerator() {
+        String k = "";
+        do {
+            for (int i = 0; i < CARD_NUM_LEN; ++i) {
+                k += Integer.toString(DatabaseLoader.randomInt(0,9));
+            }
+        } while (k.length() != 16 && cardValues.contains(k));
+        cardValues.add(k);
+        return k;
+    }
 }
 

@@ -20,7 +20,6 @@ public class DatabaseLoader implements CommandLineRunner {
     private static final int CARD_EXPIRE_MIN = 2018;
     private static final int CARD_EXPIRE_MAX = 2025;
 
-    private final UserRepository userRepo;
     private final CreditCardRepository creditCardRepo;
     private final DebitCardRepository debitCardRepo;
     private final CustomerAccountRepository customerRepo;
@@ -29,20 +28,17 @@ public class DatabaseLoader implements CommandLineRunner {
     private final TransactionItemRepository transactionItemRepo;
     private final BusinessRepository businessRepo;
     private final BusinessAccountRepository businessAccountRepo;
-    //private final CategoryRepository categoryRepo;
 
     private ArrayList<Item> items;
     private ArrayList<Business> businesses;
-    //private ArrayList<Category> categories;
 
     /* low to high inclusive */
-    private static int randomInt(int low, int high) {
+    public static int randomInt(int low, int high) {
         return ((new Random()).nextInt(high - low + 1) + low);
     }
 
     @Autowired
-    public DatabaseLoader(UserRepository userRepo,
-                          CreditCardRepository creditRepo,
+    public DatabaseLoader(CreditCardRepository creditRepo,
                           DebitCardRepository debitRepo,
                           CustomerAccountRepository customerRepo,
                           ItemRepository itemRepo,
@@ -50,8 +46,6 @@ public class DatabaseLoader implements CommandLineRunner {
                           TransactionItemRepository transactionItemRepo,
                           BusinessRepository businessRepo,
                           BusinessAccountRepository businessAccountRepo) {
-                          //CategoryRepository categoryRepo) {
-        this.userRepo = userRepo;
         this.creditCardRepo = creditRepo;
         this.debitCardRepo = debitRepo;
         this.customerRepo = customerRepo;
@@ -59,11 +53,10 @@ public class DatabaseLoader implements CommandLineRunner {
         this.transactionRepo = transactionRepo;
         this.transactionItemRepo = transactionItemRepo;
         this.businessRepo = businessRepo;
-        this.businessAccountRepo = businessAccountRepo; //this.categoryRepo = categoryRepo;
+        this.businessAccountRepo = businessAccountRepo;
 
         this.items = new ArrayList<Item>();
         this.businesses = new ArrayList<Business>();
-        //this.categories = new ArrayList<Category>();
     }
 
     public static String[] CATEGORY = {
@@ -104,8 +97,7 @@ public class DatabaseLoader implements CommandLineRunner {
     public void generateItems() {
         for (String i : ITEMS) {
             Item it = new Item(i, "description here");
-            this.items.add(it);
-            itemRepo.save(it);
+            this.items.add(itemRepo.save(it));
         }
     }
 
@@ -124,17 +116,20 @@ public class DatabaseLoader implements CommandLineRunner {
         return this.cities[randomInt(0, this.cities.length - 1)];
     }
 
+    static HashSet<Long> busIds = new HashSet<Long>();
     public void generateTransactionItems(Card card) {
         HashSet<TransactionItem> ti = new HashSet<TransactionItem>();
         HashSet<Item> itemsSeen = new HashSet<Item>();
 
         for(int j = 0 ; j < 5; j++){
+            int busIdx = randomInt(0, businesses.size()-1);
+            Business business = this.businesses.get(busIdx);
             Transaction transaction = new Transaction(
                 new Date(),
                 generateState(),
                 generateCity(),
                 card,
-                this.businesses.get(randomInt(0, businesses.size()-1)),
+                business,
                 null
             );
             this.transactionRepo.save(transaction);
@@ -154,12 +149,15 @@ public class DatabaseLoader implements CommandLineRunner {
                     ti.add(tItem);
                 }
             }
+            System.out.println("\t\tTI: " + transaction.getId() + " BI: " + business.getId());
+            //if (busIds.add(business.getId()) == false) {
+            //    break;
+            //}
             transaction.setTransactionItems(ti);
             this.transactionRepo.save(transaction);
-            }
-
-        
-        //System.out.println(transaction);
+            business.addTransaction(transaction);
+            this.businesses.set(busIdx, this.businessRepo.save(business));
+        }
 
     }
 
@@ -173,10 +171,11 @@ public class DatabaseLoader implements CommandLineRunner {
     };
     public void generateBusinesses() {
         for (int i = 0; i < BUSINESS_NAME.length; ++i) {
-            this.businesses.add(new Business(
-                this.BUSINESS_NAME[i], (double)randomInt(1, 5)
-            ));
-            this.businessRepo.save(businesses.get(i));
+            Business b = new Business(
+                this.BUSINESS_NAME[i], (double)randomInt(1, 5),
+                new HashSet<Transaction>(), new HashSet<BusinessAccount>()
+            );
+            this.businesses.add(this.businessRepo.save(b));
         }
     }
 
@@ -273,10 +272,13 @@ public class DatabaseLoader implements CommandLineRunner {
         generateBusinessAccounts();
 
         List<CustomerAccount> accounts = this.customerRepo.findAll();
-
+        Card crc = null;
         for(CustomerAccount acc : accounts){
             Set<Card> ccards = new HashSet<Card>();
-            ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 1000));
+            // TODO delete
+            crc = new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 1000);
+            ccards.add(crc);
+            //ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 1000));
             ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 2000));
             ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 1000));
             ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 3000));
@@ -288,63 +290,5 @@ public class DatabaseLoader implements CommandLineRunner {
             this.customerRepo.save(acc);
             generateTransactionItems(ccards.iterator().next());
         }
-
-        /*
-        CustomerAccount acc = this.customerRepo.findAll().get(0);
-
-        Set<Card> ccards = new HashSet<Card>();
-        ccards.add(new CreditCard(acc, 2020, 10, 19, 1000));
-        ccards.add(new CreditCard(acc, 2020, 10, 19, 2000));
-        ccards.add(new CreditCard(acc, 2020, 10, 19, 1000));
-        ccards.add(new CreditCard(acc, 2020, 10, 19, 3000));
-        for (Card c : ccards) {
-            CreditCard cc = (CreditCard)c;
-            this.creditCardRepo.save(cc);
-        }
-
-        acc.setCards(ccards);
-        this.customerRepo.save(acc);
-        */
-
-        //Item i1 = new Item("sponge", "spongey thing to clean stuff");
-        //Item i2 = new Item("soap", "bubbly thing that makes squeakies");
-
-       
-        //Transaction tr = new Transaction
-
-        //ccards.get(0)
-
-        /*
-        for (CreditCard c : ccards) {
-            this.creditCardRepo.save(c);
-        }
-        ArrayList<DebitCard> dcards = new ArrayList<DebitCard>();
-        dcards.add(new DebitCard(new Date(2020, 10, 19), 10000));
-        dcards.add(new DebitCard(new Date(2020, 10, 19), 20000));
-        dcards.add(new DebitCard(new Date(2020, 10, 19), 10000));
-        dcards.add(new DebitCard(new Date(2020, 10, 19), 30000));
-        for (DebitCard c : dcards) {
-            this.debitCardRepo.save(c);
-        }
-        */
-
-        /*
-        CustomerAccount acct = new CustomerAccount(
-            "firstname",
-            "nomiddle",
-            "lastname",
-            Ethnicity.WHITE,
-            Gender.FEMALE,
-            new Date(2000, 11, 11),
-            10000
-        );
-        CreditCard c1 = new CreditCard(new Date(2017, 10, 7), 4000);
-        DebitCard d1 = new DebitCard(new Date(2017, 10, 9), 8000);
-        c1.setAccount(acct);
-        d1.setAccount(acct);
-        this.customerRepo.save(acct);
-        this.creditCardRepo.save(c1);
-        this.debitCardRepo.save(d1);
-        */
     }
 }

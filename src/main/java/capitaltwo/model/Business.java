@@ -26,11 +26,17 @@ public class Business {
 
     protected Business() {}
 
-    public Business(String name, double rewardRate) {
+    public Business(String name,
+                    double rewardRate,
+                    Set<Transaction> transactions,
+                    Set<BusinessAccount> accounts) {
         this.name = name;
         this.rewardRate = rewardRate;
+        this.transactions = transactions;
+        this.accounts = accounts;
     }
 
+    public Long getId() { return this.businessId; }
     public String getName() { return this.name; }
     public double getRewardRate() { return this.rewardRate; }
     public Set<Transaction> getTransactions() { return this.transactions; }

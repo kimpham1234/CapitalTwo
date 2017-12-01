@@ -82,4 +82,19 @@ public class QueryUtils {
         }
         return jsonArray;
     }
+
+    public static String getDateJoinString(String start, String end) {
+        String dateJoin = "";
+        if (start != null && !start.equals("") && !start.equals("NONE")) {
+            dateJoin += "date >= \"" + start + "\"";
+            if (end != null && !end.equals("") && !end.equals("NONE")) {
+                dateJoin += " AND ";
+            }
+        }
+        if (end != null && !end.equals("") && !end.equals("NONE")) {
+            dateJoin += "date <= \"" + end + "\"";
+        }
+        System.out.println(dateJoin);
+        return dateJoin;
+    }
 }
