@@ -100,10 +100,10 @@ public class MainController {
                     produces = "application/json")
     @ResponseBody
     public String getCustomerCards(@RequestParam("account_id") Long account_id) {
-        String[] cols = {"card_number", "expiration"};
+        String[] cols = {"card_id", "card_number", "expiration"};
         String query = String.join("\n"
             ,"SELECT"
-            ,    "card_number, expiration_day"
+            ,    "card_id, card_number, expiration_day"
             ,"FROM"
             ,    "card"
             ,"WHERE"
@@ -179,7 +179,7 @@ public class MainController {
             ,    "card_id in"
             ,"("
                 ,"SELECT"
-                ,"customer_cards_card_number"
+                ,"customer_cards_card_id"
                 ,"FROM"
                 ,"customer_account_customer_cards"
                 ,"WHERE"
@@ -203,7 +203,7 @@ public class MainController {
             "category", "amount"
         };
 
-        String dateJoin = getDateJoinString(start, end);
+        String dateJoin = QueryUtils.getDateJoinString(start, end);
         if (dateJoin != "") {
             dateJoin = " WHERE " + dateJoin;
         }
