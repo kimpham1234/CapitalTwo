@@ -14,12 +14,101 @@ import java.util.List;
 public class DatabaseLoader implements CommandLineRunner {
 
     private static final int DAY_MIN = 1;
-    private static final int DAY_MAX = 28; // don't care about getting all dates
+    private static final int DAY_MAX = 28;
     private static final int MONTH_MIN = 1;
     private static final int MONTH_MAX = 12;
     private static final int CARD_EXPIRE_MIN = 2018;
     private static final int CARD_EXPIRE_MAX = 2025;
 
+    public static String[] ITEMS = {
+        "Appliances",
+        "Comfort",
+        "Decorations",
+        "Electronics",
+        "Entertainment",
+        "Hobbies",
+        "Lighting",
+        "Plumbing",
+        "Storage",
+        "Surfaces",
+        "Vehicles",
+        "Miscellaneous",
+        "Pets"
+    };
+
+    public static String[] DESCRIPTIONS = {
+        "Mainly kitchen objects: Refrigerators, stoves, dishwashers, microwaves, coffee makers, food processor, garbage cans, barbecues and trash compactors.",
+        "Beds, chairs, armchairs, sofas, bar stools, benches and deck chairs.",
+        "Plants, paintings, sculptures, mirrors, curtains, rugs, ornaments, etc.",
+        "TVs, computers, stereos, clocks, burglar alarm, fire alarm, video games, phones, pinball machines, etc.",
+        "Sporting goods, hobbies and skill items, party items, etc.",
+        "Musical instruments, bookshelves, exercise equipment, play equipment, workbenches, other skill-building items, etc.",
+        "Lamps, wall sconces, hanging lights, and outdoor lights.",
+        "Toilets, sinks, showers, bathtubs and hot tubs.",
+        "Bookshelves and dressers.",
+        "Counters, kitchen tables, desks, side tables, coffee tables, shelves and displays (not bookshelves), cabinets, bars etc.",
+        "Cars, bicycles, motorcycles, scooters, parking spaces, garage doors, and bike racks.",
+        "Skill-building items (mirrors, weight machines, bookshelves),dressers, play equipment, party items, children\'s items, cars, pet items, garbage cans, etc.",
+        "Pet Bowls, pet houses, chewable dog toys, scratching posts, horse training obstacles, horse stalls, haystack, etc."
+    };
+
+    public static String[] STATES = {
+        "Alaska", "Virginia", "Kansas", "Tennessee", "New Mexico", "Wisconsin",
+        "California", "Alabama", "North Carolina", "Guam", "Idaho", "Palau",
+        "Louisiana", "Mississippi", "North Carolina", "Tennessee",
+        "Massachusetts", "Illinois", "California", "Nevada", "Massachusetts",
+        "South Carolina", "Alabama", "South Carolina", "Maryland", "Louisiana",
+        "Maine", "Delaware", "Hawaii", "Illinois", "Idaho", "Iowa", "Alaska",
+        "West Virginia", "Texas", "Michigan", "Oregon", "North Carolina",
+        "North Dakota", "Nebraska", "Missouri", "Alaska", "Virginia",
+        "California", "North Dakota", "South Dakota", "Colorado", "New Mexico",
+        "American Samoa", "California", "Connecticut", "Missouri", "Missouri",
+        "Hawaii", "South Carolina", "Ohio", "Florida", "Kentucky", "North Dakota",
+        "Northern Mariana Islands", "Oregon", "Arizona", "Arkansas", "Wisconsin",
+        "Federated States Of Micronesia"
+    };
+
+    public static String[] CITIES= {
+        "FAIRBANKS", "MANASSAS", "ERIE", "KINGSPORT", "SANTA CRUZ", "LANCASTER",
+        "BLACKHAWK-CAMINO TASSAJARA", "BRUNDIDGE", "WHITE PLAINS", "GUAM",
+        "HAZELTON", "Palau", "LAROSE", "MERIGOLD", "LINCOLNTON", "TRIMBLE",
+        "SOUTH DENNIS", "MCCOOK", "OCEANSIDE", "WEST WENDOVER", "LYNN", "OLAR",
+        "MCMULLEN", "PATRICK", "KENT NARROWS", "DESTREHAN", "WILTON",
+        "FENWICK ISLAND", "KOLOA", "DANVERS", "KETCHUM", "SERGEANT BLUFF",
+        "WALES", "WOMELSDORF (COALTON)", "AVERY", "ROCKWOOD",
+        "HARBECK-FRUITDALE", "BROGDEN", "LARIMORE", "LIBERTY", "CURRYVILLE",
+        "COOPER LANDING", "BROOKNEAL", "THERMALITO", "MAKOTI", "KAYLOR",
+        "CROWLEY", "UNIVERSITY PARK", "American Samoa", "EDGEWOOD",
+        "PUTNAM DISTRICT", "LADDONIA", "CARUTHERSVILLE", "LIHUE", "JEFFERSON",
+        "BURLINGTON", "FISHER ISLAND", "MACKVILLE", "COLEHARBOR",
+        "NORTHERN MARIANA ISLANDS", "PILOT ROCK", "WILLIAMS", "HAZEN", "WHITING",
+        "FSM"
+    };
+
+    public static String[] BUSINESS_NAME = {
+        "Google",
+        "Facebook",
+        "Microsoft",
+        "Amazon",
+        "Apple",
+        "Walmart",
+        "Safeway",
+        "Best Buy",
+        "Grocery Outlet Bargain Market",
+        "Target",
+        "Costco",
+        "Starbucks",
+        "Sam's Club",
+        "Lucky's",
+        "Walgreen's",
+        "Macy's",
+        "Nordstrom",
+        "Home Depot",
+        "Orchard Hardware Supplies"
+    };
+
+
+    /* Repositories */
     private final CreditCardRepository creditCardRepo;
     private final DebitCardRepository debitCardRepo;
     private final CustomerAccountRepository customerRepo;
@@ -29,13 +118,9 @@ public class DatabaseLoader implements CommandLineRunner {
     private final BusinessRepository businessRepo;
     private final BusinessAccountRepository businessAccountRepo;
 
+    /* Entity sets for later use */
     private ArrayList<Item> items;
     private ArrayList<Business> businesses;
-
-    /* low to high inclusive */
-    public static int randomInt(int low, int high) {
-        return ((new Random()).nextInt(high - low + 1) + low);
-    }
 
     @Autowired
     public DatabaseLoader(CreditCardRepository creditRepo,
@@ -59,64 +144,32 @@ public class DatabaseLoader implements CommandLineRunner {
         this.businesses = new ArrayList<Business>();
     }
 
-    public static String[] CATEGORY = {
-        "Food",
-        "Electronics",
-        "Clothing",
-        "Utility",
-        "Service"
-    };
-    public static String[] CATEGORY_DESCRIPTIONS = {
-        "edible items",
-        "techy thingies",
-        "soft things",
-        "useful things",
-        "not goods"
-    };
-
-    //public void generateCategories() {
-    //    for (int i = 0; i < this.CATEGORY.length; ++i) {
-    //        this.categories.add(
-    //            new Category(CATEGORY[i], CATEGORY_DESCRIPTIONS[i])
-    //        );
-    //        this.categoryRepo.save(categories.get(i));
-    //    }
-    //}
-
-    public static String[] ITEMS = {
-        "sock",
-        "shoe",
-        "clothing",
-        "fruit",
-        "veggies",
-        "tv",
-        "computer",
-        "pencils"
-    };
+    /* low to high inclusive */
+    public static int randomInt(int low, int high) {
+        return ((new Random()).nextInt(high - low + 1) + low);
+    }
 
     public void generateItems() {
-        for (String i : ITEMS) {
-            Item it = new Item(i, "description here");
+        for (int i = 0; i < ITEMS.length; ++i) {
+            Item it = new Item(ITEMS[i], DESCRIPTIONS[i]);
             this.items.add(itemRepo.save(it));
         }
     }
 
-    /* TODO return array pairs of state, city */
-    public static String[] states = {
-        "CA", "TX", "WA", "MA", "NY", "FL", "OR"
-    };
-    public String generateState() {
-        return this.states[randomInt(0, this.states.length - 1)];
+    public String[] generateCity() {
+        int idx = randomInt(0, this.CITIES.length - 1);
+        String[] city = {this.CITIES[idx], this.STATES[idx]};
+        return city;
     }
 
-    public static String[] cities = {
-        "city1", "city2", "city3", "city4", "city5"
-    };
-    public String generateCity() {
-        return this.cities[randomInt(0, this.cities.length - 1)];
+    public String generatePhoneNumber() {
+        String p = "";
+        for (int i = 0; i < 10; ++i) {
+            p += Integer.toString(randomInt(0,9));
+        }
+        return p;
     }
 
-    static HashSet<Long> busIds = new HashSet<Long>();
     public void generateTransactionItems(Card card) {
         HashSet<TransactionItem> ti = new HashSet<TransactionItem>();
         HashSet<Item> itemsSeen = new HashSet<Item>();
@@ -124,10 +177,12 @@ public class DatabaseLoader implements CommandLineRunner {
         for(int j = 0 ; j < 5; j++){
             int busIdx = randomInt(0, businesses.size()-1);
             Business business = this.businesses.get(busIdx);
+            String[] city = generateCity();
+            Date day = new Date((new Date()).getTime() - randomInt(0,1000)* 24 * 3600 * 1000l);
             Transaction transaction = new Transaction(
-                new Date(),
-                generateState(),
-                generateCity(),
+                day,
+                city[1],
+                city[0],
                 card,
                 business,
                 null
@@ -149,26 +204,13 @@ public class DatabaseLoader implements CommandLineRunner {
                     ti.add(tItem);
                 }
             }
-            System.out.println("\t\tTI: " + transaction.getId() + " BI: " + business.getId());
-            //if (busIds.add(business.getId()) == false) {
-            //    break;
-            //}
             transaction.setTransactionItems(ti);
             this.transactionRepo.save(transaction);
             business.addTransaction(transaction);
             this.businesses.set(busIdx, this.businessRepo.save(business));
         }
-
     }
 
-    public static String[] BUSINESS_NAME = {
-        "google",
-        "facebook",
-        "microsoft",
-        "amazon",
-        "apple",
-        "grocery outlet bargain market"
-    };
     public void generateBusinesses() {
         for (int i = 0; i < BUSINESS_NAME.length; ++i) {
             Business b = new Business(
@@ -183,7 +225,7 @@ public class DatabaseLoader implements CommandLineRunner {
         for(Business b : businesses){
             Set<BusinessAccount> accountSet = new HashSet<BusinessAccount>();
             b.setAccounts(accountSet);
-            BusinessAccount newAccount = new BusinessAccount(b.getName(), "123456", "408-415-7292",
+            BusinessAccount newAccount = new BusinessAccount(b.getName(), "123456", generatePhoneNumber(),
                             b.getName().split(" ")[0]+"@gmail.com", randomInt(2020, 2025), randomInt(1,12),
                             randomInt(1,30), "Partner", true, b);
             b.addAccount(newAccount);
@@ -194,19 +236,18 @@ public class DatabaseLoader implements CommandLineRunner {
     public void generateAccounts() {
         ArrayList<CustomerAccount> customers = new ArrayList<CustomerAccount>();
         customers.add(new CustomerAccount(
-            "secritboy",
+            "username1",
             "hunter2",
             "123-456-7890",
             "therealdonald@gmail.com",
             "Donald",
-            "Dumbass",
+            "D",
             "Drumpf",
             Ethnicity.WHITE,
             Gender.MALE,
             1776, 7, 4,
             200000)
         );
-
         customers.add(new CustomerAccount(
             "someaccount",
             "123456",
@@ -233,7 +274,8 @@ public class DatabaseLoader implements CommandLineRunner {
             1985, 6, 12,
             45000)
         );
-        customers.add(new CustomerAccount("MJaccount",
+        customers.add(new CustomerAccount(
+            "MJaccount",
             "123456",
             "4087134294",
             "email3@email.com",
@@ -272,13 +314,9 @@ public class DatabaseLoader implements CommandLineRunner {
         generateBusinessAccounts();
 
         List<CustomerAccount> accounts = this.customerRepo.findAll();
-        Card crc = null;
-        for(CustomerAccount acc : accounts){
+        for(CustomerAccount acc : accounts) {
             Set<Card> ccards = new HashSet<Card>();
-            // TODO delete
-            crc = new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 1000);
-            ccards.add(crc);
-            //ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 1000));
+            ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 1000));
             ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 2000));
             ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 1000));
             ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 3000));

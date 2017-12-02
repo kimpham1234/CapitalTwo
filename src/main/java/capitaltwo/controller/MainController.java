@@ -167,7 +167,7 @@ public class MainController {
             ,"FROM"
             ,    "transaction_list"
             ,"WHERE"
-            ,    "business_id = "+business_id
+            ,    "business_id = " + business_id
             ,    dateJoin
             ,"ORDER BY"
             ,"date, transaction_id"
@@ -213,23 +213,6 @@ public class MainController {
         );
         return queryResults(query, cols);
     }
-
-    /*
-    private String getDateJoinString(String start, String end) {
-        String dateJoin = "";
-        if (start != null && !start.equals("") && !start.equals("NONE")) {
-            dateJoin += "date >= \"" + start + "\"";
-            if (end != null && !end.equals("") && !end.equals("NONE")) {
-                dateJoin += " AND ";
-            }
-        }
-        if (end != null && !end.equals("") && !end.equals("NONE")) {
-            dateJoin += "date <= \"" + end + "\"";
-        }
-        System.out.println(dateJoin);
-        return dateJoin;
-    }
-    */
 
     @RequestMapping(value = "/createTransaction",
                     params={"date", "state", "city", "card_id",
@@ -304,12 +287,21 @@ public class MainController {
         return "Success";
     }
 
-
+    @Transactional
     @RequestMapping(value = "/deleteTransaction",
                     params={"transaction_id"},
                     method = RequestMethod.GET)
     public @ResponseBody String addTransaction (
         @RequestParam("transaction_id") Long transaction_id) {
+        String deleteBusiness = "DELETE FROM business_transactions " +
+            "WHERE transactions_transaction_id = " + transaction_id;
+        String deleteTransactionItem = "DELETE FROM transaction_item " +
+            "WHERE transaction_transaction_id = " + transaction_id;
+        String deleteTransaction = "DELETE FROM transaction " +
+            "WHERE transaction_id = " + transaction_id;
+        em.createNativeQuery(deleteBusiness).executeUpdate();
+        em.createNativeQuery(deleteTransactionItem).executeUpdate();
+        em.createNativeQuery(deleteTransaction).executeUpdate();
         return "Success";
     }
 
