@@ -122,6 +122,39 @@ public class MainController {
         return queryResults(query, cols);
     }
 
+    @RequestMapping(value="/findAllBusiness",
+                    method=RequestMethod.GET,
+                    produces = "application/json")
+    @ResponseBody
+    public String getBusinesses() {
+        String[] cols = {"business_id", "name", "reward_rate"};
+        String query = String.join("\n"
+            ,"SELECT"
+            ,    "*"
+            ,"FROM"
+            ,    "business"
+        );
+        return queryResults(query, cols);
+    }
+
+    @RequestMapping(value="/getCustomerCards",
+                    params="account_id",
+                    method=RequestMethod.GET,
+                    produces = "application/json")
+    @ResponseBody
+    public String getCustomerCards(@RequestParam("account_id") Long account_id) {
+        String[] cols = {"card_number", "expiration"};
+        String query = String.join("\n"
+            ,"SELECT"
+            ,    "card_number, expiration_day"
+            ,"FROM"
+            ,    "card"
+            ,"WHERE"
+            ,"account_account_id = "+account_id
+        );
+        return queryResults(query, cols);
+    }
+
     @RequestMapping(value="/findCustomerId",
                     params = "email", 
                     method=RequestMethod.GET,
@@ -335,6 +368,10 @@ public class MainController {
 
 		DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
 
+        for(int i = 0; i < items.length; i++){
+            System.out.println("hhhhhhhhh " + items[i]);
+        }
+
         Card currCard = creditCardRepo.findById(card_id);
         if (currCard == null) {
             currCard = debitCardRepo.findById(card_id);
@@ -391,6 +428,7 @@ public class MainController {
         }
         trans.setTransactionItems(ti);
         this.transactionRepo.save(trans);
+        System.out.println("Transaction id " + trans.getId());
         return "Success";
     }
 
@@ -424,6 +462,8 @@ public class MainController {
                 fieldUpdates = fieldUpdates + ", ";
             }
         }
+
+        System.out.println(fieldUpdates);
 
         String query = String.join("\n"
             ,"UPDATE"

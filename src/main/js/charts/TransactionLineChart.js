@@ -32,13 +32,3 @@ class TransactionLineChart extends React.Component {
 }
 
 export default TransactionLineChart;
-
-/*
-{[
-  [
-    { x: 1, y: 20 },
-    { x: 2, y: 10 },
-    { x: 3, y: 25 }
-  ]
-]}
-*/

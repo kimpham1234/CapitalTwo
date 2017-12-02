@@ -16,11 +16,19 @@ class Transaction extends React.Component {
 		this.state = {
 			transactions: [],
 			item_list:[],
+			card_list:[],
+			business_list:[],
 			open: false,
 			lineChartOpen: false,
-			inputDate: "2017-11-20",
+			inputDate: "2017-11-29",
 			inputCity: "",
 			inputState: "",
+			inputBusiness: -1,
+			inputCard: -1,
+			inputCategory: -1,
+			inputQuantity: 0,
+			inputPrice: 0,
+			inputItemList: [],
 			account_id: 0,
 			totalBalance: 0,
 			all: true,
@@ -34,7 +42,8 @@ class Transaction extends React.Component {
 		this.handleChange = this.handleChange.bind(this);
 		this.showAll = this.showAll.bind(this);
 		this.showLineChart = this.showLineChart.bind(this);
-		
+		this.showPieChart = this.showPieChart.bind(this);
+		this.handleAddItem = this.handleAddItem.bind(this);
 	}
 	
 	toggle(){
@@ -62,12 +71,35 @@ class Transaction extends React.Component {
 	}
 
 	addTransaction(e){
-		var transactions = this.state.transactions.slice();
-		var submitted = {date: this.state.inputDate, city: this.state.inputCity, state: this.state.inputState};
-		transactions.push(submitted);
-		alert("Submitted " + JSON.stringify(transactions));
-		this.setState({transactions: transactions});
+		console.log("items " + JSON.stringify(this.state.inputItemList));
+	
+		axios.get('http://localhost:8080/demo/createTransaction', {
+            params: {
+                date: this.state.inputDate.toString(),
+                state: this.state.inputState,
+                city: this.state.inputCity,
+                card_id: this.state.inputCard,
+                business_id: this.state.inputBusiness,
+                items: this.state.inputItemList
+            }
+		})
+		.then(function (response) {
+			console.log(response);
+			alert(response);
+		})
+		.catch(function (error) {
+			console.log(error);
+		});
+	}	
+
+	handleAddItem(){
+		var items = this.state.inputItemList.slice();
+		var i = this.state.inputCategory +","+this.state.inputQuantity+","+this.state.inputPrice;
+		items.push(i);
+		this.setState({inputItemList: items});
+		console.log("items " + JSON.stringify(this.state.inputItemList));
 	}
+
 
 	showLineChart(){
 		var data = [];
@@ -90,11 +122,59 @@ class Transaction extends React.Component {
 		});
 	}
 
+	showPieChart(){
+		var start = "";
+		var end = "";
+
+		if(!this.state.all){
+			start = this.state.from;
+			end = this.state.to
+		}
+
+		axios.get('http://localhost:8080/demo/getCustomerCategorizedTrans', {
+			params: {
+				start: start,
+				end: end
+			}
+		})
+		.then(res => {
+				var results = res.data.results;
+				var data = [];
+				for(var i = 0; i < results.length; i++){
+					var p = {key: results[i].category, value: results[i].amount};
+					data.push(p);
+				}
+
+				hashHistory.push({
+				pathname: "/pieChart",
+				state: {
+					data: data
+				}
+			});
+		});
+		
+		
+	}
+
 	componentDidMount(){
 		axios.get('http://localhost:8080/demo/getItemList')
 			.then(res =>{
 				console.log(JSON.stringify(res.data));
 				this.setState({item_list: res.data.results});
+			});
+		axios.get('http://localhost:8080/demo/findAllBusiness')
+			.then(res => {
+				console.log(JSON.stringify(res.data));
+				this.setState({business_list: res.data.results});
+			});
+		axios.get('http://localhost:8080/demo/getCustomerCards', {
+				params: {
+					account_id: this.props.location.state.account_id
+				}
+			})
+			.then(res => {
+				console.log(JSON.stringify(res.data));
+				this.setState({card_list: res.data.results});
 			});
 	}
 
@@ -168,7 +248,7 @@ class Transaction extends React.Component {
                 card_id: 26,
                 business_id: 16,
                 items: [
-                    "6,1,1",
+                    "6,1,1", //id, price, 
                     "7,1,1",
                     "8,1,1",
                 ]
@@ -236,6 +316,7 @@ class Transaction extends React.Component {
 
 	      <Button className="primary" onClick={this.toggle}>Add Transaction</Button>
 	      <Button className="primary" onClick={this.showLineChart}>Line Chart</Button>
+	      <Button className="primary" onClick={this.showPieChart}>Pie Chart</Button>
 	      	<Panel collapsible expanded={this.state.open}>
 		      	<Form inline onSubmit={this.addTransaction}>
 				    <FormGroup controlId="formInlineName">
@@ -244,12 +325,14 @@ class Transaction extends React.Component {
 				      <FormControl type="date" name="inputDate" value={this.state.inputDate} onChange={this.handleChange}/>
 				    </FormGroup>
 				    {' '}
+
 				    <FormGroup controlId="formInlineEmail">
 				      <ControlLabel>City</ControlLabel>
 				      {' '}
 				      <FormControl type="text" name="inputCity" value={this.state.inputCity} onChange={this.handleChange}/>
 				    </FormGroup>
 				    {' '}
+
 				    <FormGroup controlId="formInlineEmail">
 				      <ControlLabel>State</ControlLabel>
 				      {' '}
@@ -260,6 +343,63 @@ class Transaction extends React.Component {
 				      Add
 				    </Button>
 				</Form>
+
+				<FormGroup>
+				      <ControlLabel>Card</ControlLabel>
+				      {' '}
+				      <FormControl componentClass="select" className="date-input" name="inputCard" placeholder="Card" onChange={this.handleChange}>
+					    	<option value={-1}>Card</option>
+					    	{ this.state.card_list.map((card) => (
+					    		<option value={card.card_number}>{card.card_number}</option>
+					    	  )
+					    	)}
+					  </FormControl>
+				    </FormGroup>
+				    {' '}
+
+				    <FormGroup controlId="formInlineEmail">
+				      <ControlLabel>Business</ControlLabel>
+				      {' '}
+				      <FormControl componentClass="select" className="date-input" name="inputBusiness" placeholder="Business" onChange={this.handleChange}>
+					    	<option value={-1}>Business</option>
+					    	{ this.state.business_list.map((business) => (
+					    		<option value={business.business_id}>{business.name}</option>
+					    	  )
+					    	)}
+					  </FormControl>
+				    </FormGroup>
+				    {' '}
+
+				    <FormGroup controlId="formInlineEmail">
+				      <ControlLabel>Category</ControlLabel>
+				      {' '}
+				      <FormControl componentClass="select" className="date-input" name="inputCategory" placeholder="Category" onChange={this.handleChange}>
+					    	<option value={-1}>Category</option>
+					    	{ this.state.item_list.map((item) => (
+					    		<option value={item.item_id}>{item.name}</option>
+					    	  )
+					    	)}
+					  </FormControl>
+				    </FormGroup>
+				    {' '}
+
+				    <FormGroup controlId="formInlineName">
+				      <ControlLabel>Quantity</ControlLabel>
+				      {' '}
+				      <FormControl type="number" name="inputQuantity" value={this.state.inputQuantity} onChange={this.handleChange}/>
+				    </FormGroup>
+				    {' '}
+
+				    <FormGroup controlId="formInlineName">
+				      <ControlLabel>Price</ControlLabel>
+				      {' '}
+				      <FormControl type="number" name="inputPrice" value={this.state.inputPrice} onChange={this.handleChange}/>
+				    </FormGroup>
+				    {' '}
+
+				    <Button onClick={this.handleAddItem}>Add Category</Button>
+
+
 	      	</Panel>
 	      	<BusinessTransaction transactions={this.state.transactions}/>
 	    </div>

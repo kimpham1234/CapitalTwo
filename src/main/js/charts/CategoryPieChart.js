@@ -1,4 +1,4 @@
-import {PieChart} from 'react-easy-chart';
+import {PieChart, Legend } from 'react-easy-chart';
 const React = require('react');
 const ReactDOM = require('react-dom');
 
@@ -11,19 +11,33 @@ class CategoryPieChart extends React.Component {
 
 
 	render() {
+		const customStyle = {
+		    '.legend': {
+		      backgroundColor: '#f9f9f9',
+		      border: '1px solid #e5e5e5',
+		      borderRadius: '12px',
+		      fontSize: '0.8em',
+		      maxWidth: '300px',
+		      padding: '12px',
+		      float: 'left'
+		    }
+		  };
+
 		return (
+
 			<div>
 			  <h1>Pie chart</h1>
-		      <LineChart
-		      	size = {750}
+		      <PieChart
+		      	size = {600}
 		      	padding = {50}
 		      	labels
-			    data = {[
-			    	{key: 'A', value: 100},
-			    	{key: 'B', value: 40},
-			    	{key: 'C', value: 70}
-			    ]}
+			    data = {this.props.location.state.data}
 				/>
+
+				<Legend 
+					data = {this.props.location.state.data}
+					dataId = {'key'}
+					styles = {customStyle} />
 			</div>
 	    );
 	 }

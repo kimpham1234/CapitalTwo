@@ -1,4 +1,4 @@
-import {Button} from 'react-bootstrap'
+import {Button, Glyphicon} from 'react-bootstrap'
 import Transaction from './Transaction.js'
 import CustomerInfo from './CustomerInfo.js'
 import Card from './Card.js'
@@ -18,6 +18,16 @@ class CustomerProfile extends React.Component {
 		}
 		console.log("Profile constructor");
 		this.handleViewTransaction = this.handleViewTransaction.bind(this);
+		this.handleEdit = this.handleEdit.bind(this);
+	}
+
+	handleEdit(){
+		hashHistory.push({
+			pathname:"/editProfile",
+			state: {
+				customer: this.state.user
+			}
+		});
 	}
 
 	componentDidMount(){
@@ -50,7 +60,7 @@ class CustomerProfile extends React.Component {
 	render() {
 		return (
 	      <div>
-	      	<h1>Customer Profile</h1>
+	      	<h1>Customer Profile</h1><Button bsStyle="primary" onClick={this.handleEdit}><Glyphicon glyph="pencil"/></Button>
 	      	<CustomerInfo customer={this.state.user}/>
 	      	
 	      	{this.state.user.cards!=null &&
