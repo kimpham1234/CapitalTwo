@@ -79,6 +79,39 @@ public class MainController {
         return queryResults(query, cols);
     }
 
+    @RequestMapping(value="/findAllBusiness",
+                    method=RequestMethod.GET,
+                    produces = "application/json")
+    @ResponseBody
+    public String getBusinesses() {
+        String[] cols = {"business_id", "name", "reward_rate"};
+        String query = String.join("\n"
+            ,"SELECT"
+            ,    "*"
+            ,"FROM"
+            ,    "business"
+        );
+        return queryResults(query, cols);
+    }
+
+    @RequestMapping(value="/getCustomerCards",
+                    params="account_id",
+                    method=RequestMethod.GET,
+                    produces = "application/json")
+    @ResponseBody
+    public String getCustomerCards(@RequestParam("account_id") Long account_id) {
+        String[] cols = {"card_number", "expiration"};
+        String query = String.join("\n"
+            ,"SELECT"
+            ,    "card_number, expiration_day"
+            ,"FROM"
+            ,    "card"
+            ,"WHERE"
+            ,"account_account_id = "+account_id
+        );
+        return queryResults(query, cols);
+    }
+
     @RequestMapping(value="/findCustomerId",
                     params = "email", 
                     method=RequestMethod.GET,
@@ -93,6 +126,21 @@ public class MainController {
             ,    "account"
             ,"WHERE"
             ,    "email = '"+email+"'"
+        );
+        return queryResults(query, cols);
+    }
+
+    @RequestMapping(value="/getItemList",
+                    method=RequestMethod.GET,
+                    produces = "application/json")
+    @ResponseBody
+    public String getItemList() {
+        String[] cols = {"item_id", "description", "name"};
+        String query = String.join("\n"
+            ,"SELECT"
+            ,    "*"
+            ,"FROM"
+            ,    "item"
         );
         return queryResults(query, cols);
     }
@@ -118,8 +166,8 @@ public class MainController {
         }
 
         String itemJoin = "";
-        if (item_id != null || item_id != -1) {
-            itemJoin = "AND transaction_list.item_id = " + item_id;
+        if (item_id != null && item_id != -1) {
+            itemJoin = " AND transaction_list.item_id = " + item_id;
         }
 
         String query = String.join("\n"
@@ -136,10 +184,41 @@ public class MainController {
                 ,"customer_account_customer_cards"
                 ,"WHERE"
                 ,"customer_account_account_id = "+account_id
-                ,itemJoin
             ,")"
+            ,itemJoin
             ,dateJoin
         );
+        return queryResults(query, cols);
+    }  
+
+    @RequestMapping(value="/getCustomerCategorizedTrans",
+                    params = {"start", "end"},
+                    method=RequestMethod.GET,
+                    produces = "application/json")
+    @ResponseBody
+    public String getCustomerCategorizedTransaction(
+        @RequestParam("start") String start,
+        @RequestParam("end") String end) {
+        String[] cols = {
+            "category", "amount"
+        };
+
+        String dateJoin = getDateJoinString(start, end);
+        if (dateJoin != "") {
+            dateJoin = " WHERE " + dateJoin;
+        }
+       
+        System.out.println("date join " + dateJoin);
+
+        String query = String.join("\n"
+            ,"SELECT"
+            ,    "category, sum(quantity)"
+            ,"FROM"
+            ,    "transaction_list"
+            ,dateJoin
+            ,"GROUP BY category"
+        );
+        //return em.createNativeQuery(query).getResultList().toString();
         return queryResults(query, cols);
     }  
 
@@ -228,6 +307,10 @@ public class MainController {
 
 		DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
 
+        for(int i = 0; i < items.length; i++){
+            System.out.println("hhhhhhhhh " + items[i]);
+        }
+
         Card currCard = creditCardRepo.findById(card_id);
         if (currCard == null) {
             currCard = debitCardRepo.findById(card_id);
@@ -284,6 +367,7 @@ public class MainController {
         }
         trans.setTransactionItems(ti);
         this.transactionRepo.save(trans);
+        System.out.println("Transaction id " + trans.getId());
         return "Success";
     }
 
@@ -336,6 +420,8 @@ public class MainController {
             }
         }
 
+        System.out.println(fieldUpdates);
+
         String query = String.join("\n"
             ,"UPDATE"
             ,"account, customer_account"
@@ -346,4 +432,6 @@ public class MainController {
         );
         return em.createNativeQuery(query).executeUpdate() > 0 ? "Success" : "Fail";
     }
+
+
 }

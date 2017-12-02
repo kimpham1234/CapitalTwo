@@ -30,6 +30,15 @@ td, th {
 	text-decoration: capitalize;
 }
 
+.date-label {
+	margin-left: 5px;
+}
+
+.date-input {
+	display: inline-block !important;
+	width: 13% !important;
+}
+
 #divider {
 	width: 60%;
 	margin-left: 20px;
@@ -64,4 +73,15 @@ h3 {
 	display: inline-block;
 	border-radius: 2px;
 	background-color: whitesmoke;
+}
+
+#all-checkbox {
+	width: 2% !important;
+	height: 15px !important;
+	display: inline-block !important;
+}
+
+div.pie-chart-3afcc56500a4dc7cb6f400b7aea238e998b7eb73 {
+	width: 50% !important;
+	background-color: grey;
 }
