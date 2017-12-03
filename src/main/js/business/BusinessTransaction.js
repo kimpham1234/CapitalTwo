@@ -1,13 +1,31 @@
 import {Button, Table, Panel} from 'react-bootstrap'
 const React = require('react');
 const ReactDOM = require('react-dom');
-
+const axios = require('axios');
 
 
 class BusinessTransaction extends React.Component {
 
 	constructor(props) {
 		super(props);
+		this.state = {
+			id: 0
+		}
+	}
+
+	handleDelete(id){
+		
+		axios.get('http://localhost:8080/demo/deleteTransaction',{
+			params: {
+				transaction_id: id
+			}
+		})
+		.then(res => {
+			console.log(res);
+		})
+		.catch(err => {
+			console.log(err);
+		});
 	}
 
 //"transaction_id","city","cost","date","state","business_id","card_id","quantity","name","category"
@@ -24,6 +42,7 @@ class BusinessTransaction extends React.Component {
 		      		<th>Card Id</th>
 		      		<th>Merchant</th>
 		      		<th>Category</th>
+		      		<th>{'     '}</th>
 		      	</tr>
 	      	</thead>
 	      	<tbody>
@@ -43,6 +62,9 @@ class BusinessTransaction extends React.Component {
 		      					</li>
 		      				)}
 		      				</ul>
+		      			</td>
+		      			<td>
+		      				<Button onClick={this.handleDelete.bind(this, trans.transaction_id)}>Delete</Button>
 		      			</td>
 		      		</tr>
 		      	)}

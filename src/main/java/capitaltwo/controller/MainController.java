@@ -274,7 +274,7 @@ public class MainController {
         }
         String dateJoin = QueryUtils.getDateJoinString(start, end);
         if (dateJoin != "") {
-            dateJoin = "WHERE " + dateJoin;
+            dateJoin = "AND " + dateJoin;
         }
 
         String groupBy = group == 0 ?
@@ -286,6 +286,8 @@ public class MainController {
             , groupBy
 			,"FROM                                  "
 			,"	transaction                         "
+            ,"WHERE"
+            ,"business_business_id = "+business_id
             , dateJoin
 			,"GROUP BY                              "
 			, groupBy
