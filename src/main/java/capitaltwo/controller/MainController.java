@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.text.DateFormat;
@@ -293,6 +294,121 @@ public class MainController {
 			,"GROUP BY                              "
 			, groupBy
         );
+        return queryResults(query, cols);
+    }
+
+    @RequestMapping(value="/getBusinessDemographics",
+                    params={"business_id", "min_age", "max_age", "ethnicity", "gender"},
+                    method=RequestMethod.GET,
+                    produces="application/json")
+    @ResponseBody
+    public String getBusinessDemographics(
+        @RequestParam("business_id") Long business_id,
+        @RequestParam("min_age") Integer min_age,
+        @RequestParam("max_age") Integer max_age,
+        @RequestParam("ethnicity") Integer ethnicity,
+        @RequestParam("gender") Integer gender) {
+    
+        ArrayList<String> joins = new ArrayList<String>();
+
+        if (min_age != -1 || max_age != -1) {
+            String ageJoin = "";
+            String ageQuery = "YEAR(date) - birth_year";
+            if (min_age != -1) {
+                ageJoin += ageQuery + " > " + min_age;
+                if (max_age != -1) {
+                    ageJoin += " AND ";
+                }
+            }
+            if (max_age != -1) {
+                ageJoin += ageQuery + " < " + max_age;
+            }
+            joins.add(ageJoin);
+        }
+
+        if (ethnicity != -1) {
+            joins.add("ethnicity = " + ethnicity);
+        }
+
+        if (gender != -1) {
+            joins.add("gender = " + gender);
+        }
+
+        String joinQuery = "";
+        for (String s : joins) {
+            joinQuery += " AND " + s;
+        }
+
+        String[] cols = {
+            "birth_day", "birth_month", "birth_year", "ethnicity",
+            "name", "gender", "income", "reward_points", "transaction_id",
+            "cost", "date", "city", "state", "business_id"
+        };
+        String query = String.join("\n"
+            ,"SELECT"
+            ,"*"
+            ,"FROM"
+            ,"customer_demo_list"
+            ,"WHERE"
+            ,"business_id = " + business_id
+            ,joinQuery
+        );
+        System.out.println(query);
+        return queryResults(query, cols);
+    }
+
+    @RequestMapping(value="/getBusinessStatsByGroup",
+                    params={"business_id", "group", "age_interval"},
+                    method=RequestMethod.GET,
+                    produces="application/json")
+    @ResponseBody
+    public String getBusinessDemographicsTotalsByGroup(
+        @RequestParam("business_id") Long business_id,
+        @RequestParam("group") Integer group,
+        @RequestParam("age_interval") Integer age_interval) {
+        /*
+        group:
+            0 - ethnicity
+            1 - gender
+            2 - age
+
+        age_interval:
+            -1 for none,
+            any number for any age
+            
+        */
+        String groupQuery;
+        switch(group) {
+            case 0: {
+                groupQuery = "ethnicity";
+                break;
+            }
+            case 1: {
+                groupQuery = "gender";
+                break;
+            }
+            case 2: {
+                groupQuery = "FLOOR((YEAR(date) - birth_year)/" + age_interval + ")";
+                break;
+            }
+            default: {
+                groupQuery = "INVALID";
+            }
+        }
+    
+        String[] cols = {
+            "count", "sum", "group_value"
+        };
+        String query = String.join("\n"
+            ,"SELECT"
+            ,"COUNT(*), SUM(cost), " + groupQuery + " AS groupVal"
+            ,"FROM"
+            ,"customer_demo_list"
+            ,"WHERE"
+            ,"business_id = " + business_id
+            ,"GROUP BY groupVal"
+        );
+        System.out.println(query);
         return queryResults(query, cols);
     }
 

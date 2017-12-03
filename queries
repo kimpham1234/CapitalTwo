@@ -21,12 +21,12 @@ WHERE a.transaction_id = b.transaction_transaction_id
   and a.card_card_id = e.card_id
 ORDER BY a.transaction_id, a.card_card_id;
 
-col: transaction_id | city  | cost | date | state | business_id | card_id | quantity |name| category
+col: transaction_id | city  | cost | date | state | business_id | card_id | card_number | quantity | name | category | unit_price | item_id
 
 3. Create customer_demo_list that contains customer demographic tied to a transaction with business id
 
 CREATE VIEW customer_demo_list as
-SELECT a.birth_day, a.birth_month, a.birth_year, a.ethnicity, concat(a.first_name,',', a.last_name) as name, a.gender,a.income,a.reward_points, c.transaction_id, c.cost, c.date, c.city, c.state, c.business_business_id as business_id
+SELECT a.birth_day, a.birth_month, a.birth_year, a.ethnicity, concat(a.first_name,' ', a.last_name) as name, a.gender,a.income,a.reward_points, c.transaction_id, c.cost, c.date, c.city, c.state, c.business_business_id as business_id
 FROM customer_account a, card b, transaction c
 WHERE a.account_id = b.account_account_id
   and b.card_id = c.card_card_id;
