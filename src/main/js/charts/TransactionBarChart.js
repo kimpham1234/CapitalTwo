@@ -23,15 +23,7 @@ class TransactionBarChart extends React.Component {
 			      	width={750}
 				    height={500}
 				    margin={{top: 10, right: 30, bottom: 50, left: 50}}
-				    data={[
-				      {x: 'A', y: 20},
-				      {x: 'B', y: 30},
-				      {x: 'C', y: 40},
-				      {x: 'D', y: 20},
-				      {x: 'E', y: 40},
-				      {x: 'F', y: 25},
-				      {x: 'G', y: 5}
-				    ]}
+				    data={this.props.location.state.data}
 				/>
 			</div>
 	    );

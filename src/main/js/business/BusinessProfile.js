@@ -114,22 +114,58 @@ class BusinessProfile extends React.Component {
 	showLineChart(){
 		var data = [];
 		var transactions = this.state.transactions.slice();
+		console.log("transaction " + JSON.stringify(transactions));
+		console.log("mode " + JSON.stringify(this.state.mode));
 
-		
-		for(var i = 0; i < transactions.length; i++){
-			var p = {x: transactions[i].date.substring(0,11), y: transactions[i].cost};
-			data.push(p);
+		if(this.state.mode == 0){
+			for(var i = 0; i < transactions.length; i++){
+				if(transactions[i].date.substring(0,11) == data[data.length-1])
+					data[data.length-1].cost+= transactions[i].cost;
+				else{
+					var p = {x: transactions[i].date.substring(0,11), y: transactions[i].cost};
+					data.push(p);
+				}
+			}
+
+			data.reverse();
+			console.log("data " + JSON.stringify(data));		
+			
+			hashHistory.push({
+				pathname: "/lineChart",
+				state: {
+					data: [data]
+				}
+			});
+		}else if(this.state.mode == 1){
+
+			for(var i = 0; i< transactions.length; i++){
+				var p = {x: transactions[i].month+"-"+transactions[i].year, y: transactions[i].total};
+				data.push(p);
+			}
+
+			console.log("data " + JSON.stringify(data));
+
+			hashHistory.push({
+				pathname: "/barChart",
+				state: {
+					data: data
+				}
+			});
+		}else {
+
+			for(var i = 0; i< transactions.length; i++){
+				var p = {x: transactions[i].year, y: transactions[i].total};
+				data.push(p);
+			}
+
+			hashHistory.push({
+				pathname: "/barChart",
+				state: {
+					data: data
+				}
+			});
 		}
 
-		data.reverse();
-		console.log("data " + JSON.stringify(data));		
-		
-		hashHistory.push({
-			pathname: "/lineChart",
-			state: {
-				data: [data]
-			}
-		});
 	}
 
 	showMonToMonChart(){
@@ -255,7 +291,7 @@ class BusinessProfile extends React.Component {
 				    <ControlLabel className="date-label">To</ControlLabel>
 				    <FormControl className="date-input" type="date" name="to" value={this.state.to} onChange={this.handleChange}/>
 			     </div>
-	      		<Button className="primary" onClick={this.showLineChart}>Line Chart</Button>
+	      		<Button className="primary" onClick={this.showLineChart}>See Chart</Button>
 	      		<Button className="primary" onClick={this.showMonToMonChart}>View Month to Month</Button>
 	      		<Button className="primary" onClick={this.showYearToYearChart}>View Year to Year</Button>
 	      	</div>
