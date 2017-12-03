@@ -35,18 +35,19 @@ public abstract class Card {
         this.cardNumber = cardNumberGenerator();
     }
 
+    public int getExpirationYear() { return this.expirationYear; }
+    public int getExpirationMonth() { return this.expirationMonth; }
+    public int getExpirationDay() { return this.expirationDay; }
+    public String getCardNumber() { return this.cardNumber; }
+    public CustomerAccount getAccount() { return this.account; } 
+
+    public void setCustomerAccount(CustomerAccount acc) { this.account = acc; }
     public void setExpirationDate(int year, int month, int day) {
         this.expirationYear = year;
         this.expirationMonth = month;
         this.expirationDay = day;
-    };
-    public int getExpirationYear() { return this.expirationYear; };
-    public int getExpirationMonth() { return this.expirationMonth; };
-    public int getExpirationDay() { return this.expirationDay; };
-
-
-    public CustomerAccount getAccount() { return this.account; } 
-    public void setCustomerAccount(CustomerAccount acc) { this.account = acc; }
+    }
+    public void setCardNumber(String c) { this.cardNumber = c; }
 
     public abstract boolean charge(double val);
 
