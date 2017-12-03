@@ -39,7 +39,7 @@ class BusinessTransaction extends React.Component {
 		      		<th>Location</th>
 		      		<th>Date</th>
 		      		<th>Cost</th>
-		      		<th>Card Id</th>
+		      		<th>Card Number</th>
 		      		<th>Merchant</th>
 		      		<th>Category</th>
 		      		<th>{'     '}</th>
@@ -52,7 +52,7 @@ class BusinessTransaction extends React.Component {
 		      			<td>{trans.city + ", " + trans.state}</td>
 		      			<td>{trans.date}</td>
 		      			<td>{trans.cost}</td>
-		      			<td>{trans.card_id}</td>
+		      			<td>{trans.card_number}</td>
 		      			<td>{trans.name}</td>
 		      			<td>
 		      				<ul>Category - Quantity

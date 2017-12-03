@@ -157,7 +157,8 @@ public class MainController {
         @RequestParam("item_id") Long item_id) { // default is -1
         String[] cols = {
             "transaction_id","city","cost","date","state","business_id",
-            "card_id","quantity","name","category", "item_id"
+            "card_id", "card_number", "quantity","name","category",
+            "unit_price", "item_id"
         };
 
         String dateJoin = QueryUtils.getDateJoinString(start, end);

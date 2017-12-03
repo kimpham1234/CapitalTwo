@@ -208,27 +208,32 @@ class Transaction extends React.Component {
 			var totalBalance = 0;
 
 			for(var i = 0; i < transactions.length; i++){
+                var transCost = transactions[i].unit_price*transactions[i].quantity;
 				if(transactions[i].transaction_id!=preTrans){
 					var t = {
 						transaction_id: transactions[i].transaction_id,
 						city: transactions[i].city,
 						state: transactions[i].state,
 						date: transactions[i].date,
-						cost: transactions[i].cost,
+						cost: transCost,//transactions[i].cost,
 						card_id: transactions[i].card_id,
+                        card_number: transactions[i].card_number,
 						business_id: transactions[i].business_id,
 						name: transactions[i].name,
 						items: [
 							{ category: transactions[i].category, quantity: transactions[i].quantity}
 						]
 					}
-					totalBalance += transactions[i].cost;
+					//totalBalance += transactions[i].cost;
 					//console.log(JSON.stringify(t));
 					preTrans = transactions[i].transaction_id;
 					compressedTran.push(t);
 				}else{
-					compressedTran[compressedTran.length-1].items.push({ category: transactions[i].category, quantity: transactions[i].quantity});
+                    var t = compressedTran[compressedTran.length-1];
+                    t.items.push({ category: transactions[i].category, quantity: transactions[i].quantity});
+                    t.cost += transCost;
 				}
+                totalBalance += transCost;
 			}
 			console.log(JSON.stringify(compressedTran));
 			this.setState({

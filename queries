@@ -13,11 +13,12 @@ col: name(business)| reward_rate | expiration | business_position | business_ver
 2. Create transaction_list view that contains transaction info, business name & id, card id, and category
 
 CREATE VIEW transaction_list as
-SELECT a.transaction_id, a.city, a.cost, a.date, a.state, a.business_business_id as business_id, a.card_card_id as card_id, b. quantity, c.name, d.name as category, d.item_id as item_id
-FROM transaction a, transaction_item b, business c, item d 
+SELECT a.transaction_id, a.city, a.cost, a.date, a.state, a.business_business_id as business_id, a.card_card_id as card_id, e.card_number as card_number, b.quantity, c.name, d.name as category, b.unit_price as unit_price, d.item_id as item_id
+FROM transaction a, transaction_item b, business c, item d, card e
 WHERE a.transaction_id = b.transaction_transaction_id 
   and a.business_business_id = c.business_id 
   and b.item_item_id = d.item_id 
+  and a.card_card_id = e.card_id
 ORDER BY a.transaction_id, a.card_card_id;
 
 col: transaction_id | city  | cost | date | state | business_id | card_id | quantity |name| category
