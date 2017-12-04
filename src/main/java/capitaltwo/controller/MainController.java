@@ -235,8 +235,10 @@ public class MainController {
         @RequestParam("end") String end) {
         String[] cols = {
             "transaction_id","city","cost","date","state","business_id",
-            "card_id","quantity","name","category", "item_id"
+            "card_id","card_number", "quantity","name","category", "unit_price",
+            "item_id"
         };
+
 
         String dateJoin = QueryUtils.getDateJoinString(start, end);
         if (dateJoin != "") {
