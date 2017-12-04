@@ -10,6 +10,7 @@ import javax.json.Json;
 import javax.persistence.EntityManager;
 
 import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class QueryUtils {
@@ -50,6 +51,10 @@ public class QueryUtils {
                 }
                 else if (c == BigInteger.class) {
                     BigInteger num = (BigInteger)obj[j];
+                    jsonObject.add(fieldNames[j], num);
+                }
+                else if (c == BigDecimal.class) {
+                    BigDecimal num = (BigDecimal)obj[j];
                     jsonObject.add(fieldNames[j], num);
                 }
                 else if (c == Integer.class) {

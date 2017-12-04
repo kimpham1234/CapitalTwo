@@ -50,6 +50,7 @@ public abstract class Card {
     public void setCardNumber(String c) { this.cardNumber = c; }
 
     public abstract boolean charge(double val);
+    public abstract boolean isChargeable(double val);
 
     private static HashSet<String> cardValues = new HashSet<String>();
     private static int CARD_NUM_LEN = 16;

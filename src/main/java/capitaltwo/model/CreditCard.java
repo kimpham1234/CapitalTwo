@@ -17,12 +17,16 @@ public class CreditCard extends Card {
                       double monthlyLimit) {
         super(account, expirationYear, expirationMonth, expirationDay);
         this.monthlyLimit = monthlyLimit;
-        this.monthlySpent = monthlyLimit;
+        this.monthlySpent = 0;
+    }
+
+    public boolean isChargeable(double cost) {
+        return monthlySpent + cost < monthlyLimit;
     }
 
     public boolean charge(double cost) {
-        if (monthlySpent - cost >= 0) {
-            monthlySpent -= cost;
+        if (monthlySpent + cost <= monthlyLimit) {
+            monthlySpent += cost;
             return true;
         }
         return false;

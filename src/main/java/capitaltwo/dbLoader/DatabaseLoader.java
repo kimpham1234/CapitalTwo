@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.List;
+import java.util.Calendar;
 
 @Component
 public class DatabaseLoader implements CommandLineRunner {
@@ -31,9 +32,12 @@ public class DatabaseLoader implements CommandLineRunner {
         "Plumbing",
         "Storage",
         "Surfaces",
-        "Vehicles",
+        "Transportation",
         "Miscellaneous",
-        "Pets"
+        "Pets",
+        "Outdoor",
+        "Kids",
+        "Medical"
     };
 
     public static String[] DESCRIPTIONS = {
@@ -41,15 +45,18 @@ public class DatabaseLoader implements CommandLineRunner {
         "Beds, chairs, armchairs, sofas, bar stools, benches and deck chairs.",
         "Plants, paintings, sculptures, mirrors, curtains, rugs, ornaments, etc.",
         "TVs, computers, stereos, clocks, burglar alarm, fire alarm, video games, phones, pinball machines, etc.",
-        "Sporting goods, hobbies and skill items, party items, etc.",
+        "Hobbies and skill items, party items, etc.",
         "Musical instruments, bookshelves, exercise equipment, play equipment, workbenches, other skill-building items, etc.",
-        "Lamps, wall sconces, hanging lights, and outdoor lights.",
+        "Lamps, wall sconces, hanging lights.",
         "Toilets, sinks, showers, bathtubs and hot tubs.",
         "Bookshelves and dressers.",
         "Counters, kitchen tables, desks, side tables, coffee tables, shelves and displays (not bookshelves), cabinets, bars etc.",
         "Cars, bicycles, motorcycles, scooters, parking spaces, garage doors, and bike racks.",
         "Skill-building items (mirrors, weight machines, bookshelves),dressers, play equipment, party items, children\'s items, cars, pet items, garbage cans, etc.",
-        "Pet Bowls, pet houses, chewable dog toys, scratching posts, horse training obstacles, horse stalls, haystack, etc."
+        "Pet Bowls, pet houses, chewable dog toys, scratching posts, horse training obstacles, horse stalls, haystack, etc.",
+        "Barbecues, sporting goods, patio, balcony, backyard items, outdoor lighting.",
+        "Toys, diapers, clothing, baby items, health",
+        "Medicine, drugs, medical machines"
     };
 
     public static String[] STATES = {
@@ -121,6 +128,7 @@ public class DatabaseLoader implements CommandLineRunner {
     /* Entity sets for later use */
     private ArrayList<Item> items;
     private ArrayList<Business> businesses;
+    private ArrayList<Card> cards;
 
     @Autowired
     public DatabaseLoader(CreditCardRepository creditRepo,
@@ -172,13 +180,23 @@ public class DatabaseLoader implements CommandLineRunner {
 
     public void generateTransactionItems(Card card) {
         HashSet<TransactionItem> ti = new HashSet<TransactionItem>();
-        HashSet<Item> itemsSeen = new HashSet<Item>();
-
-        for(int j = 0 ; j < 5; j++){
+        
+        int transCount = randomInt(3, 25);
+        for(int j = 0 ; j < transCount; j++){
+            HashSet<Item> itemsSeen = new HashSet<Item>();
             int busIdx = randomInt(0, businesses.size()-1);
             Business business = this.businesses.get(busIdx);
             String[] city = generateCity();
-            Date day = new Date((new Date()).getTime() - randomInt(0,1000)* 24 * 3600 * 1000l);
+            // 0 to 2000 days ago from today
+            Date today = new Date();
+            Date day = new Date(today.getTime() - randomInt(0, 2000)* 24 * 3600 * 1000l);
+            Calendar todayCal = Calendar.getInstance();
+            todayCal.setTime(today);
+            Calendar dayCal = Calendar.getInstance();
+            dayCal.setTime(day);
+
+            boolean thisMonth = todayCal.get(Calendar.YEAR) == dayCal.get(Calendar.YEAR) &&
+                todayCal.get(Calendar.MONTH) == dayCal.get(Calendar.MONTH);
             Transaction transaction = new Transaction(
                 day,
                 city[1],
@@ -191,15 +209,22 @@ public class DatabaseLoader implements CommandLineRunner {
 
             int sz = items.size();
             int r = randomInt(0, sz - 1);
-            for (int i = 0; i < sz; ++i) {
+            for (int i = 0; i < r; ++i) {
                 Item currItem = items.get(randomInt(0, sz-1));
-                if (itemsSeen.add(currItem)) { // no duplicates
+                double cost = (double)randomInt(5, 5000);
+                int quantity = randomInt(1,5);
+                if (thisMonth && !card.isChargeable(cost*quantity)) {
+                    break;
+                }
+                // no duplicates in this transaction
+                if (itemsSeen.add(currItem)) { 
                     TransactionItem tItem = new TransactionItem(
                         transaction,
                         currItem,
-                        randomInt(1, 5),
-                        (double)randomInt(5, 100)
+                        quantity,
+                        cost
                     );
+                    card.charge(cost*quantity);
                     transactionItemRepo.save(tItem);
                     ti.add(tItem);
                 }
@@ -208,6 +233,11 @@ public class DatabaseLoader implements CommandLineRunner {
             this.transactionRepo.save(transaction);
             business.addTransaction(transaction);
             this.businesses.set(busIdx, this.businessRepo.save(business));
+            if (card.getClass() == DebitCard.class) {
+                this.debitCardRepo.save((DebitCard)card);
+            } else {
+                this.creditCardRepo.save((CreditCard)card);
+            }
         }
     }
 
@@ -305,6 +335,40 @@ public class DatabaseLoader implements CommandLineRunner {
         }
     }
 
+    public void generateCards(CustomerAccount customer) {
+            
+            Set<Card> customerCards = new HashSet<Card>();
+
+            int c_num = randomInt(1, 5);
+            for (int i = 0; i < c_num; ++i) {
+                CreditCard c = new CreditCard(
+                    customer,
+                    randomInt(2018, 2025),
+                    randomInt(1,12),
+                    randomInt(1,28),
+                    randomInt(1000, 100000)
+                );
+                customerCards.add(this.creditCardRepo.save(c));
+            }
+            c_num = randomInt(1, 5);
+            for (int i = 0; i < c_num; ++i) {
+                DebitCard d = new DebitCard(
+                    customer,
+                    randomInt(2018, 2025),
+                    randomInt(1,12),
+                    randomInt(1,28),
+                    randomInt(1000, 100000)
+                );
+                customerCards.add(this.debitCardRepo.save(d));
+            }
+            customer.setCards(customerCards);
+            this.customerRepo.save(customer);
+
+            for (Card c : customerCards) {
+                generateTransactionItems(c);
+            }
+    }
+
     @Override
     public void run(String... strings) throws Exception {
         
@@ -315,18 +379,7 @@ public class DatabaseLoader implements CommandLineRunner {
 
         List<CustomerAccount> accounts = this.customerRepo.findAll();
         for(CustomerAccount acc : accounts) {
-            Set<Card> ccards = new HashSet<Card>();
-            ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 1000));
-            ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 2000));
-            ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 1000));
-            ccards.add(new CreditCard(acc, 2020, randomInt(1,12), randomInt(1,30), 3000));
-            for (Card c : ccards) {
-                CreditCard cc = (CreditCard)c;
-                this.creditCardRepo.save(cc);
-            } 
-            acc.setCards(ccards);
-            this.customerRepo.save(acc);
-            generateTransactionItems(ccards.iterator().next());
+            generateCards(acc);
         }
     }
 }

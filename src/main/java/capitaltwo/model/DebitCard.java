@@ -19,6 +19,10 @@ public class DebitCard extends Card {
         this.balance = balance;
     }
 
+    public boolean isChargeable(double cost) {
+        return balance >= cost;
+    }
+
     public boolean charge(double cost) {
         if (balance - cost >= 0) {
             balance -= cost;
