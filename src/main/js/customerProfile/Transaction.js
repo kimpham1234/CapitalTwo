@@ -298,7 +298,7 @@ class Transaction extends React.Component {
 
 	render() {
 		return (
-		<div className="container2">
+		<div id="container2">
 	      <h1>Transaction of {this.props.params.loginId}</h1>
 	      <p>Total spent: {this.state.totalBalance}</p>
 

@@ -64,9 +64,9 @@ class CustomerProfile extends React.Component {
 	      	<CustomerInfo customer={this.state.user}/>
 	      	
 	    
-		      	{this.state.user.cards!=null &&
-			      	<Card cards={this.state.user.cards}/>
-		      	}
+	      	{this.state.user.cards!=null &&
+		      	<Card cards={this.state.user.cards}/>
+	      	}
 
 
 		    <Button className="primary" onClick={this.handleViewTransaction}>View Transaction</Button>
