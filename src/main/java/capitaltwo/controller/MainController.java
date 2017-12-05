@@ -430,19 +430,19 @@ public class MainController {
         @RequestParam("business_id") Long business_id,
         @RequestParam("items[]") String[] items) {
 
-		DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
         Card currCard = creditCardRepo.findById(card_id);
         if (currCard == null) {
             currCard = debitCardRepo.findById(card_id);
             if (currCard == null) {
-                System.out.println("failed at card");
+                System.out.println("Error: Failed at card");
                 return "Failure";
             }
         }
         Business currBusiness = businessRepo.findById(business_id);
         if (currBusiness == null) {
-            System.out.println("failed at business");
+            System.out.println("Error: Failed at business");
             return "Failure";
         }
 
@@ -451,11 +451,12 @@ public class MainController {
             d = df.parse(date);
         }
         catch (Exception e) {
-            System.out.println("INVALID DATE FORMAT");
+            System.out.println("Error: INVALID DATE FORMAT");
+            System.out.println("Error: Failed at date format");
             e.printStackTrace();
-            System.out.println("failed at date format");
             return "Failure";
         }
+        System.out.println("Date: " + d);
 
         Transaction trans = new Transaction(
             d,
@@ -465,12 +466,14 @@ public class MainController {
             currBusiness,
             null
         );
+        trans = this.transactionRepo.save(trans);
         System.out.println("Creating transaction...");
         System.out.println(trans);
 
         HashSet<TransactionItem> ti = new HashSet<TransactionItem>();
         for (String s : items) {
-            String[] strs = s.split(",");
+            System.out.println("Item string to parse: " + s);
+            String[] strs = s.split(":");
             Item currItem = itemRepo.findById(Long.parseLong(strs[0]));
             if (currItem == null) {
                 System.out.println("FAILED TO FIND ITEM");
@@ -483,23 +486,10 @@ public class MainController {
                 Integer.parseInt(strs[2])
             );
             ti.add(tItem);
-        }
-
-        trans.setTransactionItems(ti);
-        if (!currCard.isChargeable(trans.getCost())) {
-            return "CARD DECLINED: NOT ENOUGH FUNDS";
-        }
-        currCard.charge(trans.getCost());
-        if (currCard.getClass() == DebitCard.class) {
-            this.debitCardRepo.save((DebitCard)currCard);
-        } else {
-            this.creditCardRepo.save((CreditCard)currCard);
-        }
-
-        for (TransactionItem tItem : ti) {
             this.transactionItemRepo.save(tItem);
         }
 
+        trans.setTransactionItems(ti);
         this.transactionRepo.save(trans);
         System.out.println("Transaction id " + trans.getId());
         return "Success";

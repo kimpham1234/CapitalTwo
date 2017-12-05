@@ -17,7 +17,6 @@ class CategoryPieChart extends React.Component {
 		      border: '1px solid #e5e5e5',
 		      borderRadius: '12px',
 		      fontSize: '0.8em',
-		      maxWidth: '300px',
 		      padding: '12px',
 		      float: 'left'
 		    }
@@ -39,7 +38,8 @@ class CategoryPieChart extends React.Component {
 				<Legend 
 					data = {this.props.location == null ? this.props.data : this.props.location.state.data}
 					dataId = {'key'}
-					styles = {customStyle} />
+					styles = {customStyle}
+                    horizontal/>
 			</div>
 	    );
 	}

@@ -20,7 +20,7 @@ class Transaction extends React.Component {
 			business_list:[],
 			open: false,
 			lineChartOpen: false,
-			inputDate: "2017-11-29",
+			inputDate: "2017-12-7",
 			inputCity: "",
 			inputState: "",
 			inputBusiness: -1,
@@ -94,7 +94,7 @@ class Transaction extends React.Component {
 
 	handleAddItem(){
 		var items = this.state.inputItemList.slice();
-		var i = this.state.inputCategory +","+this.state.inputQuantity+","+this.state.inputPrice;
+		var i = this.state.inputCategory +":"+this.state.inputQuantity+":"+this.state.inputPrice;
 		items.push(i);
 		this.setState({inputItemList: items});
 		console.log("items " + JSON.stringify(this.state.inputItemList));
@@ -137,9 +137,7 @@ class Transaction extends React.Component {
 			end = this.state.to
 			title+= " from " + start + " to " + end;
 		}
-
-
-
+        console.log(start + " " + end);
 		axios.get('http://localhost:8080/demo/getCustomerCategorizedTrans', {
 			params: {
 				start: start,
@@ -154,6 +152,7 @@ class Transaction extends React.Component {
 					data.push(p);
 				}
 
+                console.log(JSON.stringify(data));
 				hashHistory.push({
 				pathname: "/pieChart",
 				state: {

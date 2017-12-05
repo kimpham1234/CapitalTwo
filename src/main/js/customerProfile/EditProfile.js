@@ -59,7 +59,6 @@ class EditProfile extends React.Component {
 
 
 	handleSubmit(){
-		hashHistory.push('/customerProfile');
 	    var values = []
         values.push(this.state.day);
         values.push(this.state.month);
@@ -81,6 +80,7 @@ class EditProfile extends React.Component {
 		})
 		.then(function (response) {
 			console.log(response);
+            hashHistory.push('/customerProfile');
 		})
 		.catch(function (error) {
 			console.log(error);

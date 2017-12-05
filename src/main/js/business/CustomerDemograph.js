@@ -6,6 +6,7 @@ import CategoryPieChart from '../charts/CategoryPieChart.js'
 const React = require('react');
 const ReactDOM = require('react-dom');
 const axios = require('axios');
+const AGE_INTERVAL = 5;
 
 class CustomerDemograph extends React.Component {
 
@@ -29,7 +30,7 @@ class CustomerDemograph extends React.Component {
 			params: {
 				business_id: that.props.params.id,
 				group: 2,
-				age_interval: 20
+				age_interval: AGE_INTERVAL
 			}
 		})
 		.then(res => {
@@ -39,8 +40,8 @@ class CustomerDemograph extends React.Component {
 			var data2 = [];
 			//low = group_value * 20, high = (group_value+1)*20-1
 			for(var i = 0; i < resData.length; i++){
-				var low = resData[i].group_value*20;
-				var high = (resData[i].group_value+1)*20;
+				var low = resData[i].group_value*AGE_INTERVAL;
+				var high = (resData[i].group_value+1)*AGE_INTERVAL;
 
 				var p = {key: low +" - "+high, value: resData[i].count};
 				var p2 = {key: low +" - "+high + " ", value: resData[i].sum};

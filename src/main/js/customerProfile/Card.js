@@ -41,6 +41,8 @@ class Card extends React.Component {
 		      			{card.monthlyLimit && <br></br>}
 		      			{card.monthlySpent == null ? "" : "Monthly Spent " + card.monthlySpent}
 		      			{card.monthlyLimit && <br></br>}
+		      			{card.balance == null ? "" : "Balance " + card.balance}
+		      			{card.balance && <br></br>}
 		      		</li>
 		      	)}
 	      	</Panel>
