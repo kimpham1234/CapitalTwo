@@ -189,6 +189,7 @@ public class MainController {
             ,")"
             ,itemJoin
             ,dateJoin
+            ,"ORDER by date DESC"
         );
         return queryResults(query, cols);
     }  
@@ -253,7 +254,7 @@ public class MainController {
             ,    "business_id = " + business_id
             ,    dateJoin
             ,"ORDER BY"
-            ,"date, transaction_id"
+            ,"date DESC, transaction_id"
         );
         return queryResults(query, cols);
     }
@@ -283,6 +284,8 @@ public class MainController {
 
         String groupBy = group == 0 ?
             "transaction.year" : "transaction.month, transaction.year";
+        String orderBy = group == 0 ?
+            "ORDER by year DESC" : "ORDER by year DESC, month DESC";
         
         String query = String.join("\n"
 			,"SELECT                                "
@@ -295,6 +298,7 @@ public class MainController {
             , dateJoin
 			,"GROUP BY                              "
 			, groupBy
+            , orderBy
         );
         return queryResults(query, cols);
     }

@@ -48,7 +48,7 @@ td, th {
 }
 
 h3 {
-	margin-left: 20px;
+	margin-left: 10px;
 }
 
 #card-panel.collapse.in {
@@ -84,4 +84,13 @@ h3 {
 div.pie-chart-3afcc56500a4dc7cb6f400b7aea238e998b7eb73 {
 	width: 50% !important;
 	background-color: grey;
+}
+
+#pieChart {
+	width: 50% !important;
+}
+
+#AppBarChildren {
+	margin-left: 10px;
+	margin-right: 10px;
 }

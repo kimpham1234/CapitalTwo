@@ -22,6 +22,7 @@ class BusinessTransaction extends React.Component {
 		})
 		.then(res => {
 			console.log(res);
+			this.setState({id: 0});
 		})
 		.catch(err => {
 			console.log(err);
@@ -42,7 +43,7 @@ class BusinessTransaction extends React.Component {
 		      		<th>Card Number</th>
 		      		<th>Merchant</th>
 		      		<th>Category</th>
-		      		<th>{'     '}</th>
+		      		{!this.props.hidden && <th>{'     '}</th>}
 		      	</tr>
 	      	</thead>
 	      	<tbody>
@@ -63,9 +64,11 @@ class BusinessTransaction extends React.Component {
 		      				)}
 		      				</ul>
 		      			</td>
+		      			{!this.props.hidden &&
 		      			<td>
 		      				<Button onClick={this.handleDelete.bind(this, trans.transaction_id)}>Delete</Button>
 		      			</td>
+		      			}	
 		      		</tr>
 		      	)}
 	      	</tbody>

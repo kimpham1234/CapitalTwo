@@ -3,6 +3,7 @@ import {hashHistory} from 'react-router'
 import BusinessTransaction from './BusinessTransaction.js'
 import MonthToMonth from './MonthToMonth.js'
 import YearToYear from './YearToYear.js'
+import * as firebase from 'firebase'
 
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -28,6 +29,7 @@ class BusinessProfile extends React.Component {
 		this.handleShow = this.handleShow.bind(this);
 		this.showMonToMonChart = this.showMonToMonChart.bind(this);
 		this.showYearToYearChart = this.showYearToYearChart.bind(this);
+		this.showCustomerDemograph = this.showCustomerDemograph.bind(this);
 	}
 
 	//[{"name":"google","reward_rate":1,"expiration":"3/26/2025",
@@ -35,12 +37,19 @@ class BusinessProfile extends React.Component {
 
 	componentDidMount(){
 		var that = this;
+		var loginId = "";
+		var currentUser = firebase.auth().currentUser;
+		if(currentUser == null){
+			hashHistory.push("/login");
+		}else {
+			loginId = currentUser.email;
+		}
 		if(this.state.initial || this.state.all){
 			//console.log("start " + start.toString() + " end " + end.toString());
 		
 			axios.get('http://localhost:8080/demo/findBusiness', {
 				params: {
-					email: this.props.params.loginId
+					email: loginId //this.props.params.loginId
 				}
 			})
 			.then((res) => {
@@ -114,9 +123,17 @@ class BusinessProfile extends React.Component {
 	showLineChart(){
 		var data = [];
 		var transactions = this.state.transactions.slice();
-		console.log("transaction " + JSON.stringify(transactions));
-		console.log("mode " + JSON.stringify(this.state.mode));
+		var title = "";
+		var start = "";
+		var end = "";
+		if(!this.state.all){
+			start = this.state.from;
+			end = this.state.to;
+			title = " from " + start + " to " + end;
+		}
 
+
+		//transaction timeline
 		if(this.state.mode == 0){
 			for(var i = 0; i < transactions.length; i++){
 				if(transactions[i].date.substring(0,11) == data[data.length-1])
@@ -133,40 +150,46 @@ class BusinessProfile extends React.Component {
 			hashHistory.push({
 				pathname: "/lineChart",
 				state: {
-					data: [data]
+					data: [data],
+					title: "Transaction Timeline " + title
 				}
 			});
 		}else if(this.state.mode == 1){
-
 			for(var i = 0; i< transactions.length; i++){
 				var p = {x: transactions[i].month+"-"+transactions[i].year, y: transactions[i].total};
 				data.push(p);
 			}
-
+			data.reverse();
 			console.log("data " + JSON.stringify(data));
 
 			hashHistory.push({
 				pathname: "/barChart",
 				state: {
-					data: data
+					data: data,
+					title: "Month to Month Transactions "+title
 				}
 			});
 		}else {
-
 			for(var i = 0; i< transactions.length; i++){
 				var p = {x: transactions[i].year, y: transactions[i].total};
 				data.push(p);
 			}
-
+			data.reverse();
 			hashHistory.push({
 				pathname: "/barChart",
 				state: {
-					data: data
+					data: data,
+					title: "Year to Year Transactions "+title
 				}
 			});
 		}
 
 	}
+
+	showCustomerDemograph(){
+		hashHistory.push('/demographs/'+this.state.business_id);
+	}
+
 
 	showMonToMonChart(){
 		var that = this;
@@ -261,7 +284,7 @@ class BusinessProfile extends React.Component {
 		var toRender;
 
 		if(this.state.mode == 0)
-			toRender =(<div><BusinessTransaction transactions={this.state.transactions}/></div>);
+			toRender =(<div><BusinessTransaction transactions={this.state.transactions} hidden={true}/></div>);
 		else if(this.state.mode == 1)
 			toRender = (<div><MonthToMonth transactions={this.state.transactions}/></div>);
 		else toRender = (<div><YearToYear transactions={this.state.transactions}/></div>)
@@ -294,6 +317,7 @@ class BusinessProfile extends React.Component {
 	      		<Button className="primary" onClick={this.showLineChart}>See Chart</Button>
 	      		<Button className="primary" onClick={this.showMonToMonChart}>View Month to Month</Button>
 	      		<Button className="primary" onClick={this.showYearToYearChart}>View Year to Year</Button>
+	      		<Button className="primary" onClick={this.showCustomerDemograph}>Customer Demographics</Button>
 	      	</div>
 	      	{toRender}
 	      </div>

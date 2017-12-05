@@ -26,21 +26,23 @@ class CategoryPieChart extends React.Component {
 		return (
 
 			<div>
-			  <h1>Pie chart</h1>
-		      <PieChart
-		      	size = {600}
-		      	padding = {50}
-		      	labels
-			    data = {this.props.location.state.data}
-				/>
+				<h3>{this.props.location != null ? this.props.location.state.title : ""}</h3>
+			    <div id="pieChart">
+		      		<PieChart
+		      			size = {600}
+		      			padding = {50}
+		      			labels
+			   			data = {this.props.location == null ? this.props.data : this.props.location.state.data}
+						/>
+			    </div>
 
 				<Legend 
-					data = {this.props.location.state.data}
+					data = {this.props.location == null ? this.props.data : this.props.location.state.data}
 					dataId = {'key'}
 					styles = {customStyle} />
 			</div>
 	    );
-	 }
+	}
 }
 
 export default CategoryPieChart;
