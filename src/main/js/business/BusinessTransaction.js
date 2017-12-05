@@ -23,7 +23,6 @@ class BusinessTransaction extends React.Component {
 		.then(res => {
 			console.log(res);
 			this.setState({id: 0});
-
 		})
 		.catch(err => {
 			console.log(err);

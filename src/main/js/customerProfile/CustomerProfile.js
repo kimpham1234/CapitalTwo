@@ -63,11 +63,11 @@ class CustomerProfile extends React.Component {
 	      	<h1>Customer Profile</h1><Button bsStyle="primary" onClick={this.handleEdit}><Glyphicon glyph="pencil"/></Button>
 	      	<CustomerInfo customer={this.state.user}/>
 	      	
-	      	<div>
+	    
 		      	{this.state.user.cards!=null &&
 			      	<Card cards={this.state.user.cards}/>
 		      	}
-		    </div>
+
 
 		    <Button className="primary" onClick={this.handleViewTransaction}>View Transaction</Button>
 	      </div>
