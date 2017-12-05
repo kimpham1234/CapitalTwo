@@ -34,7 +34,7 @@ class Card extends React.Component {
 	      	<Panel id="card-panel" collapsible expanded={this.state.open}>
 		      	{this.state.cards.map((card, index)=>
 		      		<li key={index}> 
-		      			Card: {card.card_number}<br></br>
+		      			Card: {card.cardNumber}<br></br>
 		      			Monthly Limit: {card.monthlyLimit}<br></br>
 		      			Monthly Spent: {card.monthlySpent}<br></br>
 		      			Expiration Date: {card.expirationMonth}/{card.expirationDay}/{card.expirationYear}

@@ -9,6 +9,7 @@ import CustomerProfile from './customerProfile/CustomerProfile.js'
 import Transaction from './customerProfile/Transaction.js'
 import EditProfile from './customerProfile/EditProfile.js'
 import BusinessProfile from './business/BusinessProfile.js'
+import CustomerDemograph from './business/CustomerDemograph.js'
 import TransactionLineChart from './charts/TransactionLineChart.js'
 import CategoryPieChart from './charts/CategoryPieChart.js'
 import TransactionBarChart from './charts/TransactionBarChart.js'
@@ -36,6 +37,7 @@ render((
 			<Route path="/customerProfile" component={CustomerProfile}/>
 			<Route path="/transactions/:loginId" component={Transaction}/>
 			<Route path="/businessProfile/:loginId" component={BusinessProfile}/>
+			<Route path="/demographs/:id" component={CustomerDemograph}/>
 			<Route path="/lineChart" component={TransactionLineChart}/>
 			<Route path="/pieChart" component={CategoryPieChart}/>
 			<Route path="/barChart" component={TransactionBarChart}/>

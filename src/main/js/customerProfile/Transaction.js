@@ -355,7 +355,7 @@ class Transaction extends React.Component {
 				      <FormControl componentClass="select" className="date-input" name="inputCard" placeholder="Card" onChange={this.handleChange}>
 					    	<option value={-1}>Card</option>
 					    	{ this.state.card_list.map((card) => (
-					    		<option value={card.card_number}>{card.card_number}</option>
+					    		<option value={card.card_id}>{'XXXX' + card.card_number.substring(12)}</option>
 					    	  )
 					    	)}
 					  </FormControl>

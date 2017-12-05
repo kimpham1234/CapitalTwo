@@ -28,6 +28,7 @@ class BusinessProfile extends React.Component {
 		this.handleShow = this.handleShow.bind(this);
 		this.showMonToMonChart = this.showMonToMonChart.bind(this);
 		this.showYearToYearChart = this.showYearToYearChart.bind(this);
+		this.showCustomerDemograph = this.showCustomerDemograph.bind(this);
 	}
 
 	//[{"name":"google","reward_rate":1,"expiration":"3/26/2025",
@@ -142,7 +143,7 @@ class BusinessProfile extends React.Component {
 				var p = {x: transactions[i].month+"-"+transactions[i].year, y: transactions[i].total};
 				data.push(p);
 			}
-
+			data.reverse();
 			console.log("data " + JSON.stringify(data));
 
 			hashHistory.push({
@@ -157,7 +158,7 @@ class BusinessProfile extends React.Component {
 				var p = {x: transactions[i].year, y: transactions[i].total};
 				data.push(p);
 			}
-
+			data.reverse();
 			hashHistory.push({
 				pathname: "/barChart",
 				state: {
@@ -167,6 +168,11 @@ class BusinessProfile extends React.Component {
 		}
 
 	}
+
+	showCustomerDemograph(){
+		hashHistory.push('/demographs/'+this.state.business_id);
+	}
+
 
 	showMonToMonChart(){
 		var that = this;
@@ -294,6 +300,7 @@ class BusinessProfile extends React.Component {
 	      		<Button className="primary" onClick={this.showLineChart}>See Chart</Button>
 	      		<Button className="primary" onClick={this.showMonToMonChart}>View Month to Month</Button>
 	      		<Button className="primary" onClick={this.showYearToYearChart}>View Year to Year</Button>
+	      		<Button className="primary" onClick={this.showCustomerDemograph}>Customer Demographics</Button>
 	      	</div>
 	      	{toRender}
 	      </div>

@@ -20,9 +20,9 @@ class TransactionLineChart extends React.Component {
 			    grid
 			    dataPoints
 			    lineColors={['tomato']}
-			    margin={{top: 10, right: 30, bottom: 50, left: 50}}
+			    margin={{top: 50, right: 50, bottom: 50, left: 100}}
 			    axisLabels={{x: 'Date', y: '$'}}
-			    width={750}
+			    width={1000}
 			    height={500}
 			    data={ this.props.location.state.data }
 				/>
