@@ -8,6 +8,10 @@ td, th {
     text-align: left;
 }
 
+body, html {
+	margin-left: 2px;
+}
+
 .inner-container {
 	width: 30%;
 	margin-right: 5%;
@@ -17,7 +21,7 @@ td, th {
 	font-size: 14px;
 }
 
-.container {
+.cusInfo-container {
 	margin-left: 0px !important;
 	margin-top: 0px;
 }

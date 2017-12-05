@@ -36,7 +36,7 @@ render((
 			<Route path="/newCustomer" component={CreateAccount}/>
 			<Route path="/customerProfile" component={CustomerProfile}/>
 			<Route path="/transactions/:loginId" component={Transaction}/>
-			<Route path="/businessProfile/:loginId" component={BusinessProfile}/>
+			<Route path="/businessProfile" component={BusinessProfile}/>
 			<Route path="/demographs/:id" component={CustomerDemograph}/>
 			<Route path="/lineChart" component={TransactionLineChart}/>
 			<Route path="/pieChart" component={CategoryPieChart}/>

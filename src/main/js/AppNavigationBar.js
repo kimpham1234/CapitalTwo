@@ -5,7 +5,7 @@ import * as firebase from 'firebase'
 
 const React = require('react');
 const ReactDOM = require('react-dom');
-
+const axios = require('axios');
 class AppNavigationBar extends React.Component {
 
 	constructor(props) {
@@ -13,16 +13,14 @@ class AppNavigationBar extends React.Component {
 		this.logOut = this.logOut.bind(this);
 	}
 
-	componentDidMount() {
-		console.log("component did mount");
-	}
-
-
 	logOut(){
 		console.log("logged out");
 		firebase.auth().signOut()
 		.then(function(){
 			hashHistory.push("/login");
+			this.setState({
+				isBusiness: ""
+			})
 		})
 		.catch(function(error){
 			var errorMessage = error.message;
@@ -44,8 +42,14 @@ class AppNavigationBar extends React.Component {
 			    <Navbar.Collapse>
 			      <Nav>
 			        <NavItem><Link to="/login">Login</Link></NavItem>
+			        <NavItem><Link to="/customerProfile">Customer</Link></NavItem>
+			        <NavItem><Link to="/businessProfile">Business</Link></NavItem>
 			        <NavItem><Button className="primary" onClick={this.logOut}>Log Out</Button></NavItem> 
+			      	 
 			      </Nav>
+			      
+			      
+			      }
 			    </Navbar.Collapse>
 			  </Navbar>
 

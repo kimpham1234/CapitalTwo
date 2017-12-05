@@ -3,6 +3,7 @@ import {hashHistory} from 'react-router'
 import BusinessTransaction from './BusinessTransaction.js'
 import MonthToMonth from './MonthToMonth.js'
 import YearToYear from './YearToYear.js'
+import * as firebase from 'firebase'
 
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -36,12 +37,19 @@ class BusinessProfile extends React.Component {
 
 	componentDidMount(){
 		var that = this;
+		var loginId = "";
+		var currentUser = firebase.auth().currentUser;
+		if(currentUser == null){
+			hashHistory.push("/login");
+		}else {
+			loginId = currentUser.email;
+		}
 		if(this.state.initial || this.state.all){
 			//console.log("start " + start.toString() + " end " + end.toString());
 		
 			axios.get('http://localhost:8080/demo/findBusiness', {
 				params: {
-					email: this.props.params.loginId
+					email: loginId //this.props.params.loginId
 				}
 			})
 			.then((res) => {
@@ -276,7 +284,7 @@ class BusinessProfile extends React.Component {
 		var toRender;
 
 		if(this.state.mode == 0)
-			toRender =(<div><BusinessTransaction transactions={this.state.transactions}/></div>);
+			toRender =(<div><BusinessTransaction transactions={this.state.transactions} hidden={true}/></div>);
 		else if(this.state.mode == 1)
 			toRender = (<div><MonthToMonth transactions={this.state.transactions}/></div>);
 		else toRender = (<div><YearToYear transactions={this.state.transactions}/></div>)

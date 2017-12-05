@@ -47,9 +47,10 @@ class Login extends React.Component {
 				var path = "/customerProfile";
 				hashHistory.push(path);
 			}
-			else{
-				console.log("from login " + loginId);
-				hashHistory.push("/businessProfile/"+loginId);
+			else if(userType == "business"){
+				hashHistory.push("/businessProfile");
+			}else {
+				alert("Please select Customer or Business Login");
 			}
 		})
 		.catch(function(error) {
