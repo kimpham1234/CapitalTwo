@@ -428,10 +428,6 @@ public class MainController {
 
 		DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
 
-        for(int i = 0; i < items.length; i++){
-            System.out.println("hhhhhhhhh " + items[i]);
-        }
-
         Card currCard = creditCardRepo.findById(card_id);
         if (currCard == null) {
             currCard = debitCardRepo.findById(card_id);
@@ -467,7 +463,6 @@ public class MainController {
         );
         System.out.println("Creating transaction...");
         System.out.println(trans);
-        this.transactionRepo.save(trans);
 
         HashSet<TransactionItem> ti = new HashSet<TransactionItem>();
         for (String s : items) {
@@ -484,9 +479,23 @@ public class MainController {
                 Integer.parseInt(strs[2])
             );
             ti.add(tItem);
+        }
+
+        trans.setTransactionItems(ti);
+        if (!currCard.isChargeable(trans.getCost())) {
+            return "CARD DECLINED: NOT ENOUGH FUNDS";
+        }
+        currCard.charge(trans.getCost());
+        if (currCard.getClass() == DebitCard.class) {
+            this.debitCardRepo.save((DebitCard)currCard);
+        } else {
+            this.creditCardRepo.save((CreditCard)currCard);
+        }
+
+        for (TransactionItem tItem : ti) {
             this.transactionItemRepo.save(tItem);
         }
-        trans.setTransactionItems(ti);
+
         this.transactionRepo.save(trans);
         System.out.println("Transaction id " + trans.getId());
         return "Success";

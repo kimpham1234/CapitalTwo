@@ -91,6 +91,7 @@ public class Transaction {
     public String getState() { return this.state; }
     public String getCity() { return this.city; }
     public Card getCard() { return this.card; }
+    public double getCost() { return this.cost; }
     public Set<TransactionItem> getTransactionItems() { return this.transactionItems; }
 
     @Override

@@ -21,6 +21,108 @@ public class DatabaseLoader implements CommandLineRunner {
     private static final int CARD_EXPIRE_MIN = 2018;
     private static final int CARD_EXPIRE_MAX = 2025;
 
+    public static String[] MALE_FIRST_NAMES = {
+        "Brian", "Terrell", "Earnest", "Bart", "Bryce", "Grover", "Keith",
+        "Bernard", "Chadwick", "Russel", "Millard", "Reuben", "Van", "Jeffrey",
+        "Toby", "Edmundo", "Joesph", "Willian", "Jonah", "Scott", "Sergio",
+        "Murray", "Darnell", "Rueben", "Lazaro", "William", "Mitch", "Heriberto",
+        "Gregg", "Lynn", "Demetrius", "Nathanael", "Neil", "Tyron", "Jefferey",
+        "Homer", "Lawrence", "Lesley", "Philip", "Harland", "Jared", "Ambrose",
+        "Wes", "Garrett", "Kendall", "Saul", "Wilford", "Adrian", "Elton", "Anthony",
+        "Ron", "Herman", "Rudolf", "Maximo", "Bryant", "Kenton", "Alex", "Coy",
+        "Arlen", "Michael", "Eugenio", "Adalberto", "Jaime", "Lynwood", "Dante",
+        "Herschel", "Pat", "Kareem", "Norman", "Jae", "Johnathon", "Fredric",
+        "Cristopher", "Brendon", "Kelvin", "Riley", "Rene", "Monroe", "Angel",
+        "Buford", "Domingo", "Johnie", "Jeffery", "Kelly", "James", "Dion", "Nick",
+        "Stanton", "Cameron", "Brett", "Linwood", "Kevin", "Kory", "Ricardo",
+        "Vicente", "Fritz", "Jesus", "Jacinto", "Edison", "Eddy"
+    };
+
+    public static String[] FEMALE_FIRST_NAMES = {
+        "Alta", "Celinda", "Lannie", "Felicitas", "Georgann", "Verdie", "Sana",
+        "Keli", "Avelina", "Sanjuanita", "Carri", "Johnette", "Nidia", "Christine",
+        "Magdalen", "Jama", "Vivien", "Karol", "Vanna", "Tu", "Maryann", "Marlo",
+        "Toi", "Clemmie", "Jacquelin", "Celina", "Vena", "Trinh", "Donnette",
+        "Xiao", "Robbi", "Jacquelyne", "Leanora", "Jolene", "Pamula", "Catharine",
+        "Ona", "Sanda", "Yee", "Jayna", "Rochell", "Danille", "Fanny", "Bernice",
+        "Rosann", "Shelli", "Vicki", "Joycelyn", "Calandra", "Meta", "Lucinda",
+        "Elenora", "Mitzi", "Lucia", "Reta", "Tomoko", "Bernarda", "Elvira",
+        "Jo", "Rosanne", "Marya", "Tresa", "Aida", "Lurline", "Merlyn", "Nakisha",
+        "Renetta", "Stefani", "Piedad", "Camelia", "Belinda", "Darlene", "Janessa",
+        "Vernia", "Racheal", "Bebe", "Cheryl", "Providencia", "Cherryl", "Charlsie",
+        "Alysha", "Shae", "Margit", "Vanetta", "Natisha", "Deborah", "Jonnie",
+        "Gaynell", "Laurice", "Saturnina", "Mirella", "Noelle", "Belle", "Richelle",
+        "Simona", "Ingrid", "Eloisa", "Marilee", "Constance", "Imogene"
+    };
+
+    public static String[] LAST_NAMES = {
+        "Chung", "Chen", "Melton", "Hill", "Puckett", "Song", "Hamilton", "Bender",
+        "Wagner", "McLaughlin", "McNamara", "Raynor", "Moon", "Woodard", "Desai",
+        "Wallace", "Lawrence", "Griffin", "Dougherty", "Powers", "May", "Steele",
+        "Teague", "Vick", "Gallagher", "Solomon", "Walsh", "Monroe", "Connolly",
+        "Hawkins", "Middleton", "Goldstein", "Watts", "Johnston", "Weeks", "Wilkerson",
+        "Barton", "Walton", "Hall", "Ross", "Chung", "Bender", "Woods",
+        "Mangum", "Joseph", "Rosenthal", "Bowden", "Barton", "Underwood", "Jones",
+        "Baker", "Merritt", "Cross", "Cooper", "Holmes", "Sharpe", "Morgan",
+        "Hoyle", "Allen", "Rich", "Rich", "Grant", "Proctor", "Diaz",
+        "Graham", "Watkins", "Hinton", "Marsh", "Hewitt", "Branch", "Walton",
+        "O'Brien", "Case", "Watts", "Christensen", "Parks", "Hardin", "Lucas",
+        "Eason", "Davidson", "Whitehead", "Rose", "Sparks", "Moore", "Pearson",
+        "Rodgers", "Graves", "Scarborough", "Sutton", "Sinclair", "Bowman", "Olsen",
+        "Love", "McLean", "Christian", "Lamb", "James", "Chandler", "Stout",
+        "Cowan", "Golden", "Bowling", "Beasley", "Clapp", "Abrams", "Tilley",
+        "Morse", "Boykin", "Sumner", "Cassidy", "Davidson", "Heath", "Blanchard",
+        "McAllister", "McKenzie", "Byrne", "Schroeder", "Griffin", "Gross", "Perkins",
+        "Robertson", "Palmer", "Brady", "Rowe", "Zhang", "Hodge", "Li", "Bowling",
+        "Justice", "Glass", "Willis", "Hester", "Floyd", "Graves", "Fischer",
+        "Norman", "Chan", "Hunt", "Byrd", "Lane", "Kaplan", "Heller",
+        "May", "Jennings", "Hanna", "Locklear", "Holloway", "Jones", "Glover",
+        "Vick", "O'Donnell", "Goldman", "McKenna", "Starr", "Stone"
+    };
+
+    public static String[] USERNAMES = {
+        "unhappy_colleague", "mortallysupremeinflux", "constant_maintenance",
+        "reproachfully_teeny-tiny_chivalry", "spicy_stole", "utter_adherence",
+        "deserted_syntax", "Jam-packedReceptor", "readydexterity564",
+        "unawareboasting5", "box_of_arms", "OpenNeighbour",
+        "PM_ME_YOUR_SYNDROMES", "NeatlyHabitual", "NeatlyGarrulous",
+        "OftenUntried", "SpeedilyFormal", "lackingsesame68",
+        "adhesivemover_5975", "bossy_effectiveness", "shaggybattery",
+        "needy_bureaucracy", "noteworthyhands0", "continually_rich_propensity",
+        "LuxuriantManifesto", "negativeemperor45", "alleged_header",
+        "NumberlessDelegation", "PM_ME_YOUR_PERSONAS", "UnequaledDingo",
+        "selfishly_gray_crocodile", "pushyeyewitness_5371", "excitedlypoorvolcano",
+        "TroubledIntercession", "notable_outage", "apt_lookout",
+        "purring_wiring", "misguidedpiles_16", "reassuringly_ethical_self-confidence",
+        "rarely_entertaining_delicacy", "DiscreetPrivacy", "forgetfulrecipe82",
+        "apathetic_progression", "NoisyAssociation", "dynamic_narration",
+        "ThreateningBanjo", "therapeutic_honesty", "loud_follower",
+        "PM_ME_YOUR_ARCHITECTURES", "RevolvingTicker", "PresentCoverage",
+        "RudelyMixed", "UpliftinglyFixed", "envelope_of_conditioners",
+        "LinearFrequency", "WrongBookmark", "brisklyquackaccuracy",
+        "RighteouslyMiniature", "SoftGoogle", "unequaled_domination",
+        "bewitchedbicycle08", "PleasantDrank", "young_and_foolish",
+        "supportivebroccoli_83", "veneratedterry", "abiding_joseph",
+        "ThankfullyHonorable", "Sure-footedVoltage", "TruculentOutfield",
+        "politicaladvertising_44", "SoftlyRebel", "colossalanthropology138",
+        "automaticextinction_34", "courageousfoyer8841", "cup_of_tracks",
+        "thevillainousultimatum", "CriticalStorey", "theshyplurality",
+        "NicelySlushy", "slow_mentality", "TheBulkyApplause",
+        "theblack-and-whiteemancipation", "lostpottery", "AboundingLiner",
+        "ImpishBuffalo", "exasperated_envoy", "TheCravenReceptor",
+        "HandsomeOpportunity", "FunnyRunoff", "cut_through_the_red_tape",
+        "FretfulBanjo", "belligerentscenery334", "unruly_rendition",
+        "FarawayRanger", "selfish_espionage", "theapprehensivescouring",
+        "gleefulhockey", "AwkwardFunction", "recklesslyreminiscentabsence",
+        "pleasing_passenger"
+    };
+
+    public static String[] EMAIL_DOMAINS = {
+        "@gmail.com",
+        "@yahoo.com",
+        "@hotmail.com"
+    };
+
     public static String[] ITEMS = {
         "Appliances",
         "Comfort",
@@ -208,7 +310,7 @@ public class DatabaseLoader implements CommandLineRunner {
             this.transactionRepo.save(transaction);
 
             int sz = items.size();
-            int r = randomInt(0, sz - 1);
+            int r = randomInt(0, (sz - 1)/4);
             for (int i = 0; i < r; ++i) {
                 Item currItem = items.get(randomInt(0, sz-1));
                 double cost = (double)randomInt(5, 5000);
@@ -224,7 +326,9 @@ public class DatabaseLoader implements CommandLineRunner {
                         quantity,
                         cost
                     );
-                    card.charge(cost*quantity);
+                    if (thisMonth && card.getClass() == CreditCard.class) {
+                        card.charge(cost*quantity);
+                    }
                     transactionItemRepo.save(tItem);
                     ti.add(tItem);
                 }
@@ -242,6 +346,7 @@ public class DatabaseLoader implements CommandLineRunner {
     }
 
     public void generateBusinesses() {
+        System.out.println("Generating businesses");
         for (int i = 0; i < BUSINESS_NAME.length; ++i) {
             Business b = new Business(
                 this.BUSINESS_NAME[i], (double)randomInt(1, 5),
@@ -252,23 +357,50 @@ public class DatabaseLoader implements CommandLineRunner {
     }
 
     public void generateBusinessAccounts(){
+        System.out.println("Generating business accounts");
         for(Business b : businesses){
             Set<BusinessAccount> accountSet = new HashSet<BusinessAccount>();
             b.setAccounts(accountSet);
-            BusinessAccount newAccount = new BusinessAccount(b.getName(), "123456", generatePhoneNumber(),
-                            b.getName().split(" ")[0]+"@gmail.com", randomInt(2020, 2025), randomInt(1,12),
-                            randomInt(1,30), "Partner", true, b);
+            BusinessAccount newAccount = new BusinessAccount(
+                b.getName(), "123456", generatePhoneNumber(),
+                b.getName().split(" ")[0]+"@gmail.com",
+                randomInt(2020, 2025), randomInt(1,12), randomInt(1,30),
+                "Partner", true, b);
             b.addAccount(newAccount);
             businessAccountRepo.save(newAccount);
         }
     }
 
     public void generateAccounts() {
+        System.out.println("Generating accounts");
+        generateFixedAccounts();
+        for (int i = 0; i < USERNAMES.length; ++i) {
+            int gender = randomInt(0,1);
+            CustomerAccount cust = new CustomerAccount(
+                USERNAMES[i],
+                "123456",
+                generatePhoneNumber(),
+                USERNAMES[i] + EMAIL_DOMAINS[randomInt(0,EMAIL_DOMAINS.length-1)],
+                gender != 0 ?
+                    FEMALE_FIRST_NAMES[randomInt(0, FEMALE_FIRST_NAMES.length-1)] :
+                    MALE_FIRST_NAMES[randomInt(0, MALE_FIRST_NAMES.length-1)],
+                LAST_NAMES[randomInt(0, LAST_NAMES.length-1)],
+                LAST_NAMES[randomInt(0, LAST_NAMES.length-1)],
+                Ethnicity.values()[randomInt(0, Ethnicity.values().length-1)],
+                Gender.values()[gender],
+                randomInt(1940, 2000), randomInt(1,12), randomInt(1,28),
+                randomInt(30000,1000000)
+            );
+            this.customerRepo.save(cust);
+        }
+    }
+
+    public void generateFixedAccounts() {
         ArrayList<CustomerAccount> customers = new ArrayList<CustomerAccount>();
         customers.add(new CustomerAccount(
             "username1",
             "hunter2",
-            "123-456-7890",
+            "1234567890",
             "therealdonald@gmail.com",
             "Donald",
             "D",
@@ -328,6 +460,19 @@ public class DatabaseLoader implements CommandLineRunner {
             Ethnicity.ASIAN,
             Gender.FEMALE,
             1980, 1, 23,
+            59000)
+        );
+        customers.add(new CustomerAccount(
+            "mrturtles",
+            "123456",
+            "4157285109",
+            "turtlesaregreat@gmail.com",
+            "mister",
+            "Theodore",
+            "turtles",
+            Ethnicity.OTHER,
+            Gender.FEMALE,
+            1992, 1, 23,
             59000)
         );
         for (CustomerAccount customer : customers) {
