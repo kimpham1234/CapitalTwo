@@ -52,8 +52,9 @@ class AppNavigationBar extends React.Component {
 			      }
 			    </Navbar.Collapse>
 			  </Navbar>
-
+			  <div id="AppBarChildren">
 			  {this.props.children}
+			  </div>
 	      </div>
 	    );
 	 }
