@@ -105,6 +105,11 @@ class Transaction extends React.Component {
 		var data = [];
 		var transactions = this.state.transactions.slice();
 
+		var title = "Transaction timeline ";
+		if(!this.state.all){
+			title += " from " + this.state.from + " to " + this.state.to;
+		}
+
 		
 		for(var i = 0; i < transactions.length; i++){
 			var p = {x: transactions[i].date.substring(0,11), y: transactions[i].cost};
@@ -117,7 +122,8 @@ class Transaction extends React.Component {
 		hashHistory.push({
 			pathname: "/lineChart",
 			state: {
-				data: [data]
+				data: [data],
+				title: title
 			}
 		});
 	}
@@ -125,11 +131,14 @@ class Transaction extends React.Component {
 	showPieChart(){
 		var start = "";
 		var end = "";
-
+		var title = "Spending Category "
 		if(!this.state.all){
 			start = this.state.from;
 			end = this.state.to
+			title+= " from " + start + " to " + end;
 		}
+
+
 
 		axios.get('http://localhost:8080/demo/getCustomerCategorizedTrans', {
 			params: {
@@ -148,7 +157,8 @@ class Transaction extends React.Component {
 				hashHistory.push({
 				pathname: "/pieChart",
 				state: {
-					data: data
+					data: data,
+					title: title
 				}
 			});
 		});
@@ -296,7 +306,7 @@ class Transaction extends React.Component {
 	      <div id="filtering-panel">
 	      	{/*Get All transaction*/}
 
-	      	<Button className="primary" onClick={this.showAll}>Show All Transactions</Button>
+	      	<Button className="primary" onClick={this.showAll}>Show Transactions</Button>
 	      	<ControlLabel className="date-label">All Transactions</ControlLabel>
 		  	<FormControl id="all-checkbox" type="checkbox" name="all" onChange={this.handleChange} checked={this.state.all}/>
 
@@ -320,8 +330,8 @@ class Transaction extends React.Component {
 	      </div>
 
 	      <Button className="primary" onClick={this.toggle}>Add Transaction</Button>
-	      <Button className="primary" onClick={this.showLineChart}>Line Chart</Button>
-	      <Button className="primary" onClick={this.showPieChart}>Pie Chart</Button>
+	      <Button className="primary" onClick={this.showLineChart}>View Timeline</Button>
+	      <Button className="primary" onClick={this.showPieChart}>View Spending Category</Button>
 	      	<Panel collapsible expanded={this.state.open}>
 		      	<Form inline onSubmit={this.addTransaction}>
 				    <FormGroup controlId="formInlineName">

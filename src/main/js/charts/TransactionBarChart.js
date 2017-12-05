@@ -13,7 +13,7 @@ class TransactionBarChart extends React.Component {
 	render() {
 		return (
 			<div>
-				<h1>Bar chart</h1>
+				<h1>{this.props.location.state.title}</h1>
 		      	<BarChart
 			      	colorBars
 			      	axes

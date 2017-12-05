@@ -10,7 +10,6 @@ class AppNavigationBar extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {employees: []};
 		this.logOut = this.logOut.bind(this);
 	}
 
@@ -19,14 +18,15 @@ class AppNavigationBar extends React.Component {
 	}
 
 
-	logOut(event){
-		event.preventDefault();
+	logOut(){
+		console.log("logged out");
 		firebase.auth().signOut()
 		.then(function(){
-			hashHistory.push("/");
+			hashHistory.push("/login");
 		})
 		.catch(function(error){
 			var errorMessage = error.message;
+			console.log("error");
 		});
 	}
 
@@ -44,15 +44,7 @@ class AppNavigationBar extends React.Component {
 			    <Navbar.Collapse>
 			      <Nav>
 			        <NavItem><Link to="/login">Login</Link></NavItem>
-			        <NavDropdown title="Menu" id="basic-nav-dropdown">
-			          <MenuItem ><Link to="/newCustomer">New Customer</Link></MenuItem>
-			          <MenuItem ><Link to="/customerProfile">Customer  Profile</Link></MenuItem>
-			          <MenuItem ><Link to="/transaction">Transaction</Link></MenuItem>
-			        </NavDropdown>
-			      </Nav>
-			      <Nav pullRight>
-			        <NavItem><Button className="primary" onClick={this.logOut}>Log Out</Button></NavItem>
-			        <NavItem eventKey={2} href="#">Link Right</NavItem>
+			        <NavItem><Button className="primary" onClick={this.logOut}>Log Out</Button></NavItem> 
 			      </Nav>
 			    </Navbar.Collapse>
 			  </Navbar>

@@ -115,9 +115,17 @@ class BusinessProfile extends React.Component {
 	showLineChart(){
 		var data = [];
 		var transactions = this.state.transactions.slice();
-		console.log("transaction " + JSON.stringify(transactions));
-		console.log("mode " + JSON.stringify(this.state.mode));
+		var title = "";
+		var start = "";
+		var end = "";
+		if(!this.state.all){
+			start = this.state.from;
+			end = this.state.to;
+			title = " from " + start + " to " + end;
+		}
 
+
+		//transaction timeline
 		if(this.state.mode == 0){
 			for(var i = 0; i < transactions.length; i++){
 				if(transactions[i].date.substring(0,11) == data[data.length-1])
@@ -134,11 +142,11 @@ class BusinessProfile extends React.Component {
 			hashHistory.push({
 				pathname: "/lineChart",
 				state: {
-					data: [data]
+					data: [data],
+					title: "Transaction Timeline " + title
 				}
 			});
 		}else if(this.state.mode == 1){
-
 			for(var i = 0; i< transactions.length; i++){
 				var p = {x: transactions[i].month+"-"+transactions[i].year, y: transactions[i].total};
 				data.push(p);
@@ -149,11 +157,11 @@ class BusinessProfile extends React.Component {
 			hashHistory.push({
 				pathname: "/barChart",
 				state: {
-					data: data
+					data: data,
+					title: "Month to Month Transactions "+title
 				}
 			});
 		}else {
-
 			for(var i = 0; i< transactions.length; i++){
 				var p = {x: transactions[i].year, y: transactions[i].total};
 				data.push(p);
@@ -162,7 +170,8 @@ class BusinessProfile extends React.Component {
 			hashHistory.push({
 				pathname: "/barChart",
 				state: {
-					data: data
+					data: data,
+					title: "Year to Year Transactions "+title
 				}
 			});
 		}

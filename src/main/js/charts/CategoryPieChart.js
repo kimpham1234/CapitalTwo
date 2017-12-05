@@ -26,7 +26,7 @@ class CategoryPieChart extends React.Component {
 		return (
 
 			<div>
-			    <h1>Pie chart</h1>
+				<h3>{this.props.location != null ? this.props.location.state.title : ""}</h3>
 			    <div id="pieChart">
 		      		<PieChart
 		      			size = {600}

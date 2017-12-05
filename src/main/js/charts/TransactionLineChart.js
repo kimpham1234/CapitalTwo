@@ -13,7 +13,7 @@ class TransactionLineChart extends React.Component {
 	render() {
 		return (
 			<div>
-			  <h1>Line chart</h1>
+			  <h1>{this.props.location.state.title}</h1>
 		      <LineChart
 		      	xType={'text'}
 			    axes

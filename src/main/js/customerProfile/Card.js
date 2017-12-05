@@ -34,12 +34,15 @@ class Card extends React.Component {
 	      	<Panel id="card-panel" collapsible expanded={this.state.open}>
 		      	{this.state.cards.map((card, index)=>
 		      		<li key={index}> 
-		      			Card: {card.cardNumber}<br></br>
-		      			Monthly Limit: {card.monthlyLimit}<br></br>
-		      			Monthly Spent: {card.monthlySpent}<br></br>
-		      			Expiration Date: {card.expirationMonth}/{card.expirationDay}/{card.expirationYear}
+		      			{card.monthlyLimit == null ? "Debit Card" : "Credit Card"}<br></br>
+		      			Card Number: ending in {card.cardNumber.substring(12)}<br></br>
+		      			Expiration Date: {card.expirationMonth}/{card.expirationDay}/{card.expirationYear}<br></br>
+		      			{card.monthlyLimit == null ? "" : "Monthly Limit " + card.monthlyLimit}
+		      			{card.monthlyLimit && <br></br>}
+		      			{card.monthlySpent == null ? "" : "Monthly Spent " + card.monthlySpent}
+		      			{card.monthlyLimit && <br></br>}
 		      		</li>
-		      	)};
+		      	)}
 	      	</Panel>
 	      </div>
 	    );
