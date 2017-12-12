@@ -17,9 +17,6 @@ public class Transaction {
     @GeneratedValue(strategy=GenerationType.TABLE)
     private Long transactionId;
     private Date date; // timestamp of purchase
-    private int day;
-    private int month;
-    private int year;
     private double cost;
     private String state;
     private String city;
@@ -46,9 +43,6 @@ public class Transaction {
 
         Calendar c = Calendar.getInstance();
         c.setTime(date);
-        this.day = c.get(Calendar.DATE);
-        this.month = c.get(Calendar.MONTH) + 1;
-        this.year = c.get(Calendar.YEAR);
 
         this.state = state;
         this.city = city;
@@ -71,9 +65,6 @@ public class Transaction {
         this.date = d;
         Calendar c = Calendar.getInstance();
         c.setTime(d);
-        this.day = c.get(Calendar.DATE);
-        this.month = c.get(Calendar.MONTH) + 1;
-        this.year = c.get(Calendar.YEAR);
     }
     public void setState(String state) { this.state = state; }
     public void setCity(String city) { this.city = city; }
@@ -84,9 +75,6 @@ public class Transaction {
     }
 
     public Long getId() { return this.transactionId; }
-    public int getDay() { return this.day; }
-    public int getMonth() { return this.month; }
-    public int getYear() { return this.year; }
     public Date getDate() { return this.date; }
     public String getState() { return this.state; }
     public String getCity() { return this.city; }

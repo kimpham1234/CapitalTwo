@@ -2,4 +2,5 @@ target
 node_modules
 src/main/resources/application.properties
 *.swp
+*.old
 src/main/resources/static/built

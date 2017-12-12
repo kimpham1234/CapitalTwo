@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.MapsId;
-import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -18,8 +17,8 @@ public class TransactionItem {
                            Item item,
                            int quantity,
                            double unitPrice) {
-        System.out.println("creating transaction " + transaction.getId() +
-            " and item " + item.getId());
+        System.out.println("Transaction id: " + transaction.getId() +
+            " Item id: " + item.getId());
         this.transaction = transaction;
         this.item = item;
         this.id = new TransactionItemId(transaction.getId(), item.getId());

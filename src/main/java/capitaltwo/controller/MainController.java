@@ -42,7 +42,7 @@ public class MainController {
         return QueryUtils.queryResults(em, query, columns);
     }
 
-    @RequestMapping(value="/testjson", 
+    @RequestMapping(value="/getAccounts",
                     method=RequestMethod.GET,
                     produces = "application/json")
     @ResponseBody
@@ -63,7 +63,7 @@ public class MainController {
     }
 
     @RequestMapping(value="/findBusiness",
-                    params = "email", 
+                    params = "email",
                     method=RequestMethod.GET,
                     produces = "application/json")
     @ResponseBody
@@ -114,7 +114,7 @@ public class MainController {
     }
 
     @RequestMapping(value="/findCustomerId",
-                    params = "email", 
+                    params = "email",
                     method=RequestMethod.GET,
                     produces = "application/json")
     @ResponseBody
@@ -192,7 +192,7 @@ public class MainController {
             ,"ORDER by date DESC"
         );
         return queryResults(query, cols);
-    }  
+    }
 
     @RequestMapping(value="/getCustomerCategorizedTrans",
                     params = {"start", "end"},
@@ -210,7 +210,7 @@ public class MainController {
         if (dateJoin != "") {
             dateJoin = " WHERE " + dateJoin;
         }
-       
+
         System.out.println("date join " + dateJoin);
 
         String query = String.join("\n"
@@ -223,7 +223,7 @@ public class MainController {
         );
         //return em.createNativeQuery(query).getResultList().toString();
         return queryResults(query, cols);
-    }  
+    }
 
     @RequestMapping(value="/getBusinessTrans",
                     params={"business_id", "start", "end"},
@@ -282,15 +282,18 @@ public class MainController {
             dateJoin = "AND " + dateJoin;
         }
 
-        String groupBy = group == 0 ?
-            "transaction.year" : "transaction.month, transaction.year";
+        String groupByAttrs = "EXTRACT(year from date) as year";
+        if (group != 0)
+            groupByAttrs = "EXTRACT(month from date) as month, " + groupByAttrs;
+        String groupBy = group == 0 ? "year" : "month, year";
+
         String orderBy = group == 0 ?
             "ORDER by year DESC" : "ORDER by year DESC, month DESC";
-        
+
         String query = String.join("\n"
 			,"SELECT                                "
 			,"	SUM(transaction.cost),              "
-            , groupBy
+            , groupByAttrs
 			,"FROM                                  "
 			,"	transaction                         "
             ,"WHERE"
@@ -314,7 +317,7 @@ public class MainController {
         @RequestParam("max_age") Integer max_age,
         @RequestParam("ethnicity") Integer ethnicity,
         @RequestParam("gender") Integer gender) {
-    
+
         ArrayList<String> joins = new ArrayList<String>();
 
         if (min_age != -1 || max_age != -1) {
@@ -381,7 +384,7 @@ public class MainController {
         age_interval:
             -1 for none,
             any number for any age
-            
+
         */
         String groupQuery;
         switch(group) {
@@ -401,7 +404,7 @@ public class MainController {
                 groupQuery = "INVALID";
             }
         }
-    
+
         String[] cols = {
             "count", "sum", "group_value"
         };
