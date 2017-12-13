@@ -1,0 +1,70 @@
+CREATE VIEW business_list as
+SELECT
+    business.business_id,
+    business.name,
+    business.reward_rate,
+    concat(business_account.expiration_month,'/',business_account.expiration_day,'/',business_account.expiration_year) as expiration,
+    business_account.business_position,
+    business_account.business_verified,
+    account.email,
+    account.phone_no
+FROM
+    business,
+    business_account, 
+    account
+WHERE
+    business_account.account_id = account.account_id AND 
+    business_account.business_business_id = business.business_id;
+
+CREATE VIEW transaction_list as
+SELECT
+    a.transaction_id,
+    a.city,
+    a.cost,
+    a.date,
+    a.state,
+    a.business_business_id as business_id,
+    a.card_card_id as card_id,
+    e.card_number as card_number,
+    b.quantity,
+    c.name,
+    d.name as category,
+    b.unit_price as unit_price,
+    d.item_id as item_id
+FROM
+    transaction a,
+    transaction_item b,
+    business c,
+    item d,
+    card e
+WHERE
+    a.transaction_id = b.transaction_transaction_id AND
+    a.business_business_id = c.business_id AND
+    b.item_item_id = d.item_id AND
+    a.card_card_id = e.card_id
+ORDER BY
+    a.transaction_id, a.card_card_id;
+
+CREATE VIEW customer_demo_list as
+SELECT
+    a.birth_day,
+    a.birth_month,
+    a.birth_year,
+    a.ethnicity,
+    concat(a.first_name,' ', a.last_name) as name,
+    a.gender,
+    a.income,
+    a.reward_points,
+    c.transaction_id,
+    c.cost,
+    c.date,
+    c.city,
+    c.state,
+    c.business_business_id as business_id
+FROM
+    customer_account a,
+    card b,
+    transaction c
+WHERE
+    a.account_id = b.account_account_id AND
+    b.card_id = c.card_card_id;
