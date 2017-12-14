@@ -195,11 +195,12 @@ public class MainController {
     }
 
     @RequestMapping(value="/getCustomerCategorizedTrans",
-                    params = {"start", "end"},
+                    params = {"account_id", "start", "end"},
                     method=RequestMethod.GET,
                     produces = "application/json")
     @ResponseBody
     public String getCustomerCategorizedTransaction(
+        @RequestParam("account_id") String account_id,
         @RequestParam("start") String start,
         @RequestParam("end") String end) {
         String[] cols = {
@@ -208,7 +209,7 @@ public class MainController {
 
         String dateJoin = QueryUtils.getDateJoinString(start, end);
         if (dateJoin != "") {
-            dateJoin = " WHERE " + dateJoin;
+            dateJoin = " AND " + dateJoin;
         }
 
         System.out.println("date join " + dateJoin);
@@ -218,10 +219,19 @@ public class MainController {
             ,    "category, sum(quantity)"
             ,"FROM"
             ,    "transaction_list"
+            ,"WHERE"
+            ,"card_id in "
+            ,"("
+                ,"SELECT"
+                ,"customer_cards_card_id"
+                ,"FROM"
+                ,"customer_account_customer_cards"
+                ,"WHERE"
+                ,"customer_account_account_id = " + account_id
+            ,")"
             ,dateJoin
             ,"GROUP BY category"
         );
-        //return em.createNativeQuery(query).getResultList().toString();
         return queryResults(query, cols);
     }
 

@@ -140,6 +140,7 @@ class Transaction extends React.Component {
         console.log(start + " " + end);
 		axios.get('http://localhost:8080/demo/getCustomerCategorizedTrans', {
 			params: {
+                account_id: this.props.location.state.account_id,
 				start: start,
 				end: end
 			}
