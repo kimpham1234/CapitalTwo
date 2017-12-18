@@ -375,7 +375,8 @@ public class DatabaseLoader implements CommandLineRunner {
         System.out.println("Generating accounts");
         generateFixedAccounts();
 
-        for (int i = 0; i < USERNAMES.length; ++i) {
+        //for (int i = 0; i < USERNAMES.length; ++i) {
+        for (int i = 0; i < USERNAMES.length/5; ++i) {
             int gender = randomInt(0,1);
             CustomerAccount cust = new CustomerAccount(
                 USERNAMES[i],
@@ -399,8 +400,8 @@ public class DatabaseLoader implements CommandLineRunner {
     public void generateFixedAccounts() {
         ArrayList<CustomerAccount> customers = new ArrayList<CustomerAccount>();
         customers.add(new CustomerAccount(
-            "PutinsFavoriteBigBoy",
-            "hunter2",
+            "myHeightIsHigherThanMyIQ",
+            "123456",
             "1234567890",
             "therealdonald@gmail.com",
             "Donald",
