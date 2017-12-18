@@ -58,10 +58,13 @@ In return, the app sells their customer transaction to business that helps the b
 16. Open your web browser and navigate to “localhost:8080” where you will be greeted with the login page
 
 Login with only these two accounts to test it:
-Type | Username | Password
---- | --- | --- |
+
+```
+  Type   |        Username         | Password
+-------- | ----------------------- | --------
 Customer | therealdonald@gmail.com | 123456
-Business | google@gmail.com | 123456
+Business | google@gmail.com        | 123456
+```
 
 Note: Our authentication uses both MySQL and Firebase to generate sessions, so create a user is not synchronized to work offline, and it was not a focal point of the project. Also, remember to select Customer or Business, otherwise the front end will not generate data.
 
